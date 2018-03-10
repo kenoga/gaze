@@ -9,6 +9,10 @@ import cv2
 def extract_under_half(frame):
     height = frame.shape[0]
     return frame[0:height//2, :]
+    
+def extract_left(frame):
+    width = frame.shape[1]
+    return frame[:, 0:width//2]
 
 def mov2imgs(in_path, out_path, func):
     # func: 動画から得られた画像に対してかける処理
@@ -34,6 +38,6 @@ def mov2imgs(in_path, out_path, func):
         print(frame_count)
     cap.release()
     
-in_path = './movie/test_para.mp4'
-out_dir = './para_image'
-mov2imgs(in_path, out_dir, extract_under_half)
+in_path = '../data/movie/test_omni.mp4'
+out_dir = '../data/omni_image'
+mov2imgs(in_path, out_dir, extract_left)

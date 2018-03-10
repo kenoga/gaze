@@ -1,19 +1,19 @@
+import argparse
+import json
 
-opencv_path = './results/face_detection_result_para_image_opencv.log'
-dlib_path = './results/face_detection_result_para_image_dlib.log'
-paths = [opencv_path, dlib_path]
+parser = argparse.ArgumentParser()
+parser.add_argument('path', help='a path of json file that you want to analyze')
+args = parser.parse_args()
 
-for path in paths:
-    fr = open(path, 'r')
-    lines = fr.readlines()
+with open(args.path, 'r') as fr:
+    results = json.load(fr)
 
-    failed_count = 0
-    total_count = len(lines)
-    for line in lines:
-        face_positions = line.split(' ')[1].strip()
-        if face_positions == 'None':
-            failed_count += 1
+total_count = 0
+failed_count = 0
+for k, v in results['results'].items():
+    total_count += 1
+    if len(v) == 0:
+        failed_count += 1
 
-    recall = (total_count - failed_count) / float(total_count)
-    print(path)
-    print('recall: %.4f' % recall)
+recall = (total_count - failed_count) / float(total_count)
+print('recall: %.4f' % recall)
