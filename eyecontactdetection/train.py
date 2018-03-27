@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 import time
 import random
 import os
 import json
 import chainer
 import glob
+import pickle
 
 import numpy as np
 from PIL import Image
@@ -30,7 +32,7 @@ SAVE_MODEL = 'result/model2'
 CLASS = 2
 INPUT_WIDTH = 128
 INPUT_HEIGHT = 128
-MINIBATCH_SIZE = 20
+MINIBATCH_SIZE = 8
 LEARN_RATE = 0.001
 EPOCH = 50
 GPU = 1
@@ -40,8 +42,8 @@ def load_dataset(dataset_path, shuffle=True):
     filepaths.sort()
     
     locked_vs_unlocked_rate = 2
-    locked_paths = [filepath for filepath in filepaths if '0V_0H' in os.path.basename()]
-    unlocked_paths = [filepath for filepath in filepaths if '0V_0H' not in os.path.basename()]
+    locked_paths = [path for path in filepaths if '_0V_0H' in os.path.basename(path)]
+    unlocked_paths = [path for path in filepaths if '_0V_0H' not in os.path.basename(path)]
     
     train_locked_paths = [path for path in locked_paths if int(os.path.basename(path).split('_')[0]) <= 45]
     test_locked_paths = [path for path in locked_paths if int(os.path.basename(path).split('_')[0]) > 45]
@@ -49,8 +51,8 @@ def load_dataset(dataset_path, shuffle=True):
     test_unlocked_paths = [path for path in unlocked_paths if int(os.path.basename(path).split('_')[0]) > 45]
     
     # lockedとunlockedの数を合わせるためにランダムサンプリングする
-    train_unlocked_paths, _ = random.sample(train_unlocked_paths, len(train_locked_paths) * 2)
-    test_unlocked_paths, _ = random.sample(train_unlocked_paths, len(test_locked_paths) * 2)
+    train_unlocked_paths = random.sample(train_unlocked_paths, len(train_locked_paths) * 2)
+    test_unlocked_paths = random.sample(train_unlocked_paths, len(test_locked_paths) * 2)
     
     def load_image(path):
         img = Image.open(path).convert('RGB') ## Gray->L, RGB->RGB
@@ -72,8 +74,8 @@ def load_dataset(dataset_path, shuffle=True):
         
         return (x, t)
         
-    train = [load_image(path) for path in train_locked_path + train_unlocked_paths]
-    test = [load_image(path) for path in test_locked_path + test_unlocked_paths]
+    train = [load_image(path) for path in train_locked_paths + train_unlocked_paths]
+    test = [load_image(path) for path in test_locked_paths + test_unlocked_paths]
     
     print('# Train locked images: {}'.format(len(train_locked_paths)))
     print('# Train unlocked images: {}'.format(len(train_unlocked_paths)))
