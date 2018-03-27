@@ -129,7 +129,8 @@ def main_train(model):
         model.to_gpu()
 
     ## Set Optimizer
-    optimizer = chainer.optimizers.MomentumSGD(LEARN_RATE)
+    # optimizer = chainer.optimizers.MomentumSGD(LEARN_RATE)
+    optimizer = chainer.optimizers.Adam(alpha=0.001, beta1=0.9, beta2=0.999, eps=1e-08)
     optimizer.setup(model)
     optimizer.add_hook(chainer.optimizer.WeightDecay(5e-4))
 
@@ -162,8 +163,6 @@ def main_train(model):
             accuracy_train.to_cpu()
             train_accuracies.append(accuracy_train.data)
         
-        # print('epoch: ', epoch_i)
-        # print('train mean loss: {:.2f}, accuracy: {:.2f}'.format( sum_loss_train / train_count, sum_accuracy_train / train_count))
         # test
         test_losses = []
         test_accuracies = []
