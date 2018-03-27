@@ -57,7 +57,6 @@ def load_dataset(dataset_path, shuffle=True):
     # lockedとunlockedの数を合わせるためにランダムサンプリングする
     train_unlocked_paths = random.sample(train_unlocked_paths, len(train_locked_paths) * 2)
     test_unlocked_paths = random.sample(test_unlocked_paths, len(test_locked_paths) * 2)
-    
     def make_tuple_dataset(paths):
         xs = []
         ts = []
@@ -83,7 +82,7 @@ def load_dataset(dataset_path, shuffle=True):
             xs.append(x)
             ts.append(t)
         
-        
+
         return np.array(xs).astype(np.float32), np.array(ts).astype(np.int32)
 
 
@@ -109,6 +108,7 @@ def main_train(model):
 
     ## Load train and test images 
     x_train, t_train, x_test, t_test = load_dataset(DATASET_PATH)
+    
     assert(len(x_train) == len(t_train))
     assert(len(x_test) == len(t_test))
     train_num = len(t_train)
@@ -178,7 +178,9 @@ def main_train(model):
             t = chainer.Variable(t_batch)
 
             y = model(x)
-
+	    print('batch_i: %d' % batch_i)
+	    print(y)
+	    print(x_batch[0][0][0])
             loss_test = F.softmax_cross_entropy(y, t)
             accuracy_test = F.accuracy(y, t)
 
