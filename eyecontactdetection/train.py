@@ -45,7 +45,7 @@ def load_dataset(dataset_path, shuffle=True):
     filepaths = glob.glob(dataset_path + '/*.jp*g')
     filepaths.sort()
     
-    locked_vs_unlocked_rate = 2
+    locked_vs_unlocked_rate = 1
     locked_paths = [path for path in filepaths if '_0V_0H' in os.path.basename(path)]
     unlocked_paths = [path for path in filepaths if '_0V_0H' not in os.path.basename(path)]
     
@@ -55,8 +55,8 @@ def load_dataset(dataset_path, shuffle=True):
     test_unlocked_paths = [path for path in unlocked_paths if int(os.path.basename(path).split('_')[0]) > 45]
     
     # lockedとunlockedの数を合わせるためにランダムサンプリングする
-    train_unlocked_paths = random.sample(train_unlocked_paths, len(train_locked_paths) * 2)
-    test_unlocked_paths = random.sample(test_unlocked_paths, len(test_locked_paths) * 2)
+    train_unlocked_paths = random.sample(train_unlocked_paths, len(train_locked_paths) * locked_vs_unlocked_rate)
+    test_unlocked_paths = random.sample(test_unlocked_paths, len(test_locked_paths) * locked_vs_unlocked_rate)
     def make_tuple_dataset(paths):
         xs = []
         ts = []
