@@ -165,14 +165,14 @@ def main_train(model):
         # print('epoch: ', epoch_i)
         # print('train mean loss: {:.2f}, accuracy: {:.2f}'.format( sum_loss_train / train_count, sum_accuracy_train / train_count))
         # test
-    test_losses = []
-    test_accuracies = []
-    sum_accuracy_test = 0
-    sum_loss_test = 0
-    #model.predictor.train = False
-        
-    perm = np.random.permutation(test_num)
-    for batch_i in range(0, test_num, BATCH_SIZE):
+        test_losses = []
+        test_accuracies = []
+        sum_accuracy_test = 0
+        sum_loss_test = 0
+        #model.predictor.train = False
+            
+        perm = np.random.permutation(test_num)
+        for batch_i in range(0, test_num, BATCH_SIZE):
             x_batch = cuda.to_gpu(x_test[perm[batch_i:batch_i+BATCH_SIZE]])
             t_batch = cuda.to_gpu(t_test[perm[batch_i:batch_i+BATCH_SIZE]])
             x = chainer.Variable(x_batch)
@@ -186,12 +186,9 @@ def main_train(model):
             test_losses.append(cuda.to_cpu(loss_test.data))
             accuracy_test.to_cpu()
             test_accuracies.append(accuracy_test.data)
-
-
             #model.predictor.train = True
 
     print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f}  {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), time.time()-start))
-
 
     print('\ntraining finished!!\n')
 
