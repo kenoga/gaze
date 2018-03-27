@@ -25,8 +25,8 @@ INPUT_WIDTH = 128
 INPUT_HEIGHT = 128
 
 ## paths to train image directory and test image one
-# DATASET_PATH = '/home/nogawa/gaze/data/eyecontact_dataset/cg_eyecontact/datasets/entire_face'
-DATASET_PATH = '../data/entire_face'
+DATASET_PATH = '/home/nogawa/gaze/data/eyecontact_dataset/cg_eyecontact/datasets/entire_face'
+# DATASET_PATH = '../data/entire_face'
 
 ## model name for save trained, and model name for  testing
 SAVE_MODEL = 'result/model2'
@@ -38,8 +38,8 @@ INPUT_HEIGHT = 128
 BATCH_SIZE = 8
 LEARN_RATE = 0.001
 EPOCH = 200
-# GPU = 1
-GPU = -1
+GPU = 1
+# GPU = -1
 
 def load_dataset(dataset_path, shuffle=True):
     filepaths = glob.glob(dataset_path + '/*.jp*g')
@@ -147,8 +147,8 @@ def main_train(model):
             x_batch = cuda.to_gpu(x_train[perm[batch_i:batch_i+BATCH_SIZE]])
             t_batch = cuda.to_gpu(t_train[perm[batch_i:batch_i+BATCH_SIZE]])
 
-            x = chainer.Variable(x_array)
-            t = chainer.Variable(t_array)
+            x = chainer.Variable(x_batch)
+            t = chainer.Variable(t_batch)
 
             y = model(x)
             
@@ -162,19 +162,20 @@ def main_train(model):
             accuracy_train.to_cpu()
             train_accuracies.append(accuracy_train.data)
         
-        print('epoch: ', train_iter.epoch)
-        print('train mean loss: {:.2f}, accuracy: {:.2f}'.format( sum_loss_train / train_count, sum_accuracy_train / train_count))
+        # print('epoch: ', epoch_i)
+        # print('train mean loss: {:.2f}, accuracy: {:.2f}'.format( sum_loss_train / train_count, sum_accuracy_train / train_count))
         # test
         test_losses = []
         test_accuracies = []
         sum_accuracy_test = 0
         sum_loss_test = 0
         #model.predictor.train = False
-        for batch_i in range(0, test_num, BATCH_SIZE):
+        perm = np.random.permutation(test_num)
+	for batch_i in range(0, test_num, BATCH_SIZE):
             x_batch = cuda.to_gpu(x_test[perm[batch_i:batch_i+BATCH_SIZE]])
             t_batch = cuda.to_gpu(t_test[perm[batch_i:batch_i+BATCH_SIZE]])
-            x = chainer.Variable(x_array)
-            t = chainer.Variable(t_array)
+            x = chainer.Variable(x_batch)
+            t = chainer.Variable(t_batch)
 
             y = model(x)
 
@@ -186,10 +187,9 @@ def main_train(model):
             test_accuracies.append(accuracy_test.data)
 
 
-            test_iter.reset()
             #model.predictor.train = True
 
-            print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f} {:^13.4f} {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), mcc, time.time()-start))
+        print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f}  {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), time.time()-start))
 
 
     print('\ntraining finished!!\n')
