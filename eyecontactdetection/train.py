@@ -188,7 +188,7 @@ def main_train(model):
             test_accuracies.append(accuracy_test.data)
             #model.predictor.train = True
 
-    print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f}  {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), time.time()-start))
+        print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f}  {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), time.time()-start))
 
     print('\ntraining finished!!\n')
 
