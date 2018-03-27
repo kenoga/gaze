@@ -15,6 +15,8 @@ from chainer.dataset import convert
 import chainer.links as L
 import chainer.functions as F
 from chainer import serializers
+from chainer.datasets import TupleDataset
+from chainer import cuda
 
 from model import CNN
 
@@ -23,7 +25,8 @@ INPUT_WIDTH = 128
 INPUT_HEIGHT = 128
 
 ## paths to train image directory and test image one
-DATASET_PATH = '/home/nogawa/gaze/data/eyecontact_dataset/cg_eyecontact/datasets/entire_face'
+# DATASET_PATH = '/home/nogawa/gaze/data/eyecontact_dataset/cg_eyecontact/datasets/entire_face'
+DATASET_PATH = '../data/entire_face'
 
 ## model name for save trained, and model name for  testing
 SAVE_MODEL = 'result/model2'
@@ -32,10 +35,11 @@ SAVE_MODEL = 'result/model2'
 CLASS = 2
 INPUT_WIDTH = 128
 INPUT_HEIGHT = 128
-MINIBATCH_SIZE = 8
+BATCH_SIZE = 8
 LEARN_RATE = 0.001
 EPOCH = 200
-GPU = 1
+# GPU = 1
+GPU = -1
 
 def load_dataset(dataset_path, shuffle=True):
     filepaths = glob.glob(dataset_path + '/*.jp*g')
@@ -54,64 +58,74 @@ def load_dataset(dataset_path, shuffle=True):
     train_unlocked_paths = random.sample(train_unlocked_paths, len(train_locked_paths) * 2)
     test_unlocked_paths = random.sample(test_unlocked_paths, len(test_locked_paths) * 2)
     
-    def load_image(path):
-        img = Image.open(path).convert('RGB') ## Gray->L, RGB->RGB
-        img = img.resize((INPUT_WIDTH, INPUT_HEIGHT))
-
-        x = np.array(img, dtype=np.float32)
-        ## Normalize [0, 255] -> [0, 1]
-        x = x / 255.
-        ## Reshape image to input shape of CNN
-        x = x.transpose(2, 0, 1)
-        #x = x.reshape(3, INPUT_HEIGHT, INPUT_WIDTH)
-
-        ## Get label(ground-truth) from file name path 
-        if '_0V_0H' in os.path.basename(path):
-            label = 0
-        else:
-            label = 1
-        t = np.array(label, dtype=np.int32)
+    def make_tuple_dataset(paths):
+        xs = []
+        ts = []
         
-        return (x, t)
+        for path in paths:
+            img = Image.open(path).convert('RGB') ## Gray->L, RGB->RGB
+            img = img.resize((INPUT_WIDTH, INPUT_HEIGHT))
+
+            x = np.array(img, dtype=np.float32)
+            ## Normalize [0, 255] -> [0, 1]
+            x = x / 255.
+            ## Reshape image to input shape of CNN
+            x = x.transpose(2, 0, 1)
+            #x = x.reshape(3, INPUT_HEIGHT, INPUT_WIDTH)
+
+            ## Get label(ground-truth) from file name path 
+            if '_0V_0H' in os.path.basename(path):
+                label = 0
+            else:
+                label = 1
+            t = np.array(label, dtype=np.int32)
+            
+            xs.append(x)
+            ts.append(t)
         
-    train = [load_image(path) for path in train_locked_paths + train_unlocked_paths]
-    test = [load_image(path) for path in test_locked_paths + test_unlocked_paths]
+        
+        return np.array(xs).astype(np.float32), np.array(ts).astype(np.int32)
+
+
+    x_train, t_train = make_tuple_dataset(train_locked_paths + train_unlocked_paths)
+    x_test, t_test = make_tuple_dataset(test_locked_paths + test_unlocked_paths)
     
     print('# Train locked images: {}'.format(len(train_locked_paths)))
     print('# Train unlocked images: {}'.format(len(train_unlocked_paths)))
     print('# Test locked images: {}'.format(len(test_locked_paths)))
     print('# Test unlocked images: {}\n'.format(len(test_unlocked_paths)))
     
-    if shuffle: random.shuffle(train)
-    return train, test
+    # if shuffle: random.shuffle(train)
+    return x_train, t_train, x_test, t_test
     
     
-def main_train(train_model):
+def main_train(model):
 
     print('\nmodel training start!!\n')
     print('# GPU: {}'.format(GPU))
-    print('# Minibatch-size: {}'.format(MINIBATCH_SIZE))
+    print('# Minibatch-size: {}'.format(BATCH_SIZE))
     print('# Epoch: {}'.format(EPOCH))
     print('# Learnrate: {}'.format(LEARN_RATE))
 
     ## Load train and test images 
-    train, test = load_dataset(DATASET_PATH)
-
-    if len(train) < 1 or len(test) < 1:
+    x_train, t_train, x_test, t_test = load_dataset(DATASET_PATH)
+    assert(len(x_train) == len(t_train))
+    assert(len(x_test) == len(t_test))
+    train_num = len(t_train)
+    test_num = len(t_test)
+    
+    if train_num < 1 or test_num < 1:
         raise Exception('train num : {}, test num: {}'.format(len(train), len(test)))
-
-    train_count = len(train)
-    test_count = len(test)
-
-    print('# Train images: {}'.format(train_count))
-    print('# Test images: {}\n'.format(test_count))
-
-    ## model define
-    model = train_model
+    print('# Train images: {}'.format(train_num))
+    print('# Test images: {}\n'.format(test_num))
+    
+    # 変形
+    # x_train = x_train.reshape(len(x_train), 3, INPUT_HEIGHT, INPUT_WIDTH)
+    # x_test = x_train.reshape(len(x_test), 3, INPUT_HEIGHT, INPUT_WIDTH)
 
     ## Set GPU device
-    if GPU:
-        chainer.cuda.get_device(GPU).use()
+    if GPU > 0:
+        cuda.get_device(GPU).use()
         model.to_gpu()
 
     ## Set Optimizer
@@ -119,76 +133,63 @@ def main_train(train_model):
     optimizer.setup(model)
     optimizer.add_hook(chainer.optimizer.WeightDecay(5e-4))
 
-    train_iter = chainer.iterators.SerialIterator(train, MINIBATCH_SIZE)
-    test_iter = chainer.iterators.SerialIterator(test, MINIBATCH_SIZE, repeat=False, shuffle=False)
-
     ## Training start!!
     start = time.time()
 
     print('epoch  train_loss  train_accuracy  test_loss  test_accuracy  Elapsed-Time')
-
-    while train_iter.epoch < EPOCH:
-
-        batch = train_iter.next()
-        # Reduce learning rate by 0.5 every 25 epochs.
-        #if train_iter.epoch % 25 == 0 and train_iter.is_new_epoch:
-        #    optimizer.lr *= 0.5
-        #    print('Reducing learning rate to: ', optimizer.lr)
-
+    
+    for epoch_i in range(EPOCH):
+        # train
         train_losses = []
         train_accuracies = []
+        perm = np.random.permutation(train_num)
+        for batch_i in range(0, train_num, BATCH_SIZE):
+            x_batch = cuda.to_gpu(x_train[perm[batch_i:batch_i+BATCH_SIZE]])
+            t_batch = cuda.to_gpu(t_train[perm[batch_i:batch_i+BATCH_SIZE]])
 
-        x_array, t_array = convert.concat_examples(batch, GPU)
-        x = chainer.Variable(x_array)
-        t = chainer.Variable(t_array)
+            x = chainer.Variable(x_array)
+            t = chainer.Variable(t_array)
 
-        y = model(x)
-        loss_train = F.softmax_cross_entropy(y, t)
-        accuracy_train = F.accuracy(y, t)
-        model.cleargrads()
-        loss_train.backward()
-        optimizer.update()
+            y = model(x)
+            
+            loss_train = F.softmax_cross_entropy(y, t)
+            accuracy_train = F.accuracy(y, t)
+            model.cleargrads()
+            loss_train.backward()
+            optimizer.update()
 
-        train_losses.append(chainer.cuda.to_cpu(loss_train.data))
-        accuracy_train.to_cpu()
-        train_accuracies.append(accuracy_train.data)
+            train_losses.append(cuda.to_cpu(loss_train.data))
+            accuracy_train.to_cpu()
+            train_accuracies.append(accuracy_train.data)
+        
+        print('epoch: ', train_iter.epoch)
+        print('train mean loss: {:.2f}, accuracy: {:.2f}'.format( sum_loss_train / train_count, sum_accuracy_train / train_count))
+        # test
+        test_losses = []
+        test_accuracies = []
+        sum_accuracy_test = 0
+        sum_loss_test = 0
+        #model.predictor.train = False
+        for batch_i in range(0, test_num, BATCH_SIZE):
+            x_batch = cuda.to_gpu(x_test[perm[batch_i:batch_i+BATCH_SIZE]])
+            t_batch = cuda.to_gpu(t_test[perm[batch_i:batch_i+BATCH_SIZE]])
+            x = chainer.Variable(x_array)
+            t = chainer.Variable(t_array)
 
-        if train_iter.is_new_epoch:
-            #print('epoch: ', train_iter.epoch)
-            #print('train mean loss: {:.2f}, accuracy: {:.2f}'.format( sum_loss_train / train_count, sum_accuracy_train / train_count))
-            # evaluation
+            y = model(x)
 
-            test_losses = []
-            test_accuracies = []
+            loss_test = F.softmax_cross_entropy(y, t)
+            accuracy_test = F.accuracy(y, t)
 
-            sum_accuracy_test = 0
-            sum_loss_test = 0
-            #model.predictor.train = False
-            for batch in test_iter:
-                x_array, t_array = convert.concat_examples(batch, GPU)
-                x = chainer.Variable(x_array)
-                t = chainer.Variable(t_array)
-
-                y = model(x)
-
-                loss_test = F.softmax_cross_entropy(y, t)
-                accuracy_test = F.accuracy(y, t)
-
-                test_losses.append(chainer.cuda.to_cpu(loss_test.data))
-                accuracy_test.to_cpu()
-                test_accuracies.append(accuracy_test.data)
-		t_cpu = chainer.cuda.to_cpu(t.data)
-		y_cpu = chainer.cuda.to_cpu(y.data)
-		print(x)
-		print(t_cpu)
-		print(y_cpu)	
-		# mcc = sklearn.metrics.matthews_corrcoef(t_cpu, y_cpu)
+            test_losses.append(cuda.to_cpu(loss_test.data))
+            accuracy_test.to_cpu()
+            test_accuracies.append(accuracy_test.data)
 
 
             test_iter.reset()
             #model.predictor.train = True
 
-            print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f} {:^13.4f} {:^12.2f}'.format(train_iter.epoch, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), mcc, time.time()-start))
+            print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f} {:^13.4f} {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), mcc, time.time()-start))
 
 
     print('\ntraining finished!!\n')
