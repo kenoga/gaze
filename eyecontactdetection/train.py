@@ -21,7 +21,7 @@ INPUT_WIDTH = 128
 INPUT_HEIGHT = 128
 
 ## paths to train image directory and test image one
-DATASET_PATH = '../data/entire_face'
+DATASET_PATH = '/home/nogawa/gaze/data/eyecontact_dataset/cg_eyecontact/datasets/entire_face'
 
 ## model name for save trained, and model name for  testing
 SAVE_MODEL = 'result/model2'
@@ -33,7 +33,7 @@ INPUT_HEIGHT = 128
 MINIBATCH_SIZE = 20
 LEARN_RATE = 0.001
 EPOCH = 50
-GPU = -1
+GPU = 1
 
 def load_dataset(dataset_path, shuffle=True):
     filepaths = glob.glob(dataset_path + '/*.jp*g')
@@ -93,7 +93,7 @@ def main_train(train_model):
     model = train_model
 
     ## Set GPU device
-    if GPU >= 0:
+    if GPU:
         chainer.cuda.get_device(GPU).use()
         model.to_gpu()
 
