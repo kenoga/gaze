@@ -9,7 +9,7 @@ import pickle
 
 import numpy as np
 from PIL import Image
-
+import sklearn.metrics
 import chainer
 from chainer.dataset import convert
 import chainer.links as L
@@ -34,7 +34,7 @@ INPUT_WIDTH = 128
 INPUT_HEIGHT = 128
 MINIBATCH_SIZE = 8
 LEARN_RATE = 0.001
-EPOCH = 50
+EPOCH = 200
 GPU = 1
 
 def load_dataset(dataset_path, shuffle=True):
@@ -52,7 +52,7 @@ def load_dataset(dataset_path, shuffle=True):
     
     # lockedとunlockedの数を合わせるためにランダムサンプリングする
     train_unlocked_paths = random.sample(train_unlocked_paths, len(train_locked_paths) * 2)
-    test_unlocked_paths = random.sample(train_unlocked_paths, len(test_locked_paths) * 2)
+    test_unlocked_paths = random.sample(test_unlocked_paths, len(test_locked_paths) * 2)
     
     def load_image(path):
         img = Image.open(path).convert('RGB') ## Gray->L, RGB->RGB
@@ -177,12 +177,18 @@ def main_train(train_model):
                 test_losses.append(chainer.cuda.to_cpu(loss_test.data))
                 accuracy_test.to_cpu()
                 test_accuracies.append(accuracy_test.data)
+		t_cpu = chainer.cuda.to_cpu(t.data)
+		y_cpu = chainer.cuda.to_cpu(y.data)
+		print(x)
+		print(t_cpu)
+		print(y_cpu)	
+		# mcc = sklearn.metrics.matthews_corrcoef(t_cpu, y_cpu)
 
 
             test_iter.reset()
             #model.predictor.train = True
 
-            print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f}  {:^12.2f}'.format(train_iter.epoch, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), time.time()-start))
+            print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f} {:^13.4f} {:^12.2f}'.format(train_iter.epoch, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), mcc, time.time()-start))
 
 
     print('\ntraining finished!!\n')
