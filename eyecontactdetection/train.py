@@ -172,7 +172,7 @@ def main_train(model):
     #model.predictor.train = False
         
     perm = np.random.permutation(test_num)
-	for batch_i in range(0, test_num, BATCH_SIZE):
+    for batch_i in range(0, test_num, BATCH_SIZE):
             x_batch = cuda.to_gpu(x_test[perm[batch_i:batch_i+BATCH_SIZE]])
             t_batch = cuda.to_gpu(t_test[perm[batch_i:batch_i+BATCH_SIZE]])
             x = chainer.Variable(x_batch)
@@ -190,7 +190,7 @@ def main_train(model):
 
             #model.predictor.train = True
 
-        print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f}  {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), time.time()-start))
+    print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f}  {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), time.time()-start))
 
 
     print('\ntraining finished!!\n')
