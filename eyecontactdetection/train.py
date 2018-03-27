@@ -165,12 +165,13 @@ def main_train(model):
         # print('epoch: ', epoch_i)
         # print('train mean loss: {:.2f}, accuracy: {:.2f}'.format( sum_loss_train / train_count, sum_accuracy_train / train_count))
         # test
-        test_losses = []
-        test_accuracies = []
-        sum_accuracy_test = 0
-        sum_loss_test = 0
-        #model.predictor.train = False
-        perm = np.random.permutation(test_num)
+    test_losses = []
+    test_accuracies = []
+    sum_accuracy_test = 0
+    sum_loss_test = 0
+    #model.predictor.train = False
+        
+    perm = np.random.permutation(test_num)
 	for batch_i in range(0, test_num, BATCH_SIZE):
             x_batch = cuda.to_gpu(x_test[perm[batch_i:batch_i+BATCH_SIZE]])
             t_batch = cuda.to_gpu(t_test[perm[batch_i:batch_i+BATCH_SIZE]])
