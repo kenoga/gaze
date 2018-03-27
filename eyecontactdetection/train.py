@@ -178,9 +178,6 @@ def main_train(model):
             t = chainer.Variable(t_batch)
 
             y = model(x)
-	    print('batch_i: %d' % batch_i)
-	    print(y)
-	    print(x_batch[0][0][0])
             loss_test = F.softmax_cross_entropy(y, t)
             accuracy_test = F.accuracy(y, t)
 
