@@ -38,11 +38,22 @@ GPU = 1
 def load_dataset(dataset_path, shuffle=True):
     filepaths = glob.glob(dataset_path + '/*.jp*g')
     filepaths.sort()
-    datasets = []
-    train = []
-    test = []
-    for filepath in filepaths:
-        img = Image.open(filepath).convert('RGB') ## Gray->L, RGB->RGB
+    
+    locked_vs_unlocked_rate = 2
+    locked_paths = [filepath for filepath in filepaths if '0V_0H' in os.path.basename()]
+    unlocked_paths = [filepath for filepath in filepaths if '0V_0H' not in os.path.basename()]
+    
+    train_locked_paths = [path for path in locked_paths if int(os.path.basename(path).split('_')[0]) <= 45]
+    test_locked_paths = [path for path in locked_paths if int(os.path.basename(path).split('_')[0]) > 45]
+    train_unlocked_paths = [path for path in unlocked_paths if int(os.path.basename(path).split('_')[0]) <= 45]
+    test_unlocked_paths = [path for path in unlocked_paths if int(os.path.basename(path).split('_')[0]) > 45]
+    
+    # lockedとunlockedの数を合わせるためにランダムサンプリングする
+    train_unlocked_paths, _ = random.sample(train_unlocked_paths, len(train_locked_paths) * 2)
+    test_unlocked_paths, _ = random.sample(train_unlocked_paths, len(test_locked_paths) * 2)
+    
+    def load_image(path):
+        img = Image.open(path).convert('RGB') ## Gray->L, RGB->RGB
         img = img.resize((INPUT_WIDTH, INPUT_HEIGHT))
 
         x = np.array(img, dtype=np.float32)
@@ -53,20 +64,24 @@ def load_dataset(dataset_path, shuffle=True):
         #x = x.reshape(3, INPUT_HEIGHT, INPUT_WIDTH)
 
         ## Get label(ground-truth) from file name path 
-        if '_0V_0H' in os.path.basename(filepath):
+        if '_0V_0H' in os.path.basename(path):
             label = 0
         else:
             label = 1
         t = np.array(label, dtype=np.int32)
-        if int(os.path.basename(filepath).split('_')[0]) <= 45:
-            train.append((x, t))
-        else:
-            test.append((x, t))
-            
-    if shuffle: random.shuffle(train)
-
-    return train, test
+        
+        return (x, t)
+        
+    train = [load_image(path) for path in train_locked_path + train_unlocked_paths]
+    test = [load_image(path) for path in test_locked_path + test_unlocked_paths]
     
+    print('# Train locked images: {}'.format(len(train_locked_paths)))
+    print('# Train unlocked images: {}'.format(len(train_unlocked_paths)))
+    print('# Test locked images: {}'.format(len(test_locked_paths)))
+    print('# Test unlocked images: {}\n'.format(len(test_unlocked_paths)))
+    
+    if shuffle: random.shuffle(train)
+    return train, test
     
     
 def main_train(train_model):
