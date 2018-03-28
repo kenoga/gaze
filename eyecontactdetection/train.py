@@ -201,6 +201,7 @@ def main_train(model):
     print('\ntraining finished!!\n')
     
     print('save all results as json file.')
+    print(results)
     with open('results.json', 'w') as fw:
         json.dump(results, fw)
 
