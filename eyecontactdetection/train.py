@@ -37,7 +37,7 @@ INPUT_WIDTH = 128
 INPUT_HEIGHT = 128
 BATCH_SIZE = 8
 LEARN_RATE = 0.001
-EPOCH = 200
+EPOCH = 10
 GPU = 1
 # GPU = -1
 
@@ -82,7 +82,6 @@ def load_dataset(dataset_path, shuffle=True):
             xs.append(x)
             ts.append(t)
         
-
         return np.array(xs).astype(np.float32), np.array(ts).astype(np.int32)
 
 
@@ -139,6 +138,14 @@ def main_train(model):
 
     print('epoch  train_loss  train_accuracy  test_loss  test_accuracy  Elapsed-Time')
     
+    results = {}
+    results['train'] = {}
+    results['train']['loss'] = []
+    results['train']['accuracy'] = []
+    results['test'] = {}
+    results['test']['loss'] = []
+    results['test']['accuracy'] = []
+    
     for epoch_i in range(EPOCH):
         # train
         train_losses = []
@@ -187,8 +194,15 @@ def main_train(model):
             #model.predictor.train = True
 
         print('{:>5}  {:^10.4f}  {:^14.4f}  {:^9.4f}  {:^13.4f}  {:^12.2f}'.format(epoch_i, np.mean(train_losses), np.mean(train_accuracies), np.mean(test_losses), np.mean(test_accuracies), time.time()-start))
-
+        results['train']['loss'].append(np.mean(train_losses))
+        results['train']['accuracy'].append(np.mean(train_accuracies))
+        results['test']['loss'].append(np.mean(test_losses))
+        results['test']['loss'].append(np.mean(test_accuracies))
     print('\ntraining finished!!\n')
+    
+    print('save all results as json file.')
+    with open('results.json', 'w') as fw:
+        json.dump(results, fw)
 
     ## Save the model and the optimizer
     print('save model start!!\n')
