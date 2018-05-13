@@ -1,4 +1,5 @@
-.Trash.*/*
+.Trash*
+.ipynb_checkpoints/
 *.pyc
 data/
 .DS_Store
