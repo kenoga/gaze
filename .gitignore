@@ -1,4 +1,4 @@
-\.Trash.*/*
+.Trash.*/*
 *.pyc
 data/
 .DS_Store
