@@ -23,36 +23,38 @@ def detect_faces_from_dir(src_dir, face_detector, log_fw):
         log_fw.write(src_path + ' ' + str(faces) + '\n')
     return results
 
-# コマンドライン引数で以下を指定する
-# - 顔検出をしたい画像が入っているディレクトリ (src_dir)
-# - 結果のjsonファイルの書き出し先ディレクトリ (dest_dir)
-parser = argparse.ArgumentParser()
-parser.add_argument('src_dir', help='a source directory that contains input images')
-parser.add_argument('dest_dir', help='a directory where you put log files')
-parser.add_argument('-m', '--model', choices=['opencv', 'dlib_svm', 'dlib_cnn'], default='opencv')
-args = parser.parse_args()
 
-# 途中でプログラムが終了したときのためにlogを書き出しておくためのfw
-log_file_name = os.path.basename(args.src_dir) + '.facedetection.%s.log' % args.model
-log_file_path = os.path.join(args.dest_dir, log_file_name)
-log_fw = open(log_file_path, 'w')
+if __name__ == "__main__":
+    # コマンドライン引数で以下を指定する
+    # - 顔検出をしたい画像が入っているディレクトリ (src_dir)
+    # - 結果のjsonファイルの書き出し先ディレクトリ (dest_dir)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('src_dir', help='a source directory that contains input images')
+    parser.add_argument('dest_dir', help='a directory where you put log files')
+    parser.add_argument('-m', '--model', choices=['opencv', 'dlib_svm', 'dlib_cnn'], default='opencv')
+    args = parser.parse_args()
 
-# 結果をjson形式で書き出し
-if args.model == 'opencv':
-    from face_detectors.face_detector_opencv_cascade import FaceDetectorOpenCVCascade
-    fd = FaceDetectorOpenCVCascade()
-elif args.model == 'dlib_svm':
-    from face_detectors.face_detector_dlib_svm import FaceDetectorDlibSVM
-    fd = FaceDetectorDlibSVM()
-else:
-    print('%s has not implemented yet...' % args.model)
-    import sys
-    sys.exit(0)
-results = detect_faces_from_dir(args.src_dir, fd, log_fw)
+    # 途中でプログラムが終了したときのためにlogを書き出しておくためのfw
+    log_file_name = os.path.basename(args.src_dir) + '.facedetection.%s.log' % args.model
+    log_file_path = os.path.join(args.dest_dir, log_file_name)
+    log_fw = open(log_file_path, 'w')
 
-result_file_name = os.path.basename(args.src_dir) + '.facedetection.%s.json' % args.model
-result_file_path = os.path.join(args.dest_dir, result_file_name)
-with open(result_file_path, 'w') as fw:
-    json.dump(results, fw, indent=2, sort_keys=True)
-log_fw.close()
+    # 結果をjson形式で書き出し
+    if args.model == 'opencv':
+        from face_detectors.face_detector_opencv_cascade import FaceDetectorOpenCVCascade
+        fd = FaceDetectorOpenCVCascade()
+    elif args.model == 'dlib_svm':
+        from face_detectors.face_detector_dlib_svm import FaceDetectorDlibSVM
+        fd = FaceDetectorDlibSVM()
+    else:
+        print('%s has not implemented yet...' % args.model)
+        import sys
+        sys.exit(0)
+    results = detect_faces_from_dir(args.src_dir, fd, log_fw)
+
+    result_file_name = os.path.basename(args.src_dir) + '.facedetection.%s.json' % args.model
+    result_file_path = os.path.join(args.dest_dir, result_file_name)
+    with open(result_file_path, 'w') as fw:
+        json.dump(results, fw, indent=2, sort_keys=True)
+    log_fw.close()
 
