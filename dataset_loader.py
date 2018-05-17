@@ -78,7 +78,7 @@ def make_tuple_dataset(pid2paths):
 
 
 def load_dataset(dataset_dir, test_ids, nonlocked_rate=1, locked_targets={0, 1, 2, 31, 32}):
-    assert os.exists(dataset_dir)
+    assert os.path.exists(dataset_dir)
     assert nonlocked_rate >= 1
     
     imgpaths = glob.glob(dataset_dir + '*/*.jpg')
