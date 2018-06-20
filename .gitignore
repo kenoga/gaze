@@ -2,6 +2,8 @@
 .ipynb_checkpoints/
 *.pyc
 data/
+train_eyecontact_detector/results/
+eyecontactdetection/result/
 .DS_Store
 facedetection/face_detectors/dlib_models/
 eyecontactdetection/mp2gaze_annotation.json
