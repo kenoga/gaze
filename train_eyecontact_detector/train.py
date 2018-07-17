@@ -5,6 +5,7 @@ import os, sys
 import json
 import chainer
 import pickle
+from collections import defaultdict
 
 from neural_networks.cnn import CNN
 from dataset_loader import DatasetLoader
@@ -28,7 +29,7 @@ def main_train(model, dataloader, model_path, learn_rate=0.01, epoch=20, gpu=1):
     print('# Learnrate: {}'.format(learn_rate))
     
     ## Set gpu device
-    if gpu > 0:
+    if gpu is not None:
         cuda.get_device(gpu).use()
         model.to_gpu()
 
@@ -123,11 +124,6 @@ def main_train(model, dataloader, model_path, learn_rate=0.01, epoch=20, gpu=1):
 
                 test_losses.append(cuda.to_cpu(loss_test.data))
                 test_accuracies.append(cuda.to_cpu(accuracy_test.data))
-#                 test_p.append(precision)
-#                 test_r.append(recall)
-#                 test_f.append(fscore)
-
-                #model.predictor.train = True
         precision, recall, fscore, _ = precision_recall_fscore_support(test_t_all, test_y_all, average='binary')
         test_f1_max = max(test_f1_max, fscore)
         print(test_t_all[:20])
@@ -154,8 +150,6 @@ def main_train(model, dataloader, model_path, learn_rate=0.01, epoch=20, gpu=1):
 
     ## Save the model and the optimizer
     print("test_f1_max: %f" % test_f1_max)
-#     with open("./results/f1_scores2.txt", "a") as fw:
-#         fw.write(str(test_f1_max) + "\n")
     print('save model start!!\n')
     directory = model_path.split('/')[0]
     if not os.path.exists(directory):
@@ -174,9 +168,28 @@ def main_train(model, dataloader, model_path, learn_rate=0.01, epoch=20, gpu=1):
 
     print('\nmodel save finished!!\n')
 
+
+def load_conf(conf_fpath, conf_id, conf=None):
+    assert os.path.exists(conf_fpath)
+    
+    if conf is None:
+        conf = defaultdict(lambda: None)
+        
+    with open(conf_fpath, 'r') as fr:
+        conf_raw = json.load(fr)[conf_id]
+    
+    for key in conf_raw.keys():
+        conf[key] = conf_raw[key]
+    
+    return conf
+    
+    
+    
 def main(conf_id):
-    with open("./init.json", "r") as fr:
-        conf = json.load(fr)[conf_id]
+    conf_def = load_conf('./init.json', 'default')
+    conf = load_conf('./init.json', conf_id, conf=conf_def)
+    for key, value in conf.items():
+        print('%s => %s' % (key, value))
     
     assert os.path.exists(conf['dataset_path'])
     RESULT_FILE = "./results/%s" % conf_id
@@ -189,29 +202,23 @@ def main(conf_id):
         conf['block_size'], 
         conf['img_size'], 
         places=conf['places'],
-        nonlocked_rate=conf['nonlocked_rate'])
+        nonlocked_rate=conf['nonlocked_rate'],
+        ignored_targets=conf['ignored_targets'],
+        annotation_path=conf['annotation_path'],
+        bulking=conf['bulking']
+        )
     model = CNN(2)
 
-    main_train(model, dataloader, RESULT_FILE, gpu=1, epoch=conf['epoch'], learn_rate=conf['learn_rate'])
+    main_train(model, dataloader, RESULT_FILE, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
 
     
-def main_different_train_size():
-    with open("./init.json", "r") as fr:
-        conf = json.load(fr)[conf_id]
+def main_different_train_size(conf_id):
+    conf_def = load_conf('./init.json', 'default')
+    conf = load_conf('./init.json', conf_id, conf=conf_def)
+    for key, value in conf.items():
+        print('%s => %s' % (key, value))
     
     assert os.path.exists(conf['dataset_path'])
-    RESULT_FILE = "./results/%s" % conf_id
-    print(RESULT_FILE)
-    
-    dataloader = DatasetLoader(
-        conf['dataset_path'], 
-        conf['test_ids'], 
-        conf['batch_size'], 
-        conf['block_size'], 
-        conf['img_size'], 
-        places=conf['places'],
-        nonlocked_rate=conf['nonlocked_rate'])
-    model = CNN(2)
     
     TRAINS = [[4],[4,5],[4,5,6],[4,5,6,7], [4,5,6,7,8,9], [4,5,6,7,8,9,10,11], [4,5,6,7,8,9,10,11,12,13], [4,5,6,7,8,9,10,11,12,13,14,15],[4,5,6,7,8,9,10,11,12,13,14,16,17]]
     
@@ -224,12 +231,20 @@ def main_different_train_size():
             conf['block_size'], 
             conf['img_size'], 
             places=conf['places'],
-            nonlocked_rate=conf['nonlocked_rate'])
-            train_ids = train_ids)
+            nonlocked_rate=conf['nonlocked_rate'],
+            ignored_targets=conf['ignored_targets'],
+            annotation_path=conf['annotation_path'],
+            bulking=conf['bulking'],
+            train_ids=train_ids
+            )
         model = CNN(2)
-        main_train(model, dataloader, RESULT_FILE, gpu=1, epoch=conf['epoch'], learn_rate=conf['learn_rate'])
-
-parser = argparse.ArgumentParser()
-parser.add_argument("config_id")
-args = parser.parse_args()
-main(args.config_id)
+        RESULT_FILE = "./results/%s_train%s" % (conf_id, '-'.join([str(train_id) for train_id in train_ids]))
+        print(RESULT_FILE)
+        main_train(model, dataloader, RESULT_FILE, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
+        
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("config_id")
+    args = parser.parse_args()
+#     main(args.config_id)
+    main(args.config_id)
