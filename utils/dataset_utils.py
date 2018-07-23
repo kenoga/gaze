@@ -8,12 +8,15 @@ import json
 import cv2
 import numpy as np
 import dlib
+import openface
 from openface import AlignDlib
+
 
 from IPython.display import display, Image
 
 DS_TYPES = {'movie', 'image', 'transformed_image', 'both_eyes', 'face_image', 'aligned_face'}
 DS_ROOT_DIR = '/root/gaze/data/kobas-omni-eyecontact'
+DS_FUJIKAWA = '/root/gaze/data/fujikawa'
 
 
 def imshow(img, format='.png'):
@@ -82,7 +85,19 @@ def get_bb_and_landmarks_dict():
             person_id = os.path.basename(json_file).split('.')[0]
             result[person_id] = json.load(fr)
     return result
-            
+
+def get_face_direction_feature_dict():
+    result = {}
+    dir_path = os.path.join(DS_ROOT_DIR, 'face_direction_feature')
+    jsons = glob.glob(os.path.join(dir_path, '*.json'))
+    for json_file in jsons:
+        json_path = os.path.join(DS_ROOT_DIR, json_file)
+        with open(json_path, 'r') as fr:
+            person_id = os.path.basename(json_file).split('.')[0]
+            result[person_id] = json.load(fr)
+    return result
+
+
 class FaceAligner():
     def __init__(self):
         DLIB_MODEL_PATH = '/root/openface/models/dlib/shape_predictor_68_face_landmarks.dat'
@@ -110,7 +125,24 @@ class FaceAligner():
         if img_path:
             img = cv2.imread(imgpath)
         return self.aligner.findLandmarks(img, bb)
-
+    
+    # アフィン変換後の顔の基準点の位置を返す
+    def get_landmarks_after_align(self, landmarks, img_size, indices=[39, 42, 57]):
+        assert(type(landmarks) == list)
+        assert(len(landmarks) == 68)
+        assert(indices is not None)
+        assert(type(indices) == list)
+        assert(len(indices) == 3)
+        indices = np.array(indices)
+        landmarks = np.float32(landmarks)
+        H = cv2.getAffineTransform(landmarks[indices], img_size * openface.align_dlib.MINMAX_TEMPLATE[indices])
+        result = []
+        for lm in landmarks:
+            lm = np.hstack((lm, 1))
+            pos = np.dot(H, lm)
+            result.append(pos.tolist())
+        return result
+            
 
 def get_circle_partition(img, radius):
     H, W, _ = img.shape
