@@ -3,6 +3,7 @@
 *.pyc
 data/
 train/results/
+train/results_old/
 eyecontactdetection/result/
 .DS_Store
 facedetection/face_detectors/dlib_models/
