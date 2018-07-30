@@ -134,7 +134,6 @@ class DataPathProvider():
             self.use_face_dir_feature = True
             self.face_dir_dict = face_direction_dict
         else:
-            
             self.use_face_dir_feature = False
             
         self.train_paths, self.test_paths = load_imgpaths(dataset_dir, \

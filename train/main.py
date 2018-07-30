@@ -47,10 +47,10 @@ def main(conf_id):
     model = CNN(2)
     
     face_dir_dict = None
-    if conf['face_direction_path']:
+    if conf['face_direction_dir']:
         model = CNNWithFCFeature(2)
         face_dir_dict = {}
-        dir_path = conf['face_direction_path']
+        dir_path = conf['face_direction_dir']
         json_fnames = [fname for fname in os.listdir(dir_path) if 'json' in fname]
         for json_fname in json_fnames:
             path = os.path.join(dir_path, json_fname)
@@ -58,11 +58,12 @@ def main(conf_id):
                 d = json.load(fr)
                 for k, v in d.items():
                     face_dir_dict[k] = v
-
+    
     path_provider = DataPathProvider(
         conf['dataset_path'], 
         conf['test_ids'], 
         places=conf['places'],
+        train_ids=conf['train_ids'],
         nonlocked_rate=conf['nonlocked_rate'],
         ignored_targets=conf['ignored_targets'],
         annotation_path=conf['annotation_path'],

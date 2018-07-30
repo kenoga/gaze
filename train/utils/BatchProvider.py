@@ -22,7 +22,7 @@ class BatchProvider():
         
         if face_dir_dict:
             self.use_face_dir_feature = True
-            self.face_dir_dict = face_direction_dict
+            self.face_dir_dict = face_dir_dict
         else:
             self.use_face_dir_feature = False
    
@@ -57,14 +57,21 @@ class BatchProvider():
             
             t = np.array(int(path.locked), dtype=np.int32)
             if self.use_face_dir_feature:
-                f_list = self.face_dir_dict[path.img_name]
-                f_list = [f / 255.0 for f in f_list]
+                f_list_nest = self.face_dir_dict[path.img_name]
+                if path.mirror:
+                    # xを反転 (positionはx, yの順になっている
+                    f_list_nest = [[1-position[0], position[1]]for position in f_list_nest]
+                f_list = [e / 255.0 for position in f_list_nest for e in position]
+                assert len(f_list) == 136
+                          
                 fs.append(np.array(f_list, dtype=np.float32))
             xs.append(x)
             ts.append(t)
         
         xs = np.array(xs).astype(np.float32)
         ts = np.array(ts).astype(np.int32)
+        if self.use_face_dir_feature:
+            fs = np.array(fs).astype(np.float32)
         if return_paths:
             if self.use_face_dir_feature:
                 return ((xs, fs), ts), paths
@@ -72,6 +79,7 @@ class BatchProvider():
                 return (xs, ts), paths
         else:
             if self.use_face_dir_feature:
+                assert len(xs) == len(fs) == len(ts)
                 return (xs, fs), ts
             else:
                 return xs, ts

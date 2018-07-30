@@ -2,6 +2,7 @@
 import os
 import json
 import chainer
+import numpy as np
 
 import chainer.links as L
 import chainer.functions as F
@@ -11,10 +12,10 @@ class CNN(chainer.Chain):
     def __init__(self, class_num):
         super(CNN, self).__init__()
         with self.init_scope():
-            self.conv1_1 = L.Convolution2D(None, 64, ksize=3, nobias=False)
-            self.conv1_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
-            self.conv2_1 = L.Convolution2D(None, 256, ksize=3, nobias=False)
-            self.conv2_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
+            self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
+            self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
+            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
+            self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
             self.fc1 = L.Linear(None, 128, nobias=True)
             self.fc2 = L.Linear(None, 2, nobias=True)      
 
@@ -36,14 +37,15 @@ class CNN(chainer.Chain):
 class CNNWithFCFeature(chainer.Chain):
 
     def __init__(self, class_num):
-        super(CNN, self).__init__()
+        super(CNNWithFCFeature, self).__init__()
         with self.init_scope():
             self.conv1_1 = L.Convolution2D(None, 64, ksize=3, nobias=False)
             self.conv1_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
             self.conv2_1 = L.Convolution2D(None, 256, ksize=3, nobias=False)
             self.conv2_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
-            self.fc1 = L.Linear(None, 128, nobias=True)
-            self.fc2 = L.Linear(None, 2, nobias=True)      
+            self.fc1 = L.Linear(None, 256, nobias=False)
+            self.fc2 = L.Linear(None, 128, nobias=False)
+            self.fc3 = L.Linear(None, 2, nobias=False)      
 
     def __call__(self, x, feature):
         h = self.conv1_1(x)
@@ -56,10 +58,13 @@ class CNNWithFCFeature(chainer.Chain):
 #         h = self.conv2_2(h)
 #         h = F.relu(h)
 #         h = F.max_pooling_2d(h, ksize=3)
-        # fcにfeatureを結合        
-        h = np.hstack((h, feature))
+        # fcにfeatureを結合
         h = F.dropout(F.relu(self.fc1(h)))
-        y = self.fc2(h)
+#         import pdb; pdb.set_trace()
+        h = F.hstack((h, feature))
+        h = F.relu(self.fc2(h))
+        y = self.fc3(h)
+#         import pdb; pdb.set_trace()
         return y
     
  
