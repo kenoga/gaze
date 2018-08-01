@@ -60,7 +60,8 @@ def main(conf_id):
                     face_dir_dict[k] = v
     
     path_provider = DataPathProvider(
-        conf['dataset_path'], 
+        conf['dataset_path'],
+        conf['validation_ids'],
         conf['test_ids'], 
         places=conf['places'],
         train_ids=conf['train_ids'],
@@ -69,12 +70,14 @@ def main(conf_id):
         annotation_path=conf['annotation_path'],
         bulking=conf['bulking'],
         fujikawa_dataset=conf['fujikawa_dataset'],
+        skip_num=conf['skip_num']
     )
     path_provider.report()
-    train_paths, test_paths = path_provider.get_paths()
+    train_paths, validation_paths, test_paths = path_provider.get_paths()
     
     batch_provider = BatchProvider(
         train_paths,
+        validation_paths,
         test_paths,
         conf['batch_size'], 
         conf['block_size'], 

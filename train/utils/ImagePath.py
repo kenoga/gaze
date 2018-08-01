@@ -12,7 +12,8 @@ class ImagePath():
         self.target = int(split[3])
         self.locked = None
         self.mirror = False
-        self.for_test = False
+        self.type = 'train'
+#         self.for_test = False
         
 class FujikawaImagePath():
     def __init__(self, path):

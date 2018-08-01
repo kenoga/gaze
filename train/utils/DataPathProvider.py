@@ -8,7 +8,7 @@ import copy
 
 from ImagePath import ImagePath, FujikawaImagePath
 
-def balance_data(imgs, nonlocked_rate):
+def balance_train_data(imgs, nonlocked_rate):
     assert type(imgs) == list
     assert len(imgs) > 0
     assert nonlocked_rate >= 1
@@ -18,7 +18,7 @@ def balance_data(imgs, nonlocked_rate):
     for img in imgs:
         if img.pid not in pid2imgs:
             pid2imgs[img.pid] = {True: [], False: []}
-        if img.for_test:
+        if img.type != 'train':
             result.append(img)
         else:
             pid2imgs[img.pid][img.locked].append(img)
@@ -33,11 +33,11 @@ def balance_data(imgs, nonlocked_rate):
     return result
 
 
-def bulk_data(imgs):
+def bulk_train_data(imgs):
     bulked = []
     for img in imgs:
         bulked.append(img)
-        if not img.for_test:
+        if img.type == 'train':
             mirrored = copy.deepcopy(img)
             mirrored.mirror = True
             bulked.append(mirrored)
@@ -63,19 +63,22 @@ def load_fujikawa_data(dtype="train"):
         images.append(fip)
     return images
 
-def load_imgpaths(dataset_dir, test_ids, locked_targets, ignored_targets, places, \
+def load_imgpaths(dataset_dir, validation_ids, test_ids, locked_targets, ignored_targets, places, \
                   train_ids=None, \
                   annotation_dict=None,
                   nonlocked_rate=None,
-                  bulking=False):
+                  bulking=False,
+                  skip_num=0):
     assert os.path.exists(dataset_dir)
-    assert nonlocked_rate >= 1 or nonlocked_rate is None
+    assert nonlocked_rate >= 1 or nonlocked_rate is None or nonlocked_rate == False
+    assert skip_num >= 0
 
-    imgpaths = glob.glob(os.path.join(dataset_dir, '*/*.jpg'))
+    imgpaths = sorted(glob.glob(os.path.join(dataset_dir, '*/*.jpg')))
+    imgpaths = imgpaths[::skip_num+1]
     imgs = [ImagePath(path) for path in imgpaths]
     
     if train_ids:
-        imgs = [img for img in imgs if img.pid in train_ids or img.pid in test_ids]
+        imgs = [img for img in imgs if img.pid in train_ids or img.pid in test_ids or img.pid in validation_ids]
 
     # delete images annotated as noise data.
     if annotation_dict:
@@ -88,27 +91,35 @@ def load_imgpaths(dataset_dir, test_ids, locked_targets, ignored_targets, places
         img.locked = True if img.target in locked_targets else False
     
     for img in imgs:
-        img.for_test = True if img.pid in test_ids else False
+        if img.pid in test_ids:
+            img.type = 'test'
+        elif img.pid in validation_ids:
+            img.type = 'validation'
+        else:
+            img.type = 'train'
     
     if bulking:
-        imgs = bulk_data(imgs)
+        imgs = bulk_train_data(imgs)
     
     if nonlocked_rate:
-        imgs = balance_data(imgs, nonlocked_rate)
+        imgs = balance_train_data(imgs, nonlocked_rate)
 
     train = []
+    validation = []
     test = []
     
     for img in imgs:
-        if img.for_test:
-            test.append(img)
-        else:
+        if img.type == 'train':
             train.append(img)
+        elif img.type == 'validation':
+            validation.append(img)
+        else:
+            test.append(img)
 
-    return train, test
+    return train, validation, test
 
 class DataPathProvider():
-    def __init__(self, dataset_dir, test_ids, 
+    def __init__(self, dataset_dir, validation_ids, test_ids, 
                  locked_targets=[0,1,2,31,32, 40, 50], 
                  ignored_targets={}, 
                  places={"A","B","C","D"}, 
@@ -117,7 +128,8 @@ class DataPathProvider():
                  nonlocked_rate=1,
                  fujikawa_dataset=None,
                  annotation_path=None, 
-                 face_dir_dict=None):
+                 face_dir_dict=None,
+                 skip_num=0):
         assert fujikawa_dataset in {False, "train", "only_test", "only"}
         # fujikawa_dataset
         # False -> train: omni, test: omni
@@ -136,34 +148,45 @@ class DataPathProvider():
         else:
             self.use_face_dir_feature = False
             
-        self.train_paths, self.test_paths = load_imgpaths(dataset_dir, \
+        self.train_paths, self.validation_paths, self.test_paths = load_imgpaths(dataset_dir, \
+                                                          validation_ids, \
                                                           test_ids, \
                                                           locked_targets, \
                                                           ignored_targets, \
                                                           places, train_ids=train_ids, \
                                                           annotation_dict=annotation_dict,
                                                           nonlocked_rate=nonlocked_rate,
-                                                          bulking=bulking)
+                                                          bulking=bulking,
+                                                          skip_num=skip_num)
         # TODO: test画像がダメ
-        if fujikawa_dataset == "train":
-            fujikawa_data = load_fujikawa_data(dtype="train")
-            self.train_paths.extend(fujikawa_data)
-        elif fujikawa_dataset == "only_test":
-            fujikawa_data = load_fujikawa_data(dtype="train")
-            self.test_paths = fujikawa_data
-        elif fujikawa_dataset == "only":
-            fujikawa_train = load_fujikawa_data(dtype="train")
-            fujikawa_test = load_fujikawa_data(dtype="test")
-            self.train_paths = fujikawa_train
-            self.test_paths = fujikawa_test
+#         if fujikawa_dataset == "train":
+#             fujikawa_data = load_fujikawa_data(dtype="train")
+#             self.train_paths.extend(fujikawa_data)
+#         elif fujikawa_dataset == "only_test":
+#             fujikawa_data = load_fujikawa_data(dtype="train")
+#             self.test_paths = fujikawa_data
+#         elif fujikawa_dataset == "only":
+#             fujikawa_train = load_fujikawa_data(dtype="train")
+#             fujikawa_test = load_fujikawa_data(dtype="test")
+#             self.train_paths = fujikawa_train
+#             self.test_paths = fujikawa_test
                                     
     def get_paths(self):
-        return self.train_paths, self.test_paths
+        return self.train_paths, self.validation_paths, self.test_paths
     
     def report(self):
         print(' '.join(['-' * 25, 'dataset', '-' * 25]))
         print("train locked size: %d" % len([0 for path in self.train_paths if path.locked == True]))
         print("train nonlocked size: %d" % len([0 for path in self.train_paths if path.locked == False]))
+        print("validation locked size: %d" % len([0 for path in self.validation_paths if path.locked == True]))
+        print("validation nonlocked size: %d" % len([0 for path in self.validation_paths if path.locked == False]))
         print("test locked size: %d" % len([0 for path in self.test_paths if path.locked == True]))
         print("test nonlocked size: %d" % len([0 for path in self.test_paths if path.locked == False]))
-    
+        
+        all_paths = []
+        all_paths.extend(self.train_paths)
+        all_paths.extend(self.validation_paths)
+        all_paths.extend(self.test_paths)
+        print("all locked sizes: %d" % len([0 for path in all_paths if path.locked == True]))
+        print("all unlocked sizes: %d" % len([0 for path in all_paths if path.locked == False]))
+          

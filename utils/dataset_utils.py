@@ -103,12 +103,12 @@ class FaceAligner():
         DLIB_MODEL_PATH = '/root/openface/models/dlib/shape_predictor_68_face_landmarks.dat'
         self.aligner = AlignDlib(DLIB_MODEL_PATH)
         
-    def align(self, img_path=None, img=None, bb=None, landmarks=None, size=255):
+    def align(self, img_path=None, img=None, bb=None, landmarks=None, size=128):
         if img_path is None and img is None:
             raise RuntimeError("Please give a imgpath or a img.")
         if img_path:
             img = cv2.imread(img_path)
-        return self.aligner.align(255, img, bb=bb, landmarks=landmarks)
+        return self.aligner.align(size, img, bb=bb, landmarks=landmarks)
     
     def bb(self, img_path=None, img=None):
         if img_path is None and img is None:
@@ -332,7 +332,7 @@ def align_faces():
     aligner = FaceAligner()
     pid2bblms = get_bb_and_landmarks_dict()
     src_dir = os.path.join(DS_ROOT_DIR, 'transformed')
-    dst_dir = os.path.join(DS_ROOT_DIR, 'aligned_face')
+    dst_dir = os.path.join(DS_ROOT_DIR, 'aligned_face2')
 
     def align_face(img, img_name, pid2bblms=None):
         if pid2bblms is None:
@@ -342,7 +342,7 @@ def align_faces():
             bb = pid2bblms[pid][img_name]['bb']
             bb_rec = dlib.rectangle(bb[0], bb[1], bb[2], bb[3])
             lms = pid2bblms[pid][img_name]['landmarks']
-            return  aligner.align(img=img, bb=bb_rec, landmarks=lms)
+            return  aligner.align(img=img, bb=bb_rec, landmarks=lms, size=96)
         return None
     
     apply_func_against_srcdir_and_save_to_dstdir(src_dir, dst_dir, align_face, give_fname=True, pid2bblms=pid2bblms)

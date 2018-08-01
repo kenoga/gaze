@@ -8,16 +8,19 @@ from PIL import Image, ImageOps
 
     
 class BatchProvider():
-    def __init__(self, train_paths, test_paths, batch_size, block_size, img_size, face_dir_dict=None):
+    def __init__(self, train_paths, validation_paths, test_paths, batch_size, block_size, img_size, face_dir_dict=None):
         self.train_paths = train_paths
+        self.validation_paths = validation_paths
         self.test_paths = test_paths
         self.train_path_pool = None
+        self.validation_path_pool = None
         self.test_path_pool = None
         self.batch_size = batch_size
         self.block_size = block_size
         self.img_size = img_size
         #  batch_queue 
         self.train_block = []
+        self.validation_block =[]
         self.test_block = []
         
         if face_dir_dict:
@@ -29,6 +32,7 @@ class BatchProvider():
     def init(self, ran=True):
         if ran:
             self.train_path_pool = random.sample(self.train_paths, len(self.train_paths))
+            self.validation_path_pool = random.sample(self.validation_paths, len(self.validation_paths))
             self.test_path_pool = random.sample(self.test_paths, len(self.test_paths))
     
     def load_batch(self, paths, return_paths=False):
@@ -102,17 +106,21 @@ class BatchProvider():
         return block
         
         
-    def get_batch(self, test=False, paths=False):
-        if self.train_path_pool is None or self.test_path_pool is None:
+    def get_batch(self, dtype='train', paths=False):
+        assert dtype in {'train', 'validation', 'test'}
+        if self.train_path_pool is None or self.validation_path_pool is None or self.test_path_pool is None:
             print("Please initialize.")
             return None
         
-        if test:
-            path_pool = self.test_path_pool
-            block = self.test_block
-        else:
+        if dtype == 'train':
             path_pool = self.train_path_pool
             block = self.train_block
+        elif dtype == 'validation':
+            path_pool = self.validation_path_pool
+            block = self.validation_block
+        else:
+            path_pool = self.test_path_pool
+            block = self.test_block
 
         # blockが空だったらメモリに読み込む
         if len(block) == 0:
