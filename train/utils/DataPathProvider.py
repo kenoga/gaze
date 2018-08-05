@@ -32,6 +32,7 @@ def balance_train_data(imgs, nonlocked_rate):
         result.extend(nonlocked_imgs)
     return result
 
+
 def bulk_train_data(imgs):
     bulked = []
     for img in imgs:
