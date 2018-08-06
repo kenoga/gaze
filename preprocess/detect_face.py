@@ -13,7 +13,7 @@ from utils.FaceAligner import FaceAligner
 from dataset_utils.config import DS_ROOT
 
 
-def detect_faces():
+def main():
     # subdirごとに結果のjsonファイルを保存する
     json_fname = "%s.json"
     img_path_dict = get_image_paths('transformed')
@@ -58,4 +58,5 @@ def detect_faces():
 
         with open(os.path.join(json_dir, json_fname) % sub_dir, "w") as fr:
             json.dump(results, fr, indent=2, sort_keys=True)
-    
+
+main()
