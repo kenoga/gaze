@@ -2,271 +2,33 @@
     "default": {
         "gpu": 1,
         "result_path": "./results/%s",
-        "test_ids": [1,2,3],
         "places": ["A", "B", "C", "D"],
-        "locked_targets": [0,1,2,31,32, 50],
-        "nonlocked_rate": 1,
+        "locked_target": [0,1,2,31,32, 50],
         "batch_size": 64,
         "block_size": 128,
-        "img_size": [45, 255],
+        "img_size": [17, 96],
         "epoch": 30,
         "learn_rate": 0.001,
         "ignored_targets": [],
-        "dataset_path": "../data/kobas-omni-eyecontact/both_eyes_from_aligned_face",
-        "bulking": false,
-        "fujikawa_dataset": false,
+        "dataset_path": "../data/kobas-omni-eyecontact/both_eyes_from_aligned_face2",
         "face_direction_dir": false,
-        "skip_num": 2
-    },
-    
-
-    
-    "ignore4_clean1": {
-        "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json"
-    },
-    
-    "ignore4_bulking_clean1": {
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true
-    },
-    
-    "ignore4_bulking_clean1_facedir": {
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_fullface": {
+        "skip_num": 2,
         "ignored_targets": [3,4,5,6],
         "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
         "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature",
-        "dataset_path": "../data/kobas-omni-eyecontact/aligned_face"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test01-03": {
-        "test_ids": [1,2,3],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test04-06": {
-        "test_ids": [4,5,6],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test07-09": {
-         "test_ids": [7,8,9],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test10-12": {
-         "test_ids": [10,11,12],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test13-15": {
-        "test_ids": [13,14,15],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test16-17": {
-         "test_ids": [16,17],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-
-    
-    
-    "ignore4_bulking_clean1_facedir_val_test02-03_val04-05": {
-        "epoch": 30,
-        "validation_ids" : [4,5],
-        "test_ids" : [2,3],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_val_test02-03_val04-05_deep": {
-        "epoch": 30,
-        "validation_ids" : [4,5],
-        "test_ids" : [2,3],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_val_test": {
-        "epoch": 1,
-        "ignored_targets": [3,4,5,6],
-        "test_ids" :[1],
-        "validation_ids" : [2],
-        "train_ids": [3],
-        "bulking": false
-    },
-    
-
-    
-    "ignore4_bulking_clean1_facedir_test01-03_val04-06": {
-        "test_ids" : [1,2,3],
-        "validation_ids" : [4,5,6],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test04-06_val07-09": {
-        "test_ids" : [4,5,6],
-        "validation_ids" : [7,8,9],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test07-09_val10-12": {
-        "test_ids" : [7,8,9],
-        "validation_ids" : [10,11,12],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test10-12_val13-15": {
-        "test_ids" : [10,11,12],
-        "validation_ids" : [13,14,15],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test13-15_val16-17": {
-        "test_ids" : [13,14,15],
-        "validation_ids" : [16,17],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test16-17_val01-03": {
-        "test_ids" : [16,17],
-        "validation_ids" : [1,2,3],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
-    },
-    
-    "ignore4_bulking_clean1_facedir_test01-03_val04-06_nobalance": {
-        "gpu": 0,
-        "test_ids" : [1,2,3],
-        "validation_ids" : [4,5,6],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature",
-        "nonlocked_rate": false
-    },
-    
-    "ignore4_bulking_clean1_facedir_test04-06_val07-09_nobalance": {
-        "gpu": 0,
-        "test_ids" : [4,5,6],
-        "validation_ids" : [7,8,9],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature",
-        "nonlocked_rate": false
-    },
-    
-    "ignore4_bulking_clean1_facedir_test07-09_val10-12_nobalance": {
-        "gpu": 0,
-        "test_ids" : [7,8,9],
-        "validation_ids" : [10,11,12],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature",
-        "nonlocked_rate": false
-    },
-    
-    "ignore4_bulking_clean1_facedir_test10-12_val13-15_nobalance": {
-        "gpu": 0,
-        "test_ids" : [10,11,12],
-        "validation_ids" : [13,14,15],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature",
-        "nonlocked_rate": false
-    },
-    
-    "ignore4_bulking_clean1_facedir_test13-15_val16-17_nobalance": {
-        "gpu": 0,
-        "test_ids" : [13,14,15],
-        "validation_ids" : [16,17],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature",
-        "nonlocked_rate": false
-    },
-    
-    "ignore4_bulking_clean1_facedir_test16-17_val01-03_nobalance": {
-        "gpu": 0,
-        "test_ids" : [16,17],
-        "validation_ids" : [1,2,3],
-         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
-        "bulking": true,
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature",
-        "nonlocked_rate": false
-    },
-    
-    "ignore4": {
-        "epoch": 1,
+        "nonlocked_rate": false,
         "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
         "group_num": 3,
-        "ignored_targets": [3,4,5,6],
-        "nonlocked_rate": false,
-        "bulking": false,
-        "skip_num": 2,
-        "dataset_path": "../data/omni/both_eyes_from_aligned_face2"
     },
     
-    
+    "facedir": {
+        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
+    },
     
     "test": {
         "epoch": 1,
         "pids": [1,2,3],
         "group_num": 3,
-        "ignored_targets": [3,4,5,6],
-        "nonlocked_rate": false,
         "bulking": false,
         "skip_num": 2
     }

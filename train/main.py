@@ -61,51 +61,22 @@ def main(conf_id):
     
     path_provider = DataPathProvider(conf)
     path_provider.report()
-    train_paths, validation_paths, test_paths = path_provider.get_paths()
     
-    batch_provider = BatchProvider(
-        train_paths,
-        validation_paths,
-        test_paths,
-        conf['batch_size'], 
-        conf['block_size'], 
-        conf['img_size'], 
-        face_dir_dict=face_dir_dict
-    )
+    while path_provider.ramains:
+        train_paths, validation_paths, test_paths = path_provider.get_paths()
+    
+        batch_provider = BatchProvider(
+            train_paths,
+            validation_paths,
+            test_paths,
+            conf['batch_size'], 
+            conf['block_size'], 
+            conf['img_size'], 
+            face_dir_dict=face_dir_dict
+        )
 
-    train.train(model, batch_provider, result_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
+        train.train(model, batch_provider, result_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
 
-    
-# def main_different_train_size(conf_id):
-#     conf_def = load_conf('./init.json', 'default')
-#     conf = load_conf('./init.json', conf_id, conf=conf_def)
-#     for key, value in conf.items():
-#         print('%s => %s' % (key, value))
-    
-#     assert os.path.exists(conf['dataset_path'])
-    
-#     TRAINS = [[4],[4,5],[4,5,6],[4,5,6,7], [4,5,6,7,8,9], [4,5,6,7,8,9,10,11], [4,5,6,7,8,9,10,11,12,13], [4,5,6,7,8,9,10,11,12,13,14,15],[4,5,6,7,8,9,10,11,12,13,14,16,17]]
-    
-#     for train_ids in TRAINS:
-#         print(train_ids)
-#         dataloader = DatasetLoader(
-#             conf['dataset_path'], 
-#             conf['test_ids'], 
-#             conf['batch_size'], 
-#             conf['block_size'], 
-#             conf['img_size'],
-#             places=conf['places'],
-#             nonlocked_rate=conf['nonlocked_rate'],
-#             ignored_targets=conf['ignored_targets'],
-#             annotation_path=conf['annotation_path'],
-#             bulking=conf['bulking'],
-#             train_ids=train_ids
-#             )
-#         model = CNN(2)
-#         RESULT_FILE = "./results/%s_train%s" % (conf_id, '-'.join([str(train_id) for train_id in train_ids]))
-#         print(RESULT_FILE)
-#         train(model, dataloader, RESULT_FILE, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
-        
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("config_id")

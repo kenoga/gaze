@@ -86,7 +86,7 @@ class DataPathProvider():
         check_conf_val(conf, 'pids')
         self.pids = conf['pids']
         check_conf_val(conf, 'group_num')
-        self.split_num = conf['group_num']
+        self.group_num = conf['group_num']
         check_conf_val(conf, 'locked_targets')
         self.locked_targets = conf['locked_targets']
         check_conf_val(conf, 'ignored_targets')
@@ -117,7 +117,7 @@ class DataPathProvider():
         # データセットの分割数は最低でも3 (train, validation, test)
         assert conf['group_num'] >= 3
         
-        self.grouped_pids = group_list(self.pids, self.split_num)
+        self.grouped_pids = group_list(self.pids, self.group_num)
         
         self.test_index = 0
         paths = sorted(glob.glob(os.path.join(conf['dataset_path'], '*/*.jpg')))
@@ -137,13 +137,16 @@ class DataPathProvider():
         self.ipaths = ipaths
         print(len(self.ipaths))
 
+    def remains(self):
+        return True if self.test_index < self.group_num else False
+
     def get_paths(self):
         # split num回まで
-        if self.test_index >= self.split_num:
+        if self.test_index >= self.group_num:
             return None
         
         test_ids = self.grouped_pids[self.test_index]
-        val_index = self.test_index + 1 if self.test_index < self.split_num else 0
+        val_index = self.test_index + 1 if self.test_index < self.group_num else 0
         val_ids = self.grouped_pids[val_index]
         
         ipaths = self.ipaths
