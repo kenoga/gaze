@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-
-import os, sys
+mport os, sys
 import random
 
 import numpy as np
