@@ -25,7 +25,8 @@ import main
 # main.main("ignore4_bulking_clean1_facedir_test13-15_val16-17")
 # main.main("ignore4_bulking_clean1_facedir_test16-17_val01-03")
 
-main.main("test")
+# main.main("test")
+main.main("ignore4")
 # main.main("ignore4_bulking_clean1_facedir_test01-03_val04-06")
 # main.main("ignore4_bulking_clean1_facedir_test04-06_val07-09")
 # main.main("ignore4_bulking_clean1_facedir_test07-09_val10-12")

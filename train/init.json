@@ -19,9 +19,7 @@
         "skip_num": 2
     },
     
-    "ignore4": {
-        "ignored_targets": [3,4,5,6]
-    },
+
     
     "ignore4_clean1": {
         "ignored_targets": [3,4,5,6],
@@ -249,6 +247,19 @@
         "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature",
         "nonlocked_rate": false
     },
+    
+    "ignore4": {
+        "epoch": 1,
+        "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
+        "group_num": 3,
+        "ignored_targets": [3,4,5,6],
+        "nonlocked_rate": false,
+        "bulking": false,
+        "skip_num": 2
+    },
+    
+    
+    
     "test": {
         "epoch": 1,
         "pids": [1,2,3],
