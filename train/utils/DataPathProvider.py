@@ -125,13 +125,14 @@ class DataPathProvider():
         
         # delete images annotated as noise data.
         if self.annotation_dict:
-            ipath = [ipath for ipath in ipaths \
+            ipaths = [ipath for ipath in ipaths \
                     if ipath.img_name not in annotation_dict \
                     or self.annotation_dict[ipath.img_name] not in {'closed-eyes', 'other'}]
 
         # delete images those targets should be ignored
-        ipath = [ipath for ipath in ipaths if ipath.target not in self.ignored_targets]
+        ipaths = [ipath for ipath in ipaths if ipath.target not in self.ignored_targets]
 
+        self.ipaths = ipaths
     def get_paths(self):
         # split num回まで
         if self.test_index >= self.split_num:
@@ -176,17 +177,17 @@ class DataPathProvider():
         
         # report dataset details
         print(' '.join(['-' * 25, 'dataset', '-' * 25]))
-        print("test ids: " + ",".join(test_ids))
-        print("validation ids: " + ",".join(val_ids))
-        print("train ids: " + ",".join([pid for pid self.pids if pid not in test_ids and not in val_ids]))
+        print("test ids: " + ",".join([str(pid) for pid in test_ids]))
+        print("validation ids: " + ",".join([str(pid) for pid in val_ids]))
+        print("train ids: " + ",".join([str(pid) for pid in self.pids if pid not in test_ids and pid not in val_ids]))
         print("train locked size: %d" % len([0 for path in train if path.locked == True]))
         print("train nonlocked size: %d" % len([0 for path in train if path.locked == False]))
         print("validation locked size: %d" % len([0 for path in validation if path.locked == True]))
         print("validation nonlocked size: %d" % len([0 for path in validation if path.locked == False]))
         print("test locked size: %d" % len([0 for path in test if path.locked == True]))
         print("test nonlocked size: %d" % len([0 for path in test if path.locked == False]))
-        print("all locked sizes: %d" % len([0 for path in ipath if path.locked == True]))
-        print("all unlocked sizes: %d" % len([0 for path in ipath if path.locked == False]))
+        print("all locked sizes: %d" % len([0 for path in ipaths if path.locked == True]))
+        print("all unlocked sizes: %d" % len([0 for path in ipaths if path.locked == False]))
         
         
         return train, validation, test
