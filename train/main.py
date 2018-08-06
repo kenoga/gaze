@@ -59,19 +59,7 @@ def main(conf_id):
                 for k, v in d.items():
                     face_dir_dict[k] = v
     
-    path_provider = DataPathProvider(
-        conf['dataset_path'],
-        conf['validation_ids'],
-        conf['test_ids'], 
-        places=conf['places'],
-        train_ids=conf['train_ids'],
-        nonlocked_rate=conf['nonlocked_rate'],
-        ignored_targets=conf['ignored_targets'],
-        annotation_path=conf['annotation_path'],
-        bulking=conf['bulking'],
-        fujikawa_dataset=conf['fujikawa_dataset'],
-        skip_num=conf['skip_num']
-    )
+    path_provider = DataPathProvider(conf)
     path_provider.report()
     train_paths, validation_paths, test_paths = path_provider.get_paths()
     
