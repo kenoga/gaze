@@ -45,10 +45,17 @@ def bulk_train_data(imgs):
 
 
 def check_conf_val(config, key):
-    assert config is not None and type(config) == dict
-    assert key in config
-    assert config[key] is not None
-    
+    assert config is not None 
+    try:    
+        assert key in config
+    except:
+        print(key)
+        raise AssertionError
+    try:
+        assert config[key] is not None
+    except:
+        print(key)
+        raise AssertionError 
 def group_list(li, group_num):
     # listをgroup_num個に分割する
     # その際groupに含まれる要素の数の差が小さくなるように分割する
@@ -73,13 +80,13 @@ def group_list(li, group_num):
         
 class DataPathProvider():
 
-    def __init__(self, config):
-        check_conf_val(conf, 'dataset_dir')
+    def __init__(self, conf):
+        check_conf_val(conf, 'dataset_path')
         
         check_conf_val(conf, 'pids')
         self.pids = conf['pids']
-        check_conf_val(conf, 'split_num')
-        self.split_num = conf['split_num']
+        check_conf_val(conf, 'group_num')
+        self.split_num = conf['group_num']
         check_conf_val(conf, 'ignored_targets')
         self.ignored_targets = conf['ignored_targets']
         check_conf_val(conf, 'places')
@@ -104,15 +111,15 @@ class DataPathProvider():
             self.use_face_dir_feature = False
         
         # データセットの分割数はデータセットの人数以下でなければならない
-        assert conf['split_num'] <= len(conf['pids'])
+        assert conf['group_num'] <= len(conf['pids'])
         # データセットの分割数は最低でも3 (train, validation, test)
-        assert conf['split_num'] >= 3
+        assert conf['group_num'] >= 3
         
         self.grouped_pids = group_list(self.pids, self.split_num)
         
         self.test_index = 0
-        paths = sorted(glob.glob(os.path.join(dataset_dir, '*/*.jpg')))
-        paths = ipaths[::skip_num+1]
+        paths = sorted(glob.glob(os.path.join(conf['dataset_path'], '*/*.jpg')))
+        paths = paths[::self.skip_num+1]
         ipaths = [ImagePath(path) for path in paths]
         ipaths = [ipath for ipath in ipaths if ipath.pid in self.pids]
         
