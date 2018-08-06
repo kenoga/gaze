@@ -2,6 +2,7 @@
 
 import os
 import sys
+import dlib
 import openface
 
 module_path = os.path.abspath("..")
