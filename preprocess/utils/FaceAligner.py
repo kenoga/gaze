@@ -6,7 +6,7 @@ import openface
 from openface import AlignDlib
 
 class FaceAligner():
-    def __init__(self), dlib_model_path='/root/openface/models/dlib/shape_predictor_68_face_landmarks.dat'):
+    def __init__(self, dlib_model_path='/root/openface/models/dlib/shape_predictor_68_face_landmarks.dat'):
         self.aligner = AlignDlib(dlib_model_path)
         
     def align(self, img=None, bb=None, landmarks=None, size=None, indices=None):
