@@ -62,7 +62,7 @@ def main(conf_id):
     path_provider = DataPathProvider(conf)
     path_provider.report()
     
-    while path_provider.ramains:
+    while path_provider.remains():
         train_paths, validation_paths, test_paths = path_provider.get_paths()
     
         batch_provider = BatchProvider(
