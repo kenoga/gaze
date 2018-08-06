@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class PolarTransformer():
 
     def __init__(self, h_src, w_src):
