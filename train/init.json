@@ -4,7 +4,7 @@
         "result_path": "./results/%s",
         "test_ids": [1,2,3],
         "places": ["A", "B", "C", "D"],
-        "locked_target": [0,1,2,31,32, 50],
+        "locked_targets": [0,1,2,31,32, 50],
         "nonlocked_rate": 1,
         "batch_size": 64,
         "block_size": 128,
@@ -255,7 +255,8 @@
         "ignored_targets": [3,4,5,6],
         "nonlocked_rate": false,
         "bulking": false,
-        "skip_num": 2
+        "skip_num": 2,
+        "dataset_path": "../data/omni/both_eyes_from_aligned_face2"
     },
     
     

@@ -87,6 +87,8 @@ class DataPathProvider():
         self.pids = conf['pids']
         check_conf_val(conf, 'group_num')
         self.split_num = conf['group_num']
+        check_conf_val(conf, 'locked_targets')
+        self.locked_targets = conf['locked_targets']
         check_conf_val(conf, 'ignored_targets')
         self.ignored_targets = conf['ignored_targets']
         check_conf_val(conf, 'places')
@@ -133,6 +135,8 @@ class DataPathProvider():
         ipaths = [ipath for ipath in ipaths if ipath.target not in self.ignored_targets]
 
         self.ipaths = ipaths
+        print(len(self.ipaths))
+
     def get_paths(self):
         # split num回まで
         if self.test_index >= self.split_num:
