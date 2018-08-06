@@ -73,7 +73,7 @@ def group_list(li, group_num):
         
 class DataPathProvider():
 
-    def __init__(self, config):
+    def __init__(self, conf):
         check_conf_val(conf, 'dataset_dir')
         
         check_conf_val(conf, 'pids')
