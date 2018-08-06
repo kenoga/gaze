@@ -155,39 +155,43 @@ class DataPathProvider():
                 ipath.type = 'train'
         
         if self.bulking:
-            ipath = bulk_train_data(ipath)
+            ipaths = bulk_train_data(ipaths)
         
         if self.nonlocked_rate:
-            ipath = balance_train_data(ipath, nonlocked_rate)
+            ipaths = balance_train_data(ipaths, nonlocked_rate)
 
         train = []
         validation = []
         test = []
         
-        for ipath in ipath:
-            if ipath.type == 'train':
-                train.append(ipath)
+        for ipath in ipaths:
+            if ipath.type == 'test':
+                test.append(ipath)
             elif ipath.type == 'validation':
                 validation.append(ipath)
             else:
-                test.append(ipath)
+                train.append(ipath)
         
         self.test_index += 1
+        
+        # report dataset details
+        print(' '.join(['-' * 25, 'dataset', '-' * 25]))
+        print("test ids: " + ",".join(test_ids))
+        print("validation ids: " + ",".join(val_ids))
+        print("train ids: " + ",".join([pid for pid self.pids if pid not in test_ids and not in val_ids]))
+        print("train locked size: %d" % len([0 for path in train if path.locked == True]))
+        print("train nonlocked size: %d" % len([0 for path in train if path.locked == False]))
+        print("validation locked size: %d" % len([0 for path in validation if path.locked == True]))
+        print("validation nonlocked size: %d" % len([0 for path in validation if path.locked == False]))
+        print("test locked size: %d" % len([0 for path in test if path.locked == True]))
+        print("test nonlocked size: %d" % len([0 for path in test if path.locked == False]))
+        print("all locked sizes: %d" % len([0 for path in ipath if path.locked == True]))
+        print("all unlocked sizes: %d" % len([0 for path in ipath if path.locked == False]))
+        
+        
         return train, validation, test
     
     def report(self):
-        print(' '.join(['-' * 25, 'dataset', '-' * 25]))
-        print("train locked size: %d" % len([0 for path in self.train_paths if path.locked == True]))
-        print("train nonlocked size: %d" % len([0 for path in self.train_paths if path.locked == False]))
-        print("validation locked size: %d" % len([0 for path in self.validation_paths if path.locked == True]))
-        print("validation nonlocked size: %d" % len([0 for path in self.validation_paths if path.locked == False]))
-        print("test locked size: %d" % len([0 for path in self.test_paths if path.locked == True]))
-        print("test nonlocked size: %d" % len([0 for path in self.test_paths if path.locked == False]))
-        
-        all_paths = []
-        all_paths.extend(self.train_paths)
-        all_paths.extend(self.validation_paths)
-        all_paths.extend(self.test_paths)
-        print("all locked sizes: %d" % len([0 for path in all_paths if path.locked == True]))
-        print("all unlocked sizes: %d" % len([0 for path in all_paths if path.locked == False]))
+        pass
+
           
