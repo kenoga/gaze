@@ -62,7 +62,7 @@ def main(conf_id):
     path_provider.report()
     
     while path_provider.remains():
-        result_path = os.path.join(conf['resulta_path'], conf_id + ("_%02d" % path_provider.get_test_index()))
+        result_path = os.path.join(conf['result_path'], conf_id + ("_%02d" % path_provider.get_test_index()))
         train_paths, validation_paths, test_paths = path_provider.get_paths()
         
     
