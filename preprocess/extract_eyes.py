@@ -12,7 +12,7 @@ from dataset_utils.config import DS_ROOT
 
 def extract_both_eyes_from_aligned_face_img(img):
     height = img.shape[0]
-    return img[int(height * 0.075):int(height * 0.25)]    
+    return img[:int(height * 0.3)]    
 
 def main():
     src_dir = os.path.join(DS_ROOT, "aligned_face2")
