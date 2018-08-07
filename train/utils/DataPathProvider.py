@@ -101,7 +101,7 @@ class DataPathProvider():
         self.skip_num = conf['skip_num']
         
         if 'annotation_path' in conf and conf['annotation_path'] is not None:
-            with open(annotation_path, 'r') as fr:
+            with open(conf['annotation_path'], 'r') as fr:
                 self.annotation_dict = json.load(fr)
         else:
             self.annotation_dict = None
@@ -128,7 +128,7 @@ class DataPathProvider():
         # delete images annotated as noise data.
         if self.annotation_dict:
             ipaths = [ipath for ipath in ipaths \
-                    if ipath.img_name not in annotation_dict \
+                    if ipath.img_name not in self.annotation_dict \
                     or self.annotation_dict[ipath.img_name] not in {'closed-eyes', 'other'}]
 
         # delete images those targets should be ignored

@@ -3,26 +3,25 @@
         "gpu": 1,
         "result_path": "./results/%s",
         "places": ["A", "B", "C", "D"],
-        "locked_target": [0,1,2,31,32, 50],
+        "locked_targets": [0,1,2,31,32, 50],
         "batch_size": 64,
         "block_size": 128,
         "img_size": [17, 96],
         "epoch": 30,
         "learn_rate": 0.001,
         "ignored_targets": [],
-        "dataset_path": "../data/kobas-omni-eyecontact/both_eyes_from_aligned_face2",
+        "dataset_path": "../data/omni/both_eyes_from_aligned_face2",
         "face_direction_dir": false,
         "skip_num": 2,
         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/kobas-omni-eyecontact/annotations.json",
+        "annotation_path": "../data/omni/annotations.json",
         "bulking": true,
         "nonlocked_rate": false,
         "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
-        "group_num": 3,
+        "group_num": 6
     },
     
     "facedir": {
-        "face_direction_dir": "../data/kobas-omni-eyecontact/face_direction_feature"
     },
     
     "test": {
