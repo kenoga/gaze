@@ -42,7 +42,6 @@ def main(conf_id):
     conf = load_conf('./init.json', conf_id, conf=conf_def)
     conf['conf_id'] = conf_id
     report_conf(conf)
-    result_path = conf['result_path'] % conf_id
     
     model = CNN(2)
     
@@ -63,7 +62,9 @@ def main(conf_id):
     path_provider.report()
     
     while path_provider.remains():
+        result_path = os.path.join(conf['resulta_path'], conf_id + ("_%02d" % path_provider.get_test_index()))
         train_paths, validation_paths, test_paths = path_provider.get_paths()
+        
     
         batch_provider = BatchProvider(
             train_paths,
@@ -76,7 +77,7 @@ def main(conf_id):
         )
 
         train.train(model, batch_provider, result_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
-
+        
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("config_id")

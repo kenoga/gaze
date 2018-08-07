@@ -1,7 +1,7 @@
 {
     "default": {
         "gpu": 1,
-        "result_path": "./results/%s",
+        "result_path": "./results",
         "places": ["A", "B", "C", "D"],
         "locked_target": [0,1,2,31,32, 50],
         "batch_size": 64,

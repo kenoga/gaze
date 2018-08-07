@@ -140,6 +140,9 @@ class DataPathProvider():
     def remains(self):
         return True if self.test_index < self.group_num else False
 
+    def get_test_index(self):
+        return self.test_index
+
     def get_paths(self):
         # split num回まで
         if self.test_index >= self.group_num:
