@@ -140,13 +140,16 @@ class DataPathProvider():
     def remains(self):
         return True if self.test_index < self.group_num else False
 
+    def get_test_index(self):
+        return self.test_index
+
     def get_paths(self):
         # split num回まで
         if self.test_index >= self.group_num:
             return None
         
         test_ids = self.grouped_pids[self.test_index]
-        val_index = self.test_index + 1 if self.test_index < self.group_num else 0
+        val_index = self.test_index + 1 if self.test_index + 1 < self.group_num else 0
         val_ids = self.grouped_pids[val_index]
         
         ipaths = self.ipaths
