@@ -82,21 +82,29 @@ class DataPathProvider():
 
     def __init__(self, conf):
         check_conf_val(conf, 'dataset_path')
+        self.dataset_path = dataset_path
         
         check_conf_val(conf, 'pids')
         self.pids = conf['pids']
+        
         check_conf_val(conf, 'group_num')
         self.group_num = conf['group_num']
+        
         check_conf_val(conf, 'locked_targets')
         self.locked_targets = conf['locked_targets']
+        
         check_conf_val(conf, 'ignored_targets')
         self.ignored_targets = conf['ignored_targets']
+        
         check_conf_val(conf, 'places')
         self.places = conf['places']
+        
         check_conf_val(conf, 'bulking')
         self.bulking = conf['bulking']
+        
         check_conf_val(conf, 'nonlocked_rate')
         self.nonlocked_rate = conf['nonlocked_rate']
+        
         check_conf_val(conf, 'skip_num')
         self.skip_num = conf['skip_num']
         
@@ -116,7 +124,6 @@ class DataPathProvider():
         assert conf['group_num'] <= len(conf['pids'])
         # データセットの分割数は最低でも3 (train, validation, test)
         assert conf['group_num'] >= 3
-        
         self.grouped_pids = group_list(self.pids, self.group_num)
         
         self.test_index = 0
@@ -136,7 +143,7 @@ class DataPathProvider():
 
         self.ipaths = ipaths
         print(len(self.ipaths))
-
+        
     def remains(self):
         return True if self.test_index < self.group_num else False
 
@@ -198,7 +205,6 @@ class DataPathProvider():
         print("test nonlocked size: %d" % len([0 for path in test if path.locked == False]))
         print("all locked sizes: %d" % len([0 for path in ipaths if path.locked == True]))
         print("all unlocked sizes: %d" % len([0 for path in ipaths if path.locked == False]))
-        
         
         return train, validation, test
     
