@@ -47,7 +47,6 @@ def main(conf_id):
     
     face_dir_dict = None
     if conf['face_direction_dir']:
-        model = CNNWithFCFeature(2)
         face_dir_dict = {}
         dir_path = conf['face_direction_dir']
         json_fnames = [fname for fname in os.listdir(dir_path) if 'json' in fname]
@@ -61,7 +60,13 @@ def main(conf_id):
     path_provider = DataPathProvider(conf)
     path_provider.report()
     
+    # cross validation
     while path_provider.remains():
+        if face_dir_dict:
+            model = CNNWithFCFeature(2)
+        else:
+            model = CNN(2)
+            
         result_path = os.path.join(conf['result_path'], conf_id + ("_%02d" % path_provider.get_test_index()))
         train_paths, validation_paths, test_paths = path_provider.get_paths()
         
