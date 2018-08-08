@@ -16,8 +16,9 @@ class CNN(chainer.Chain):
             self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
             self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
             self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
-            self.fc1 = L.Linear(None, 128, nobias=True)
-            self.fc2 = L.Linear(None, 2, nobias=True)      
+            self.fc1 = L.Linear(None, 256, nobias=False)
+            self.fc2 = L.Linear(None, 128, nobias=False)
+            self.fc3 = L.Linear(None, 2, nobias=False)      
 
     def __call__(self, x):
         h = self.conv1_1(x)
@@ -31,7 +32,8 @@ class CNN(chainer.Chain):
         h = F.relu(h)
         h = F.max_pooling_2d(h, ksize=3)
         h = F.dropout(F.relu(self.fc1(h)))
-        y = self.fc2(h)
+        h = F.dropout(F.relu(self.fc2(h)))
+        y = self.fc3(h)
         return y
 
 class CNNWithFCFeature(chainer.Chain):
@@ -53,16 +55,16 @@ class CNNWithFCFeature(chainer.Chain):
         h = self.conv1_2(h)
         h = F.relu(h)
         h = F.max_pooling_2d(h, ksize=3)
-#         h = self.conv2_1(h)
-#         h = F.relu(h)
-#         h = self.conv2_2(h)
-#         h = F.relu(h)
-#         h = F.max_pooling_2d(h, ksize=3)
+        h = self.conv2_1(h)
+        h = F.relu(h)
+        h = self.conv2_2(h)
+        h = F.relu(h)
+        h = F.max_pooling_2d(h, ksize=3)
         # fcにfeatureを結合
         h = F.dropout(F.relu(self.fc1(h)))
 #         import pdb; pdb.set_trace()
         h = F.hstack((h, feature))
-        h = F.relu(self.fc2(h))
+        h = F.dropout(F.relu(self.fc2(h)))
         y = self.fc3(h)
 #         import pdb; pdb.set_trace()
         return y
