@@ -58,7 +58,7 @@ def forward(dataloader, model, purpose, optimizer=None):
             model.cleargrads()
             loss.backward()
             optimizer.update()
-            accuracies.append(cuda.to_cpu(accuracy_.data))
+            accuracies.append(cuda.to_cpu(accuracy.data))
         else:
             argmax_y = np.argmax(y.data, axis=1)
             y_all = np.hstack((y_all, cuda.to_cpu(argmax_y)))
