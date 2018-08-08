@@ -61,6 +61,7 @@ def main(conf_id):
     path_provider.report()
     
     # cross validation
+    result_all = {}
     while path_provider.remains():
         if face_dir_dict:
             model = CNNWithFCFeature(2)
@@ -81,12 +82,16 @@ def main(conf_id):
             face_dir_dict=face_dir_dict
         )
 
-        train.train_and_test(model, batch_provider, result_path, model_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
+        result = train.train_and_test(model, batch_provider, result_path, model_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
+        index = path_provider.get_test_index()
+        result_all[index] = result
     
-    # print('save all result as json file.')
-    # with open(model_path + '.json', 'w') as fw:
-    #     json.dump(result, fw, indent=2)
-    
+    result_path = os.path.join(conf['result_path'], conf_id + '.json')
+    print('save the result as .json --> {}'.format(result_path))
+    with open(result_path, 'w') as fw:
+        json.dump(result_all, fw, indent=2)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("config_id")
