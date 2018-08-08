@@ -112,7 +112,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     result['test']['miss'] = []
     
     best_model = None
-    best_val_fscore = None
+    best_score = None
     
     print('epoch  train_loss  train_accuracy  val_loss  val_accuracy  val_precision  val_recall  val_fscore  Elapsed-Time')
     for epoch_i in range(epoch):
