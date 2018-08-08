@@ -195,6 +195,5 @@ def save_model(model_path, model):
     #     pickle.dump(model, open(model_path + '.pkl', 'wb'))
     #     print('save the optimizer --> {}'.format(model_path + '.state'))
     #     serializers.save_npz(model_path + '.state', optimizer)
-    print('\nmodel save finished!!\n')
 
     

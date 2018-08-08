@@ -83,7 +83,7 @@ def main(conf_id):
         result_all[index] = result
     
     result_path = os.path.join(conf['result_path'], conf_id, 'all.json')
-    print('save the result as .json --> {}'.format(result_path))
+    print('save all results as .json --> {}'.format(result_path))
     with open(result_path, 'w') as fw:
         json.dump(result_all, fw, indent=2)
 
