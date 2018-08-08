@@ -20,7 +20,7 @@ class CNN(chainer.Chain):
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)      
 
-    def __call__(self, x, debug=False):
+    def __call__(self, x):
         h = F.relu(self.conv1_1(x))
         h = F.relu(self.conv1_2(h))
         h = F.max_pooling_2d(h, ksize=3)
@@ -32,27 +32,7 @@ class CNN(chainer.Chain):
         y = self.fc3(h)
         return y
         
-    def print_shape(self, x):
-        print("x: %s" % x.shape)
-        h = F.relu(self.conv1_1(x))
-        print("conv1_1: %s" % h.shape)
-        h = F.relu(self.conv1_2(h))
-        print("conv1_2: %s" % h.shape)
-        h = F.max_pooling_2d(h, ksize=3)
-        print("pool1: %s" % h.shape)
-        h = F.relu(self.conv2_1(h))
-        print("conv2_1: %s" % h.shape)
-        h = F.relu(self.conv2_2(h))
-        print("conv2_2: %s" % h.shape)
-        h = F.max_pooling_2d(h, ksize=3)
-        print("pool2: %s" % h.shape)
-        h = F.dropout(F.relu(self.fc1(h)))
-        print("fc1: %s" % h.shape)
-        h = F.dropout(F.relu(self.fc2(h)))
-        print("fc2: %s" % h.shape)
-        y = self.fc3(h)
-        print("fc3: %s" % y.shape)
-        return y
+
 
 class CNNWithFCFeature(chainer.Chain):
 
@@ -60,7 +40,7 @@ class CNNWithFCFeature(chainer.Chain):
         super(CNNWithFCFeature, self).__init__()
         with self.init_scope():
             self.conv1_1 = L.Convolution2D(None, 20, ksize=5, nobias=False)
-            self.conv1_2 = L.Convolution2D(None, 50, ksize=3, nobias=False)
+            self.conv1_2 = L.Convolution2D(None, 50, ksize=5, nobias=False)
             # self.conv2_1 = L.Convolution2D(None, 256, ksize=3, nobias=False)
             # self.conv2_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
             self.fc1 = L.Linear(None, 256, nobias=False)

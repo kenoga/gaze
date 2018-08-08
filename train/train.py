@@ -92,10 +92,10 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
         model.to_gpu()
 
     ## Set Optimizer
-    # optimizer = chainer.optimizers.MomentumSGD(learn_rate)
-    optimizer = chainer.optimizers.Adam(alpha=0.001, beta1=0.9, beta2=0.999, eps=1e-08)
+    optimizer = chainer.optimizers.MomentumSGD(learn_rate)
+    # optimizer = chainer.optimizers.Adam(alpha=0.001, beta1=0.9, beta2=0.999, eps=1e-08)
     optimizer.setup(model)
-    optimizer.add_hook(chainer.optimizer.WeightDecay(5e-4))
+    # optimizer.add_hook(chainer.optimizer.WeightDecay(5e-4))
 
     ## Training start!!
     start = time.time()
