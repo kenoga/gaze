@@ -139,13 +139,13 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
                 np.mean(fscore),
                 time.time()-start))
         
-        result['train']['loss'].append(train_loss)
-        result['train']['accuracy'].append(train_accuracy)
-        result['val']['loss'].append(val_loss)
-        result['val']['accuracy'].append(val_accuracy)
-        result['val']['precision'].append(val_precision)
-        result['val']['recall'].append(val_recall)
-        result['val']['fscore'].append(val_fscore)
+        result['train']['loss'].append(float(train_loss))
+        result['train']['accuracy'].append(float(train_accuracy))
+        result['val']['loss'].append(float(val_loss))
+        result['val']['accuracy'].append(float(val_accuracy))
+        result['val']['precision'].append(float(val_precision))
+        result['val']['recall'].append(float(val_recall))
+        result['val']['fscore'].append(float(val_fscore))
     
     print('training finished!!')
     print("The best score in validation set: %f" % best_score)
