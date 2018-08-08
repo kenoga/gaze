@@ -1,3 +1,3 @@
 import main
 
-main.main("facedir")
+main.main("with_face_dir_feature")

@@ -82,7 +82,7 @@ class DataPathProvider():
 
     def __init__(self, conf):
         check_conf_val(conf, 'dataset_path')
-        self.dataset_path = dataset_path
+        self.dataset_path = conf['dataset_path']
         
         check_conf_val(conf, 'pids')
         self.pids = conf['pids']
