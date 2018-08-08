@@ -22,21 +22,26 @@ from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 def forward(dataloader, model, purpose, optimizer=None):
     assert purpose in {"train", "validation", "test"}
-    is_train = True if purpose == "train" else False
     
     losses = []
-    if is_train:
+    if purpose == "train":
         accuracies = []
     else:
         y_all = np.array([])
         t_all = np.array([])
-        
+        paths_all = []
+    
     while True:
         # train
-        batches = dataloader.get_batch(dtype=purpose)
+        require_paths = False if purpose == "train" else True
+        batches = dataloader.get_batch(dtype=purpose, paths=require_paths)
         if batches is None:
             break
-        x, t_batch = batches
+        if purpose == "train":
+            x, t_batch = batches
+        else:
+            batches, paths = batches
+            x, t_batch = batches
         
         if type(model) == CNNWithFCFeature:
             x_batch, f_batch = x
@@ -54,7 +59,7 @@ def forward(dataloader, model, purpose, optimizer=None):
         loss = F.softmax_cross_entropy(y, t)
         accuracy = F.accuracy(y, t)
 
-        if is_train:
+        if purpose == "train":
             model.cleargrads()
             loss.backward()
             optimizer.update()
@@ -63,17 +68,17 @@ def forward(dataloader, model, purpose, optimizer=None):
             argmax_y = np.argmax(y.data, axis=1)
             y_all = np.hstack((y_all, cuda.to_cpu(argmax_y)))
             t_all = np.hstack((t_all, cuda.to_cpu(t.data)))
-
+            paths_all.extend(paths)
         losses.append(cuda.to_cpu(loss.data))
     
     loss = np.mean(losses)
-    if is_train:
+    if purpose == "train":
         accuracy = np.mean(accuracies)
         return loss, accuracy
     else:
         accuracy = accuracy_score(t_all, y_all)
         precision, recall, fscore, _ = precision_recall_fscore_support(t_all, y_all, average='binary')
-        return (loss, accuracy), (precision, recall, fscore)
+        return (loss, accuracy), (precision, recall, fscore), (t_all.tolist(), y_all.tolist(), paths)
 
 
 def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False):
@@ -158,7 +163,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     
     print(' '.join(['-' * 25, 'test', '-' * 25]))
     with chainer.using_config('train', False):
-        (test_loss, test_accuracy), (test_precision, test_recall, test_fscore) = forward(dataloader, best_model, "test")
+        (test_loss, test_accuracy), (test_precision, test_recall, test_fscore), (t, y, paths) = forward(dataloader, best_model, "test")
 
     print("loss: %f" % test_loss)
     print("accuracy: %f" % test_accuracy)
@@ -170,6 +175,9 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     result['test']['precision'] = float(test_precision)
     result['test']['recall'] = float(test_recall)
     result['test']['fscore'] = float(test_fscore)
+    result['test']['t'] = t
+    result['test']['y'] = y
+    result['test']['paths'] = paths
     
     save_result(result_path, result)
     save_model(model_path, model)
