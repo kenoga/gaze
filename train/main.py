@@ -81,7 +81,7 @@ def main(conf_id):
             face_dir_dict=face_dir_dict
         )
 
-        train.train(model, batch_provider, result_path, model_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
+        train.train_and_test(model, batch_provider, result_path, model_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
     
     # print('save all result as json file.')
     # with open(model_path + '.json', 'w') as fw:
