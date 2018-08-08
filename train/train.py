@@ -128,7 +128,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
         with chainer.using_config('train', True):
             train_loss, train_accuracy = forward(dataloader, model, "train", optimizer)
         with chainer.using_config('train', False):
-            (val_loss, val_accuracy), (val_precision, val_recall, val_fscore) = forward(dataloader, model, "validation")
+            (val_loss, val_accuracy), (val_precision, val_recall, val_fscore), _ = forward(dataloader, model, "validation")
 
         if best_score is None or val_fscore > best_score :
             best_score = val_fscore
