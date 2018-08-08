@@ -20,20 +20,38 @@ class CNN(chainer.Chain):
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)      
 
-    def __call__(self, x):
-        h = self.conv1_1(x)
-        h = F.relu(h)
-        h = self.conv1_2(h)
-        h = F.relu(h)
+    def __call__(self, x, debug=False):
+        h = F.relu(self.conv1_1(x))
+        h = F.relu(self.conv1_2(h))
         h = F.max_pooling_2d(h, ksize=3)
-        h = self.conv2_1(h)
-        h = F.relu(h)
-        h = self.conv2_2(h)
-        h = F.relu(h)
+        h = F.relu(self.conv2_1(h))
+        h = F.relu(self.conv2_2(h))
         h = F.max_pooling_2d(h, ksize=3)
         h = F.dropout(F.relu(self.fc1(h)))
         h = F.dropout(F.relu(self.fc2(h)))
         y = self.fc3(h)
+        return y
+        
+    def print_shape(self, x):
+        print("x: %s" % x.shape)
+        h = F.relu(self.conv1_1(x))
+        print("conv1_1: %s" % h.shape)
+        h = F.relu(self.conv1_2(h))
+        print("conv1_2: %s" % h.shape)
+        h = F.max_pooling_2d(h, ksize=3)
+        print("pool1: %s" % h.shape)
+        h = F.relu(self.conv2_1(h))
+        print("conv2_1: %s" % h.shape)
+        h = F.relu(self.conv2_2(h))
+        print("conv2_2: %s" % h.shape)
+        h = F.max_pooling_2d(h, ksize=3)
+        print("pool2: %s" % h.shape)
+        h = F.dropout(F.relu(self.fc1(h)))
+        print("fc1: %s" % h.shape)
+        h = F.dropout(F.relu(self.fc2(h)))
+        print("fc2: %s" % h.shape)
+        y = self.fc3(h)
+        print("fc3: %s" % y.shape)
         return y
 
 class CNNWithFCFeature(chainer.Chain):
@@ -41,32 +59,24 @@ class CNNWithFCFeature(chainer.Chain):
     def __init__(self, class_num):
         super(CNNWithFCFeature, self).__init__()
         with self.init_scope():
-            self.conv1_1 = L.Convolution2D(None, 64, ksize=3, nobias=False)
-            self.conv1_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
-            self.conv2_1 = L.Convolution2D(None, 256, ksize=3, nobias=False)
-            self.conv2_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
+            self.conv1_1 = L.Convolution2D(None, 20, ksize=5, nobias=False)
+            self.conv1_2 = L.Convolution2D(None, 50, ksize=3, nobias=False)
+            # self.conv2_1 = L.Convolution2D(None, 256, ksize=3, nobias=False)
+            # self.conv2_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
             self.fc1 = L.Linear(None, 256, nobias=False)
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)      
 
     def __call__(self, x, feature):
-        h = self.conv1_1(x)
-        h = F.relu(h)
-        h = self.conv1_2(h)
-        h = F.relu(h)
-        h = F.max_pooling_2d(h, ksize=3)
-        h = self.conv2_1(h)
-        h = F.relu(h)
-        h = self.conv2_2(h)
-        h = F.relu(h)
-        h = F.max_pooling_2d(h, ksize=3)
-        # fcにfeatureを結合
+        h = F.relu(self.conv1_1(x))
+        h = F.max_pooling_2d(h, ksize=2)
+        h = F.relu(self.conv1_2(h))
+        h = F.max_pooling_2d(h, ksize=2)
         h = F.dropout(F.relu(self.fc1(h)))
-#         import pdb; pdb.set_trace()
+        # fcにfeatureを結合
         h = F.hstack((h, feature))
         h = F.dropout(F.relu(self.fc2(h)))
         y = self.fc3(h)
-#         import pdb; pdb.set_trace()
         return y
     
  
