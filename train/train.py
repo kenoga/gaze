@@ -77,7 +77,7 @@ def forward(dataloader, model, purpose, optimizer=None):
 
 
 def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False):
-    print(' '.join(['-' * 25, 'training', '-' * 25]))
+    print(' '.join(['-' * 25, 'training and validation', '-' * 25]))
     print('# epoch: {}'.format(epoch))
     # print('# learnrate: {}'.format(learn_rate))
     
@@ -113,8 +113,9 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     
     best_model = None
     best_score = None
+    updated = False
     
-    print('epoch  train_loss  train_accuracy  val_loss  val_accuracy  val_precision  val_recall  val_fscore  Elapsed-Time')
+    print('epoch  train_loss  train_accuracy  val_loss  val_accuracy  val_precision  val_recall  val_fscore  updated  Elapsed-Time')
     for epoch_i in range(epoch):
         # initialize data loader
         dataloader.init()
@@ -127,9 +128,12 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
         if best_score is None or val_fscore > best_score :
             best_score = val_fscore
             best_model = copy.deepcopy(model)
-            print("The best model was updated!")
+            updated = True
+        else:
+            updated = False
+            
         
-        print('{:>5}  {:^10.4f}  {:^14.4f}  {:^8.4f}  {:^12.4f}  {:^13.4f}  {:^10.4f}  {:^10.4f}  {:^12.2f}' \
+        print('{:>5}  {:^10.4f}  {:^14.4f}  {:^8.4f}  {:^12.4f}  {:^13.4f}  {:^10.4f}  {:^10.4f}  {:^7s}  {:^12.2f}' \
               .format( \
                 epoch_i, \
                 np.mean(train_loss), \
@@ -139,6 +143,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
                 np.mean(val_precision),
                 np.mean(val_recall),
                 np.mean(val_fscore),
+                str(updated),
                 time.time()-start))
         
         result['train']['loss'].append(float(train_loss))
@@ -149,9 +154,9 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
         result['val']['recall'].append(float(val_recall))
         result['val']['fscore'].append(float(val_fscore))
     
-    print('training finished!!')
-    print("The best score in validation set: %f" % best_score)
+    print("the best score in validation set: %f" % best_score)
     
+    print(' '.join(['-' * 25, 'test', '-' * 25]))
     with chainer.using_config('train', False):
         (test_loss, test_accuracy), (test_precision, test_recall, test_fscore) = forward(dataloader, best_model, "test")
 
