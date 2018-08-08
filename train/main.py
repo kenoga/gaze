@@ -63,7 +63,7 @@ def main(conf_id):
             model = CNN(2)
         
         result_path = os.path.join(conf['result_path'], conf_id, "%02d" % path_provider.get_test_index())
-        model_path = os.path.join(conf['model_path'], conf_idm, "%02d" % path_provider.get_test_index())
+        model_path = os.path.join(conf['model_path'], conf_id, "%02d" % path_provider.get_test_index())
         
         train_paths, validation_paths, test_paths = path_provider.get_paths()
         
