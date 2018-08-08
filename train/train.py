@@ -119,7 +119,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
         # initialize data loader
         dataloader.init()
         
-        train_loss, train_accuracy = foward(dataloader, model, "train", optimizer)
+        train_loss, train_accuracy = forward(dataloader, model, "train", optimizer)
         (val_loss, val_accuracy), (val_precision, val_recall, val_fscore) = foward(dataloader, model, "validation")
 
         if best_score is None or val_fscore > best_score :
