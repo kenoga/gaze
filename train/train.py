@@ -169,22 +169,12 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
 
 
 def save_result(result_path, result):
-    print('save result start!!\n')
-    if not os.path.exists(result_path):
-        print('make directory for result --> {}'.format(result_path))
-        os.makedirs(result_path)
-    
     print('save the result as .json --> {}'.format(result_path + '.json') )
     with open(result_path + '.json', 'w') as fw:
         json.dump(result, fw, indent=2)
 
 
-def save_model(model_path, model):    
-    print('save model start!!\n')
-    if not os.path.exists(model_path):
-        print('make directory for model --> {}'.format(model_path))
-        os.makedirs(model_path)
-    
+def save_model(model_path, model):        
     print('save the model as .npz --> {}'.format(model_path + '.npz') )
     serializers.save_npz(model_path + '.npz', model)
     #     print('save the model as .pkl --> {}'.format(model_path + '.pkl'))
