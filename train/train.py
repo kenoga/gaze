@@ -123,7 +123,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
         (val_loss, val_accuracy), (val_precision, val_recall, val_fscore) = forward(dataloader, model, "validation")
 
         if best_score is None or val_fscore > best_score :
-            best_score = fscore
+            best_score = val_fscore
             best_model = copy.deepcopy(model)
             print("The best model was updated!")
         
@@ -134,9 +134,9 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
                 np.mean(train_accuracy), \
                 np.mean(val_loss), \
                 np.mean(val_accuracy), \
-                init.jsonp.mean(precision),
-                np.mean(recall),
-                np.mean(fscore),
+                np.mean(val_precision),
+                np.mean(val_recall),
+                np.mean(val_fscore),
                 time.time()-start))
         
         result['train']['loss'].append(float(train_loss))
@@ -170,8 +170,8 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
 
 def save_result(result_path, result):
     print('save result start!!\n')
-    if not os.patha.exists(result_path):
-        print('make directory for result --> {}'.format(directory))
+    if not os.path.exists(result_path):
+        print('make directory for result --> {}'.format(result_path))
         os.makedirs(result_path)
     
     print('save the result as .json --> {}'.format(result_path + '.json') )
@@ -181,8 +181,8 @@ def save_result(result_path, result):
 
 def save_model(model_path, model):    
     print('save model start!!\n')
-    if not os.path.exists(directory):
-        print('make directory for model --> {}'.format(directory))
+    if not os.path.exists(model_path):
+        print('make directory for model --> {}'.format(model_path))
         os.makedirs(model_path)
     
     print('save the model as .npz --> {}'.format(model_path + '.npz') )
