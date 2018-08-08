@@ -7,16 +7,10 @@ from collections import defaultdict
 
 import chainer
 
+import train
 from model.cnn import CNN, CNNWithFCFeature
-# from dataset_loader import DatasetLoader
-# from dataset_loader import DataPathProvider, BatchProvider
 from utils.DataPathProvider import DataPathProvider
 from utils.BatchProvider import BatchProvider
-
-import train
-
-
-from sklearn.metrics import precision_recall_fscore_support
 
 def load_conf(conf_fpath, conf_id, conf=None):
     assert os.path.exists(conf_fpath)
@@ -68,8 +62,9 @@ def main(conf_id):
         else:
             model = CNN(2)
         
-        result_path = os.path.join(conf['result_path'], conf_id + ("_%02d" % path_provider.get_test_index()))
-        model_path = os.path.join(conf['model_path'], conf_id + ("_%02d" % path_provider.get_test_index()))
+        result_path = os.path.join(conf['result_path'], conf_id, "%02d" % path_provider.get_test_index())
+        model_path = os.path.join(conf['model_path'], conf_idm, "%02d" % path_provider.get_test_index())
+        
         train_paths, validation_paths, test_paths = path_provider.get_paths()
         
         batch_provider = BatchProvider(
@@ -82,11 +77,12 @@ def main(conf_id):
             face_dir_dict=face_dir_dict
         )
 
-        result = train.train_and_test(model, batch_provider, result_path, model_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
+        result = train.train_and_test(model, batch_provider, result_path, model_path, \
+            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
         index = path_provider.get_test_index()
         result_all[index] = result
     
-    result_path = os.path.join(conf['result_path'], conf_id + '.json')
+    result_path = os.path.join(conf['result_path'], conf_id, 'all.json')
     print('save the result as .json --> {}'.format(result_path))
     with open(result_path, 'w') as fw:
         json.dump(result_all, fw, indent=2)

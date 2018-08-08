@@ -170,12 +170,18 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
 
 def save_result(result_path, result):
     print('save the result as .json --> {}'.format(result_path + '.json') )
+    dirpath = os.path.dirname(result_path)
+    if not os.path.exists(dirpath):
+        os.makedirs(dirpath)
     with open(result_path + '.json', 'w') as fw:
         json.dump(result, fw, indent=2)
 
 
 def save_model(model_path, model):        
     print('save the model as .npz --> {}'.format(model_path + '.npz') )
+    dirpath = os.path.dirname(model_path)
+    if not os.path.exists(dirpath):
+        os.makedirs(dirpath)
     serializers.save_npz(model_path + '.npz', model)
     #     print('save the model as .pkl --> {}'.format(model_path + '.pkl'))
     #     pickle.dump(model, open(model_path + '.pkl', 'wb'))
