@@ -1,7 +1,8 @@
 {
     "default": {
         "gpu": 1,
-        "result_path": "./results",
+        "result_path": "./result",
+        "model_path": "./trained",
         "places": ["A", "B", "C", "D"],
         "locked_targets": [0,1,2,31,32,50],
         "batch_size": 64,

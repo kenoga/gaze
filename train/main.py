@@ -66,11 +66,11 @@ def main(conf_id):
             model = CNNWithFCFeature(2)
         else:
             model = CNN(2)
-            
+        
         result_path = os.path.join(conf['result_path'], conf_id + ("_%02d" % path_provider.get_test_index()))
+        model_path = os.path.join(conf['model_path'], conf_id + ("_%02d" % path_provider.get_test_index()))
         train_paths, validation_paths, test_paths = path_provider.get_paths()
         
-    
         batch_provider = BatchProvider(
             train_paths,
             validation_paths,
@@ -81,11 +81,14 @@ def main(conf_id):
             face_dir_dict=face_dir_dict
         )
 
-        train.train(model, batch_provider, result_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
-        
+        train.train(model, batch_provider, result_path, model_path, epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
+    
+    # print('save all result as json file.')
+    # with open(model_path + '.json', 'w') as fw:
+    #     json.dump(result, fw, indent=2)
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("config_id")
     args = parser.parse_args()
-#     main(args.config_id)
     main(args.config_id)
