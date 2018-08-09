@@ -9,7 +9,7 @@
         "block_size": 512,
         "img_size": [32, 96],
         "epoch": 10,
-        "learn_rate": 0.001,
+        "learn_rate": 0.01,
         "dataset_path": "../data/omni/both_eyes_from_aligned_face2",
         "face_direction_dir": false,
         "skip_num": 2,
@@ -24,9 +24,12 @@
     "facedir": {
     },
     "without40": {
+
         "ignored_tagets": [3,4,5,6,40]
     },
     "with_face_dir_feature_sgd": {
+        "gpu": 0,
+        "epoch": 30,
         "face_direction_dir": "../data/omni/face_direction_feature"
     },
     
