@@ -31,7 +31,7 @@ def report_conf(conf):
     for key, value in sorted(conf.items()):
         print('%s => %s' % (key, value))
         
-def main(conf_id):
+def main(conf_id, gpu):
     conf_def = load_conf('./init.json', 'default')
     conf = load_conf('./init.json', conf_id, conf=conf_def)
     conf['conf_id'] = conf_id
@@ -78,7 +78,7 @@ def main(conf_id):
         )
 
         result = train.train_and_test(model, batch_provider, result_path, model_path, \
-            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
+            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=gpu)
         index = path_provider.get_test_index()
         result_all[index] = result
     
@@ -91,5 +91,6 @@ def main(conf_id):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("config_id")
+    parser.add_argument("--gpu", default=0)
     args = parser.parse_args()
-    main(args.config_id)
+    main(args.config_id, args.gpu)
