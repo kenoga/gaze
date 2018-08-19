@@ -15,7 +15,7 @@ from dataset_utils.config import DS_ROOT
 
 def main():
     # subdirごとに結果のjsonファイルを保存する
-    json_fname = "%s.json"
+    json_fname = "all.json"
     img_path_dict = get_image_paths('transformed')
     face_root_dir = os.path.join(DS_ROOT, "face")
     json_dir = os.path.join(DS_ROOT, "face_bb_and_landmarks")
@@ -41,7 +41,6 @@ def main():
             count += 1
             sys.stdout.write('\r'+"person: %d / %d, all: %d / %d" % (count, len(img_paths), count, data_size))
             img_name = os.path.basename(img_path)
-            results[img_name] = {}
             img = cv2.imread(img_path)
             bb = aligner.bb(img=img)
 
@@ -50,13 +49,10 @@ def main():
                 # save face img
                 face_img = img[bb.top():bb.bottom(), bb.left():bb.right()]
                 cv2.imwrite(os.path.join(face_dir, img_name), face_img)
-                results[img_name]["detected"] = True
                 results[img_name]['bb'] = [bb.left(), bb.top(), bb.right(), bb.bottom()]
                 results[img_name]["landmarks"] = landmarks
-            else:
-                results[img_name]["detected"] = False
 
-        with open(os.path.join(json_dir, json_fname) % sub_dir, "w") as fr:
-            json.dump(results, fr, indent=2, sort_keys=True)
+    with open(os.path.join(json_dir, json_fname), "w") as fr:
+        json.dump(results, fr, sort_keys=True)
 
 main()
