@@ -120,6 +120,10 @@ class DataPathProvider():
         else:
             self.use_face_dir_feature = False
         
+        if 'noise_data_path' in conf and conf['noise_data_path'] is not None:
+            with open(conf['noise_data_path'], 'r') as fr:
+                self.noise_dict = json.load(fr)
+        
         # データセットの分割数はデータセットの人数以下でなければならない
         assert conf['group_num'] <= len(conf['pids'])
         # データセットの分割数は最低でも3 (train, validation, test)
@@ -137,6 +141,9 @@ class DataPathProvider():
             ipaths = [ipath for ipath in ipaths \
                     if ipath.img_name not in self.annotation_dict \
                     or self.annotation_dict[ipath.img_name] not in {'closed-eyes', 'other'}]
+        if self.noise_dict:
+            ipaths = [ipath for ipath in ipaths \
+                      if ipath.img_name not in self.noise_dict]
 
         # delete images those targets should be ignored
         ipaths = [ipath for ipath in ipaths if ipath.target not in self.ignored_targets]

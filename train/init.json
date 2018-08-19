@@ -31,6 +31,10 @@
         "face_direction_dir": "../data/omni/face_direction_feature"
     },
     
+    "without_noise": {
+        "noise_data_path": "../data/omni/noise_data.json"
+    },
+    
     "test": {
         "epoch": 1,
         "pids": [1,2,3],
