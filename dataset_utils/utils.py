@@ -16,7 +16,7 @@ def imshow_by_path(path, format='.png'):
     img = cv2.imread(path)
     imshow(img)
 
-def imshow_by_name(name, format='.png', type='aligned_face'):
+def imshow_by_name(name, format='.png', type='aligned_face2'):
     pid = name.split("_")[0]
     path = os.path.join(DS_ROOT, type, pid, name)
     imshow_by_path(path)
