@@ -120,9 +120,11 @@ class DataPathProvider():
         else:
             self.use_face_dir_feature = False
         
-        if 'noise_data_path' in conf and conf['noise_data_path'] is not None:
+        if 'noise_data_path' in conf and conf['noise_data_path']:
             with open(conf['noise_data_path'], 'r') as fr:
                 self.noise_dict = json.load(fr)
+        else:
+            self.noise_dict = None
         
         # データセットの分割数はデータセットの人数以下でなければならない
         assert conf['group_num'] <= len(conf['pids'])

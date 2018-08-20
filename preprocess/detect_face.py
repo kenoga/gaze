@@ -10,15 +10,16 @@ if module_path not in sys.path:
     sys.path.append(module_path)
     
 from utils.FaceAligner import FaceAligner
-from dataset_utils.config import DS_ROOT
+from dataset_utils.config import DS_ROOT, DS_KATAYAMA
+from dataset_utils.utils import get_image_paths
 
 
-def main():
+def main(src_paths, dst_dir, json_dir):
     # subdirごとに結果のjsonファイルを保存する
     json_fname = "all.json"
-    img_path_dict = get_image_paths('transformed')
-    face_root_dir = os.path.join(DS_ROOT, "face")
-    json_dir = os.path.join(DS_ROOT, "face_bb_and_landmarks")
+    img_path_dict = src_paths
+    face_root_dir = dst_dir
+    json_dir = json_dir
     aligner = FaceAligner()
     
     data_size = sum([len(img_path_dict[subdir]) for subdir in img_path_dict.keys()])
@@ -30,7 +31,6 @@ def main():
 
     results = {}    
     for sub_dir in sorted(img_path_dict.keys()):
-        print(sub_dir)
         img_paths = img_path_dict[sub_dir]
         face_dir = os.path.join(face_root_dir, sub_dir)    
 
@@ -49,10 +49,14 @@ def main():
                 # save face img
                 face_img = img[bb.top():bb.bottom(), bb.left():bb.right()]
                 cv2.imwrite(os.path.join(face_dir, img_name), face_img)
+                results[img_name] = {}
                 results[img_name]['bb'] = [bb.left(), bb.top(), bb.right(), bb.bottom()]
                 results[img_name]["landmarks"] = landmarks
 
     with open(os.path.join(json_dir, json_fname), "w") as fr:
         json.dump(results, fr, sort_keys=True)
 
-main()
+src_paths = get_image_paths('image', dataset_path=DS_KATAYAMA, format='png')
+dst_dir =  os.path.join(DS_KATAYAMA, "face")
+json_dir = os.path.join(DS_KATAYAMA, "face_bb_and_landmarks")
+main(src_paths, dst_dir, json_dir)
