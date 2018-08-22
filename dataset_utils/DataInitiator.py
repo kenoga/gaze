@@ -3,8 +3,11 @@ import os
 from Data import Data
 
 class DataInitiator(object):
-    @staticmethod
-    def path2omni(path):
+    def init(self, path):
+        pass
+ 
+class OmniDataInitiator(DataInitiator):
+     def init(self, path):
         data = Data()
         data.path = path
         data.name = os.path.basename(path)
@@ -15,8 +18,8 @@ class DataInitiator(object):
         data.target = int(split[3])
         return data
 
-    @staticmethod
-    def path2katayama(path):
+class KatayamaDataInitiator(DataInitiator):
+    def init(self, path):
         data = Data()
         data.path = path
         data.name = os.path.basename(path)
@@ -24,3 +27,5 @@ class DataInitiator(object):
         data.pid = int(split[0])
         data.target = int(split[1])
         return data
+
+  

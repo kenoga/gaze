@@ -79,6 +79,8 @@ class DataPathProvider():
         self.load_conf_val(conf, 'ignored_targets')
         self.load_conf_val(conf, 'face_direction_path')
         self.load_conf_val(conf, 'skip_num')
+        self.load_conf_val(conf, 'img_format')
+        self.load_conf_val(conf, 'data_initiator')
 
         # データセットの分割数はデータセットの人数以下でなければならない
         assert self.group_num <= len(self.pids)
@@ -87,7 +89,10 @@ class DataPathProvider():
         self.grouped_pids = group_list(self.pids, self.group_num)
         
         self.test_index = 0
-        self.dataset = dataset_utils.Dataset.Dataset(self.dataset_path)
+        self.dataset = dataset_utils.Dataset.Dataset( \
+            self.dataset_path, \
+            data_initiator_name=self.data_initiator, \
+            img_format=self.img_format)
         # データセットのフィルタリング，必要な情報の読み込みなど
         self.dataset.filter_pid(self.pids)
         self.dataset.set_label(self.locked_targets)
@@ -138,7 +143,6 @@ class DataPathProvider():
         val_index = self.test_index + 1 if self.test_index + 1 < self.group_num else 0
         val_ids = self.grouped_pids[val_index]
         ipaths = self.dataset.data
-
         for ipath in ipaths:
             if ipath.pid in test_ids:
                 ipath.type = 'test'

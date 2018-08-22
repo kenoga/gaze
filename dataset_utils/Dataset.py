@@ -1,12 +1,14 @@
 import os, sys
 import glob
 
-from DataInitiator import DataInitiator 
+from DataInitiator import * 
 
 class Dataset(object):
-    def __init__(self, dataset_dir, img_format="jpg"):
+    def __init__(self, dataset_dir, data_initiator_name="OmniDataInitiator", img_format="jpg"):
         self.dataset_dir = dataset_dir
         self.img_format = img_format
+        GivenDataInitiator = globals()[data_initiator_name]
+        self.data_initiator = GivenDataInitiator()
         self.data = self._load_data()
         self.with_face_direction = False
     
@@ -18,7 +20,7 @@ class Dataset(object):
         for subdir in subdirs:
             datapaths = sorted([path for path in \
                 glob.glob(os.path.join(subdir, '*.%s' % self.img_format))])
-            data.extend([DataInitiator.path2omni(datapath) for datapath in datapaths])
+            data.extend([self.data_initiator.init(datapath) for datapath in datapaths])
         return data
     
     def load_face_bb_lmk(self, face_bb_lmk_dict):

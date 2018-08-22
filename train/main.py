@@ -32,7 +32,7 @@ def report_conf(conf):
     for key, value in sorted(conf.items()):
         print('%s => %s' % (key, value))
         
-def main(conf_id, gpu):
+def main(conf_id, gpu=0):
     conf_def = load_conf('./init.json', 'default')
     conf = load_conf('./init.json', conf_id, conf=conf_def)
     conf['conf_id'] = conf_id
