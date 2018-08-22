@@ -6,19 +6,18 @@ import glob
 import cv2
 
 # src_dirの子ディレクトリ(sub_dir)の中に含まれる全ての画像(img)に対してfuncを適用してdst_dir/sub_dir/new_imgとして保存する
-def apply_func_against_srcdir_and_save_to_dstdir(src_dir, dst_dir, func, give_fname=False, **kwargs):
+def apply_func_against_srcdir_and_save_to_dstdir(src_dir, dst_dir, func, format='jpg', give_fname=False, **kwargs):
     assert os.path.exists(src_dir)
     if not os.path.exists(dst_dir):
         os.mkdir(dst_dir)
     
-    paths = glob.glob(os.path.join(src_dir, '*', '*.jpg'))
+    paths = glob.glob(os.path.join(src_dir, '*', '*.%s' % format))
     print(len(paths))
     img_num = len(paths)
     count = 1
     for path in paths:
         sys.stdout.write('\r'+"%d / %d" % (count, img_num))
         count += 1
-        
         img = cv2.imread(path)
         # funcは新しいimgまたはNoneを返す
         if give_fname:
