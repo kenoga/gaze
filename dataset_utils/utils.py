@@ -4,9 +4,11 @@ import os
 import json
 import cv2
 import glob
+import csv
 from PIL import Image
 from config import DS_ROOT
 from IPython.display import Image, display
+
 
 def imshow(img, format='.png'):
     decoded_bytes = cv2.imencode(format, img)[1].tobytes()
@@ -39,9 +41,9 @@ def get_subdirs(img_type='face_image', dataset_path=DS_ROOT):
 
 
 # person_id -> bb_and_landmarks dictのdictを返す
-def get_bb_and_landmarks_dict():
+def get_bb_and_landmarks_dict(dataset_path=DS_ROOT):
     result = {}
-    json_path = os.path.join(DS_ROOT, 'face_bb_and_landmarks', 'all.json')
+    json_path = os.path.join(dataset_path, 'face_bb_and_landmarks', 'all.json')
     with open(json_path, 'r') as fr:
             return json.load(fr)
 
@@ -56,3 +58,12 @@ def get_face_direction_feature_dict():
             person_id = os.path.basename(json_file).split('.')[0]
             result[person_id] = json.load(fr)
     return result
+
+def load_triangles():
+    triangles = []
+    triangle_csv = os.path.join(os.path.dirname(__file__), "triangle.csv")
+    with open(triangle_csv) as fr:
+        csvreader = csv.reader(fr)
+        for triangle in csvreader:
+            triangles.append([int(p) for p in triangle])
+    return triangles

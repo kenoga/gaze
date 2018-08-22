@@ -18,7 +18,8 @@
         "nonlocked_rate": false,
         "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
         "group_num": 6,
-        "noise_data_path": false
+        "noise_data_path": false,
+        "delete_noise": true
     },
     "large_img": {
         "img_size": [55, 255],
@@ -26,23 +27,22 @@
     }, 
     "without40": {
         "ignored_targets": [3,4,5,6,40]
-    },
-    "with_face_dir_feature_sgd": {
-        "epoch": 30,
-        "face_direction_path": "../data/omni/face_direction_feature"
-    },
-    
+    },    
     "without_noise": {
         "noise_data_path": "../data/omni/noise_data.json"
     },
-
+    "noise_as_nonlocked": {
+        "delete_noise": false
+    },
+    "with_face_feature": {
+        "face_direction_dir": "../data/omni/face_direction_feature"
+    },
     "easy1": {
         "ignored_targets": [1,2,3,4,5,6,40,50]
     },
     "easy2": {
         "ignored_targets": [1,2,3,4,5,6,31,32,40,50]
     },
-    
     
     "test": {
         "epoch": 1,
