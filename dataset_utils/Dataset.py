@@ -1,6 +1,8 @@
 import os, sys
 import glob
 
+from DataInitiator import DataInitiator 
+
 class Dataset(object):
     def __init__(self, dataset_dir, img_format="jpg"):
         self.dataset_dir = dataset_dir
@@ -14,8 +16,9 @@ class Dataset(object):
                            if os.path.isdir(os.path.join(self.dataset_dir, subdir))])
         data = []
         for subdir in subdirs:
-            datapaths = sorted([path for path in glob.glob(os.path.join(subdir, '*.%s' % format))])
-            data = [Data(datapath) for datapath in datapaths]
+            datapaths = sorted([path for path in \
+                glob.glob(os.path.join(subdir, '*.%s' % self.img_format))])
+            data.extend([DataInitiator.path2omni(datapath) for datapath in datapaths])
         return data
     
     def load_face_bb_lmk(self, face_bb_lmk_dict):
@@ -46,8 +49,8 @@ class Dataset(object):
     
     def filter_noise2(self, noise_dict):
         self.data = [d for d in self.data \
-                    if d.name not in self.annotation_dict \
-                    or noise_set[ipath.name] not in {'closed-eyes', 'other'}]
+                    if d.name not in noise_dict \
+                    or noise_dict[d.name] not in {'closed-eyes', 'other'}]
     
     def filter_pid(self, pids):
         self.data = [d for d in self.data if d.pid in pids]

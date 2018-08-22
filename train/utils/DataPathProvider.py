@@ -6,6 +6,9 @@ import json
 import copy
 from collections import deque
 import dataset_utils.Dataset 
+import dataset_utils.DataInitiator
+
+
 def balance_train_data(imgs, nonlocked_rate):
     assert type(imgs) == list
     assert len(imgs) > 0
@@ -85,27 +88,24 @@ class DataPathProvider():
         
         self.test_index = 0
         self.dataset = dataset_utils.Dataset.Dataset(self.dataset_path)
-        
         # データセットのフィルタリング，必要な情報の読み込みなど
-        if self.pids:
-            self.dataset.filter_pid(self.pids)
-
+        self.dataset.filter_pid(self.pids)
+        self.dataset.set_label(self.locked_targets)
         if self.skip_num:
             self.dataset.skip(self.skip_num)
  
         if self.noise_data_path:
-            with open(conf['noise_data_path'], 'r') as fr:
-                noise_dict = json.load(fr)
+            with open(self.noise_data_path, 'r') as fr:
+                self.noise_dict = json.load(fr)
                 self.dataset.filter_noise(self.noise_dict)
 
         if self.annotation_path:
-            with open(conf['noise_data_path'], 'r') as fr:
-                noise_dict = json.load(fr)
-                self.dataset.filter_noise(self.noise_dict)
-            self.dataset.filter_noise2(self.annotation_dict)
+            with open(self.annotation_path, 'r') as fr:
+                self.noise_dict = json.load(fr)
+                self.dataset.filter_noise2(self.noise_dict)
             
         if self.ignored_targets:
-            self.dataset.filter_target(ignored_targets)
+            self.dataset.filter_target(self.ignored_targets)
             
         if self.face_direction_path:
             face_dir_dict = {}
@@ -134,16 +134,11 @@ class DataPathProvider():
         # split num回まで
         if self.test_index >= self.group_num:
             return None
-        
         test_ids = self.grouped_pids[self.test_index]
         val_index = self.test_index + 1 if self.test_index + 1 < self.group_num else 0
         val_ids = self.grouped_pids[val_index]
-        
         ipaths = self.dataset.data
-       
-        for ipath in ipaths:
-            ipath.locked = True if ipath.target in self.locked_targets else False
-        
+
         for ipath in ipaths:
             if ipath.pid in test_ids:
                 ipath.type = 'test'
@@ -151,7 +146,6 @@ class DataPathProvider():
                 ipath.type = 'validation'
             else:
                 ipath.type = 'train'
-        
         if self.bulking:
             ipaths = bulk_train_data(ipaths)
         

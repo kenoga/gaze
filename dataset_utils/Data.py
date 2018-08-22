@@ -13,3 +13,4 @@ class Data(object):
         self.bb = None
         self.lmk = None
         self.face_direction = None
+        self.type = None

@@ -6,7 +6,7 @@ from PIL import Image, ImageOps
 
     
 class BatchProvider():
-    def __init__(self, train_paths, validation_paths, test_paths, batch_size, block_size, img_size, use_face_direction=False):
+    def __init__(self, train_paths, validation_paths, test_paths, batch_size, block_size, img_size, face_dir_dict):
         self.train_paths = train_paths
         self.validation_paths = validation_paths
         self.test_paths = test_paths
@@ -20,7 +20,8 @@ class BatchProvider():
         self.train_block = []
         self.validation_block =[]
         self.test_block = []
-   
+        self.face_dir_dict = face_dir_dict  
+ 
     def init(self, ran=True):
         if ran:
             self.train_path_pool = random.sample(self.train_paths, len(self.train_paths))
@@ -31,7 +32,7 @@ class BatchProvider():
         xs = []
         ts = []
         
-        if self.use_face_dir_feature:
+        if self.face_dir_dict:
             fs = []
         
         for path in paths:
@@ -52,7 +53,7 @@ class BatchProvider():
             x = x.reshape(1, self.img_size[0], self.img_size[1]) ## Reshape image to input shape of CNN
             
             t = np.array(int(path.locked), dtype=np.int32)
-            if self.use_face_direction:
+            if self.face_dir_dict:
                 f_list_nest = self.path.face_direction
                 if path.mirror:
                     # xを反転 (positionはx, yの順になっている
@@ -66,15 +67,15 @@ class BatchProvider():
         
         xs = np.array(xs).astype(np.float32)
         ts = np.array(ts).astype(np.int32)
-        if self.use_face_dir_feature:
+        if self.face_dir_dict:
             fs = np.array(fs).astype(np.float32)
         if return_paths:
-            if self.use_face_dir_feature:
+            if self.face_dir_dict:
                 return ((xs, fs), ts), paths
             else:
                 return (xs, ts), paths
         else:
-            if self.use_face_dir_feature:
+            if self.face_dir_dict:
                 assert len(xs) == len(fs) == len(ts)
                 return (xs, fs), ts
             else:

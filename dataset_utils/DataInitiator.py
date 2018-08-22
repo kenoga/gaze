@@ -1,19 +1,26 @@
+import os
+
+from Data import Data
 
 class DataInitiator(object):
     @staticmethod
     def path2omni(path):
-        self.path = path
-        self.name = os.path.basename(path)
-        split = self.name.split('.')[0].split('_')
-        self.pid = int(split[0])
-        self.glasses = bool(split[1])
-        self.place = split[2]
-        self.target = int(split[3])
+        data = Data()
+        data.path = path
+        data.name = os.path.basename(path)
+        split = data.name.split('.')[0].split('_')
+        data.pid = int(split[0])
+        data.glasses = bool(split[1])
+        data.place = split[2]
+        data.target = int(split[3])
+        return data
 
     @staticmethod
     def path2katayama(path):
-        self.path = path
-        self.name = os.path.basename(path)
-        split = self.name.split('.')[0].split('_')
-        self.pid = int(split[0])
-        self.target = int(split[1])
+        data = Data()
+        data.path = path
+        data.name = os.path.basename(path)
+        split = data.name.split('.')[0].split('_')
+        data.pid = int(split[0])
+        data.target = int(split[1])
+        return data
