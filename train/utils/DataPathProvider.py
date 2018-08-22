@@ -7,9 +7,6 @@ import json
 import copy
 from collections import deque
 
-sys.path.append(os.path.abspath('../../'))
-from dataste_utils.Dataset import Dataset
-
 def balance_train_data(imgs, nonlocked_rate):
     assert type(imgs) == list
     assert len(imgs) > 0
@@ -59,7 +56,7 @@ def check_conf_val(config, key):
         raise AssertionError
         
 def check_conf(conf):
-
+    pass
     
 def group_list(li, group_num):
     # listをgroup_num個に分割する
