@@ -57,5 +57,8 @@ class Dataset(object):
     
     def filater_place(self, places):
         self.data = [d for d in self.data if d.place in places]
+    
+    def skip(self, skip_num):
+        self.data = self.data[::skip_num+1]
         
     
