@@ -10,7 +10,7 @@
         "epoch": 10,
         "learn_rate": 0.01,
         "dataset_path": "../data/omni/both_eyes_from_aligned_face2",
-        "face_direction_dir": false,
+        "face_direction_path": false,
         "skip_num": 2,
         "ignored_targets": [3,4,5,6],
         "annotation_path": "../data/omni/annotations.json",
@@ -29,7 +29,7 @@
     },
     "with_face_dir_feature_sgd": {
         "epoch": 30,
-        "face_direction_dir": "../data/omni/face_direction_feature"
+        "face_direction_path": "../data/omni/face_direction_feature"
     },
     
     "without_noise": {

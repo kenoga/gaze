@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 
 import os, sys
 import random
@@ -7,7 +7,8 @@ import json
 import copy
 from collections import deque
 
-from ImagePath import ImagePath, FujikawaImagePath
+sys.path.append(os.path.abspath('../../'))
+from dataste_utils.Dataset import Dataset
 
 def balance_train_data(imgs, nonlocked_rate):
     assert type(imgs) == list
@@ -55,7 +56,11 @@ def check_conf_val(config, key):
         assert config[key] is not None
     except:
         print(key)
-        raise AssertionError 
+        raise AssertionError
+        
+def check_conf(conf):
+
+    
 def group_list(li, group_num):
     # listをgroup_num個に分割する
     # その際groupに含まれる要素の数の差が小さくなるように分割する
@@ -80,51 +85,14 @@ def group_list(li, group_num):
         
 class DataPathProvider():
 
-    def __init__(self, conf):
+    def __init__(self, conf): 
         check_conf_val(conf, 'dataset_path')
-        self.dataset_path = conf['dataset_path']
-        
-        check_conf_val(conf, 'pids')
-        self.pids = conf['pids']
-        
         check_conf_val(conf, 'group_num')
-        self.group_num = conf['group_num']
-        
         check_conf_val(conf, 'locked_targets')
-        self.locked_targets = conf['locked_targets']
-        
-        check_conf_val(conf, 'ignored_targets')
-        self.ignored_targets = conf['ignored_targets']
-        
-        check_conf_val(conf, 'places')
-        self.places = conf['places']
-        
         check_conf_val(conf, 'bulking')
         self.bulking = conf['bulking']
-        
         check_conf_val(conf, 'nonlocked_rate')
-        self.nonlocked_rate = conf['nonlocked_rate']
-        
-        check_conf_val(conf, 'skip_num')
-        self.skip_num = conf['skip_num']
-        
-        if 'annotation_path' in conf and conf['annotation_path'] is not None:
-            with open(conf['annotation_path'], 'r') as fr:
-                self.annotation_dict = json.load(fr)
-        else:
-            self.annotation_dict = None
-            
-        if 'face_dir_dict' in conf and conf['face_dir_dict'] is not None: 
-            self.use_face_dir_feature = True
-            self.face_dir_dict = face_direction_dict
-        else:
-            self.use_face_dir_feature = False
-        
-        if 'noise_data_path' in conf and conf['noise_data_path']:
-            with open(conf['noise_data_path'], 'r') as fr:
-                self.noise_dict = json.load(fr)
-        else:
-            self.noise_dict = None
+        self.nonlocked_rate = conf['nonlocked_rate'] 
         
         # データセットの分割数はデータセットの人数以下でなければならない
         assert conf['group_num'] <= len(conf['pids'])
@@ -133,26 +101,42 @@ class DataPathProvider():
         self.grouped_pids = group_list(self.pids, self.group_num)
         
         self.test_index = 0
-        paths = sorted(glob.glob(os.path.join(conf['dataset_path'], '*/*.jpg')))
         paths = paths[::self.skip_num+1]
-        ipaths = [ImagePath(path) for path in paths]
-        ipaths = [ipath for ipath in ipaths if ipath.pid in self.pids]
         
-        # delete images annotated as noise data.
-        if self.annotation_dict:
-            ipaths = [ipath for ipath in ipaths \
-                    if ipath.img_name not in self.annotation_dict \
-                    or self.annotation_dict[ipath.img_name] not in {'closed-eyes', 'other'}]
-        if self.noise_dict:
-            ipaths = [ipath for ipath in ipaths \
-                      if ipath.img_name not in self.noise_dict]
-
-        # delete images those targets should be ignored
-        ipaths = [ipath for ipath in ipaths if ipath.target not in self.ignored_targets]
-
-        self.ipaths = ipaths
-        print(len(self.ipaths))
+        self.dataset = Dataset(conf['dataset_path'])
         
+        # データセットのフィルタリング，必要な情報の読み込みなど
+        
+        if conf['pids']:
+            self.dataset.filter_pid(conf['pids'])
+        # if conf['']
+        
+        if conf['noise_data_path']:
+            with open(conf['noise_data_path'], 'r') as fr:
+                noise_dict = json.load(fr)
+                self.dataset.filter_noise(self.noise_dict)
+
+        if conf['annotation_path']:
+            with open(conf['noise_data_path'], 'r') as fr:
+                noise_dict = json.load(fr)
+                self.dataset.filter_noise(self.noise_dict)
+            self.dataset.filter_noise2(self.annotation_dict)
+            
+        if conf['ignored_targets']:
+            self.dataset.filter_target(ignored_targets)
+            
+        if conf['face_direction_path']:
+            face_dir_dict = {}
+            dir_path = conf['face_direction_dir']
+            json_fnames = [fname for fname in os.listdir(dir_path) if 'json' in fname]
+            for json_fname in json_fnames:
+                path = os.path.join(dir_path, json_fname)
+                with open(path, 'r') as fr:
+                    d = json.load(fr)
+                    for k, v in d.items():
+                        face_dir_dict[k] = v
+            self.dataset.load_face_direction_feature(face_dir_dict)
+    
     def remains(self):
         return True if self.test_index < self.group_num else False
 
@@ -168,7 +152,7 @@ class DataPathProvider():
         val_index = self.test_index + 1 if self.test_index + 1 < self.group_num else 0
         val_ids = self.grouped_pids[val_index]
         
-        ipaths = self.ipaths
+        ipaths = self.dataset.data
        
         for ipath in ipaths:
             ipath.locked = True if ipath.target in self.locked_targets else False

@@ -8,7 +8,7 @@ from PIL import Image, ImageOps
 
     
 class BatchProvider():
-    def __init__(self, train_paths, validation_paths, test_paths, batch_size, block_size, img_size, face_dir_dict=None):
+    def __init__(self, train_paths, validation_paths, test_paths, batch_size, block_size, img_size, use_face_direction=False):
         self.train_paths = train_paths
         self.validation_paths = validation_paths
         self.test_paths = test_paths
@@ -22,12 +22,6 @@ class BatchProvider():
         self.train_block = []
         self.validation_block =[]
         self.test_block = []
-        
-        if face_dir_dict:
-            self.use_face_dir_feature = True
-            self.face_dir_dict = face_dir_dict
-        else:
-            self.use_face_dir_feature = False
    
     def init(self, ran=True):
         if ran:
@@ -60,8 +54,8 @@ class BatchProvider():
             x = x.reshape(1, self.img_size[0], self.img_size[1]) ## Reshape image to input shape of CNN
             
             t = np.array(int(path.locked), dtype=np.int32)
-            if self.use_face_dir_feature:
-                f_list_nest = self.face_dir_dict[path.img_name]
+            if self.use_face_direction:
+                f_list_nest = self.path.face_direction
                 if path.mirror:
                     # xを反転 (positionはx, yの順になっている
                     f_list_nest = [[1-position[0], position[1]]for position in f_list_nest]
