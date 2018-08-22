@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+import os, sys
 import json
 import argparse
 import pickle
@@ -8,8 +10,8 @@ import chainer
 
 import train
 from model.cnn import CNN, CNNWithFCFeature
-from train_utils.DataPathProvider import DataPathProvider
-from train_utils.BatchProvider import BatchProvider
+from utils.DataPathProvider import DataPathProvider
+from utils.BatchProvider import BatchProvider
 
 def load_conf(conf_fpath, conf_id, conf=None):
     assert os.path.exists(conf_fpath)

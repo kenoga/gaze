@@ -5,9 +5,7 @@ import glob
 import json
 import copy
 from collections import deque
-
-from dataset_utils.Dataset import Dataset
-
+import dataset_utils.Dataset 
 def balance_train_data(imgs, nonlocked_rate):
     assert type(imgs) == list
     assert len(imgs) > 0
@@ -42,23 +40,6 @@ def bulk_train_data(imgs):
             bulked.append(mirrored)
     return bulked
 
-
-def check_conf_val(config, key):
-    assert config is not None 
-    try:    
-        assert key in config
-    except:
-        print(key)
-        raise AssertionError
-    try:
-        assert config[key] is not None
-    except:
-        print(key)
-        raise AssertionError
-        
-def check_conf(conf):
-    pass
-    
 def group_list(li, group_num):
     # listをgroup_num個に分割する
     # その際groupに含まれる要素の数の差が小さくなるように分割する
@@ -84,48 +65,51 @@ def group_list(li, group_num):
 class DataPathProvider():
 
     def __init__(self, conf): 
-        check_conf_val(conf, 'dataset_path')
-        check_conf_val(conf, 'group_num')
-        check_conf_val(conf, 'locked_targets')
-        check_conf_val(conf, 'bulking')
-        self.bulking = conf['bulking']
-        check_conf_val(conf, 'nonlocked_rate')
-        self.nonlocked_rate = conf['nonlocked_rate'] 
-        
+        self.load_conf_val(conf, 'dataset_path')
+        self.load_conf_val(conf, 'group_num')
+        self.load_conf_val(conf, 'locked_targets')
+        self.load_conf_val(conf, 'bulking')
+        self.load_conf_val(conf, 'pids')
+        self.load_conf_val(conf, 'nonlocked_rate')
+        self.load_conf_val(conf, 'noise_data_path')
+        self.load_conf_val(conf, 'annotation_path')
+        self.load_conf_val(conf, 'ignored_targets')
+        self.load_conf_val(conf, 'face_direction_path')
+        self.load_conf_val(conf, 'skip_num')
+
         # データセットの分割数はデータセットの人数以下でなければならない
-        assert conf['group_num'] <= len(conf['pids'])
+        assert self.group_num <= len(self.pids)
         # データセットの分割数は最低でも3 (train, validation, test)
-        assert conf['group_num'] >= 3
+        assert self.group_num >= 3
         self.grouped_pids = group_list(self.pids, self.group_num)
         
         self.test_index = 0
-        paths = paths[::self.skip_num+1]
-        
-        self.dataset = Dataset(conf['dataset_path'])
+        self.dataset = dataset_utils.Dataset.Dataset(self.dataset_path)
         
         # データセットのフィルタリング，必要な情報の読み込みなど
-        
-        if conf['pids']:
-            self.dataset.filter_pid(conf['pids'])
-        # if conf['']
-        
-        if conf['noise_data_path']:
+        if self.pids:
+            self.dataset.filter_pid(self.pids)
+
+        if self.skip_num:
+            self.dataset.skip(self.skip_num)
+ 
+        if self.noise_data_path:
             with open(conf['noise_data_path'], 'r') as fr:
                 noise_dict = json.load(fr)
                 self.dataset.filter_noise(self.noise_dict)
 
-        if conf['annotation_path']:
+        if self.annotation_path:
             with open(conf['noise_data_path'], 'r') as fr:
                 noise_dict = json.load(fr)
                 self.dataset.filter_noise(self.noise_dict)
             self.dataset.filter_noise2(self.annotation_dict)
             
-        if conf['ignored_targets']:
+        if self.ignored_targets:
             self.dataset.filter_target(ignored_targets)
             
-        if conf['face_direction_path']:
+        if self.face_direction_path:
             face_dir_dict = {}
-            dir_path = conf['face_direction_dir']
+            dir_path = self.face_direction_dir
             json_fnames = [fname for fname in os.listdir(dir_path) if 'json' in fname]
             for json_fname in json_fnames:
                 path = os.path.join(dir_path, json_fname)
@@ -135,6 +119,11 @@ class DataPathProvider():
                         face_dir_dict[k] = v
             self.dataset.load_face_direction_feature(face_dir_dict)
     
+    def load_conf_val(self, config, key):
+        assert config is not None 
+        assert key in config
+        self.__dict__[key] = config[key]
+ 
     def remains(self):
         return True if self.test_index < self.group_num else False
 

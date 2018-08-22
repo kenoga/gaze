@@ -1,3 +1,5 @@
+import os, sys
+import glob
 
 class Dataset(object):
     def __init__(self, dataset_dir, img_format="jpg"):
@@ -7,10 +9,10 @@ class Dataset(object):
         self.with_face_direction = False
     
     def _load_data(self):
-        subdirs = sorted([os.path.join(dataset_dir, subdir) \
-                           for subdir in os.listdir(dataset_dir) \
-                           if os.path.isdir(subdir)])
-
+        subdirs = sorted([os.path.join(self.dataset_dir, subdir) \
+                           for subdir in os.listdir(self.dataset_dir) \
+                           if os.path.isdir(os.path.join(self.dataset_dir, subdir))])
+        data = []
         for subdir in subdirs:
             datapaths = sorted([path for path in glob.glob(os.path.join(subdir, '*.%s' % format))])
             data = [Data(datapath) for datapath in datapaths]
