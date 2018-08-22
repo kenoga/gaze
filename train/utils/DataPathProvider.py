@@ -1,11 +1,12 @@
  # -*- coding: utf-8 -*-
 
-import os, sys
 import random
 import glob
 import json
 import copy
 from collections import deque
+
+from dataset_utils.Dataset import Dataset
 
 def balance_train_data(imgs, nonlocked_rate):
     assert type(imgs) == list

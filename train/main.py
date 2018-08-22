@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os, sys
 import json
 import argparse
 import pickle
@@ -9,8 +8,8 @@ import chainer
 
 import train
 from model.cnn import CNN, CNNWithFCFeature
-from utils.DataPathProvider import DataPathProvider
-from utils.BatchProvider import BatchProvider
+from train_utils.DataPathProvider import DataPathProvider
+from train_utils.BatchProvider import BatchProvider
 
 def load_conf(conf_fpath, conf_id, conf=None):
     assert os.path.exists(conf_fpath)
@@ -31,7 +30,7 @@ def report_conf(conf):
     for key, value in sorted(conf.items()):
         print('%s => %s' % (key, value))
         
-def main(conf_id, gpu=0):
+def main(conf_id, gpu):
     conf_def = load_conf('./init.json', 'default')
     conf = load_conf('./init.json', conf_id, conf=conf_def)
     conf['conf_id'] = conf_id
@@ -50,6 +49,7 @@ def main(conf_id, gpu=0):
                 d = json.load(fr)
                 for k, v in d.items():
                     face_dir_dict[k] = v
+    
     
     path_provider = DataPathProvider(conf)
     path_provider.report()

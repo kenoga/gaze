@@ -1,4 +1,3 @@
-import os
 
 class ImagePath():
     def __init__(self, path):
