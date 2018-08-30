@@ -81,6 +81,8 @@ class DataPathProvider():
         self.load_conf_val(conf, 'skip_num')
         self.load_conf_val(conf, 'img_format')
         self.load_conf_val(conf, 'data_initiator')
+        self.load_conf_val(conf, 'glasses')
+
 
         # データセットの分割数はデータセットの人数以下でなければならない
         assert self.group_num <= len(self.pids)
@@ -111,6 +113,9 @@ class DataPathProvider():
             
         if self.ignored_targets:
             self.dataset.filter_target(self.ignored_targets)
+        
+        if not self.glasses:
+            self.dataset.delete_glasses()
             
         if self.face_direction_path:
             face_dir_dict = {}
@@ -123,6 +128,8 @@ class DataPathProvider():
                     for k, v in d.items():
                         face_dir_dict[k] = v
             self.dataset.load_face_direction_feature(face_dir_dict)
+            
+        self.dataset.data = [d for d in self.dataset.data if not (d.pid == 12 and (d.place == "B" or d.place == "C"))]
     
     def load_conf_val(self, config, key):
         assert config is not None 
@@ -154,7 +161,7 @@ class DataPathProvider():
             ipaths = bulk_train_data(ipaths)
         
         if self.nonlocked_rate:
-            ipaths = balance_train_data(ipaths, nonlocked_rate)
+            ipaths = balance_train_data(ipaths, self.nonlocked_rate)
 
         train = []
         validation = []

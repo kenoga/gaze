@@ -11,7 +11,7 @@
         "learn_rate": 0.01,
         "dataset_path": "../data/omni/both_eyes_from_aligned_face2",
         "face_direction_path": false,
-        "skip_num": 2,
+        "skip_num": 4,
         "ignored_targets": [3,4,5,6],
         "annotation_path": "../data/omni/annotations.json",
         "bulking": true,
@@ -20,8 +20,14 @@
         "group_num": 6,
         "noise_data_path": false,
         "img_format": "jpg",
-        "data_initiator": "OmniDataInitiator"
+        "data_initiator": "OmniDataInitiator",
+        "glasses": false
     },
+    
+    "detail": {
+        "group_num": 17
+    },
+
     "large_img": {
         "img_size": [55, 255],
         "dataset_path": "../data/omni/both_eyes_from_aligned_face"
@@ -55,6 +61,19 @@
         "img_format": "png",
         "data_initiator": "KatayamaDataInitiator",
         "annotation_path": false
+    },
+    "katayama_fullface": {
+        "places": false,
+        "locked_targets": [1],
+        "dataset_path": "../data/katayama/aligned_face",
+        "face_direction_path": false,
+        "skip_num": false,
+        "ignored_targets": [],
+        "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],
+        "img_format": "png",
+        "data_initiator": "KatayamaDataInitiator",
+        "annotation_path": false,
+        "img_size": [96, 96]
     },
     
     "test": {

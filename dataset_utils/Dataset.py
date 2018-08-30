@@ -64,6 +64,10 @@ class Dataset(object):
         self.data = [d for d in self.data if d.place in places]
     
     def skip(self, skip_num):
-        self.data = self.data[::skip_num+1]
+        self.data = [d for d in self.data if (d.id % (skip_num + 1)) == 0]
+        # self.data = self.data[::skip_num+1]'
+        
+    def delete_glasses(self):
+        self.data = [d for d in self.data if not d.glasses]
         
     

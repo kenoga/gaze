@@ -13,9 +13,10 @@ class OmniDataInitiator(DataInitiator):
         data.name = os.path.basename(path)
         split = data.name.split('.')[0].split('_')
         data.pid = int(split[0])
-        data.glasses = bool(split[1])
+        data.glasses = bool(int(split[1]))
         data.place = split[2]
         data.target = int(split[3])
+        data.id = int(split[4])
         return data
 
 class KatayamaDataInitiator(DataInitiator):
@@ -26,6 +27,7 @@ class KatayamaDataInitiator(DataInitiator):
         split = data.name.split('.')[0].split('_')
         data.pid = int(split[0])
         data.target = int(split[1])
+        data.id = int(split[2].replace("image", ""))
         return data
 
   
