@@ -10,13 +10,17 @@ class OmniDataInitiator(DataInitiator):
      def init(self, path):
         data = Data()
         data.path = path
-        data.name = os.path.basename(path)
-        split = data.name.split('.')[0].split('_')
-        data.pid = int(split[0])
-        data.glasses = bool(int(split[1]))
-        data.place = split[2]
-        data.target = int(split[3])
-        data.id = int(split[4])
+        try:
+            data.name = os.path.basename(path)
+            split = data.name.split('.')[0].split('_')
+            data.pid = int(split[0])
+            data.glasses = bool(int(split[1]))
+            data.place = split[2]
+            data.target = int(split[3])
+            data.id = int(split[4])
+        except Exception as e:
+            print(e)
+            print(path)
         return data
 
 class KatayamaDataInitiator(DataInitiator):
