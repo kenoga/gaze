@@ -101,10 +101,11 @@ class DataPathProvider():
         if self.skip_num:
             self.dataset.skip(self.skip_num)
  
-        if self.noise_data_path:
-            with open(self.noise_data_path, 'r') as fr:
-                self.noise_dict = json.load(fr)
-                self.dataset.filter_noise(self.noise_dict)
+        if self.noise_data_paths:
+            for path in self.noise_data_paths:
+                with open(path, 'r') as fr:
+                    noise_dict = json.load(fr)
+                    self.dataset.filter_noise(noise_dict)
 
         if self.annotation_path:
             with open(self.annotation_path, 'r') as fr:

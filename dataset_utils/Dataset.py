@@ -47,7 +47,7 @@ class Dataset(object):
                 d.locked = False
 
     def filter_noise(self, noise_set):
-        self.data = [d for d in self.data if d not in noise_set]
+        self.data = [d for d in self.data if d.name not in noise_set]
     
     def filter_noise2(self, noise_dict):
         self.data = [d for d in self.data \

@@ -20,12 +20,14 @@
         "group_num": 6,
         "noise_data_path": false,
         "img_format": "jpg",
-        "data_initiator": "OmniDataInitiator",
-        "glasses": false
+        "data_initiator": "OmniDataInitiator"
+    },
+    "without_noise": {
+        "noise_data_path": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"]
     },
     
-    "detail": {
-        "group_num": 17
+    "sample_unlock": {
+        "nonlocked_rate": 1
     },
 
     "large_img": {
@@ -35,9 +37,7 @@
     "without40": {
         "ignored_targets": [3,4,5,6,40]
     },    
-    "without_noise": {
-        "noise_data_path": "../data/omni/noise_data.json"
-    },
+
     "noise_as_nonlocked": {
         "delete_noise": false
     },

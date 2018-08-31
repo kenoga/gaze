@@ -8,6 +8,7 @@ import csv
 from PIL import Image
 from config import DS_ROOT
 from IPython.display import Image, display
+from openface.align_dlib import TEMPLATE
 
 
 def imshow(img, format='.png'):
@@ -67,3 +68,20 @@ def load_triangles():
         for triangle in csvreader:
             triangles.append([int(p) for p in triangle])
     return triangles
+
+def extract_eyes_region_from_aligned_face(img):
+    assert img is not None
+    assert img.shape[0] == img.shape[1]
+    size = img.shape[0]
+    top = int(TEMPLATE[37][1]*size)
+    bottom = int(TEMPLATE[41][1]*size)
+    left = int(TEMPLATE[36][0]*size)
+    right = int(TEMPLATE[45][0]*size)
+    eyes = img[top: bottom, left: right]
+    return eyes
+    
+def gray(img):
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+def eqhist(img):
+    return cv2.equalizeHist(img)
