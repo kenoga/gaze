@@ -16,10 +16,10 @@ ANT_PATH = "./flmk_annotation.json"
 DATA_DIR = os.path.join(DS_ROOT, "aligned_with_68")
 
 # ノイズ検出器の学習，検証，テストに必要なデータを作成して返す
-noise_label = {"big_gap", "one_eye", "small_gap", "blink", "other"}
+noise_label = {"big_gap", "one_eye", "small_gap"}
 
 
-def get_data(data_dir, ant_path):
+def get_data(data_dir, ant_path, noise_label= {"big_gap", "small_gap", "one_eye"}):
     dataset = Dataset(data_dir)
     
     with open(ANT_PATH, "r") as fr:

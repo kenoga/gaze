@@ -54,7 +54,7 @@ class BatchProvider():
             
             t = np.array(int(path.locked), dtype=np.int32)
             if self.face_dir_dict:
-                f_list_nest = self.path.face_direction
+                f_list_nest = path.face_direction
                 if path.mirror:
                     # xを反転 (positionはx, yの順になっている
                     f_list_nest = [[1-position[0], position[1]]for position in f_list_nest]

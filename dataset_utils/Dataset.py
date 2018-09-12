@@ -35,7 +35,7 @@ class Dataset(object):
     def load_face_direction_feature(self, face_dir_dict):
         # delete data that has not face
         self.with_face_direction = True
-        self.data = [d for d in data if d in face_bb_lmk_dict]
+        self.data = [d for d in self.data if d.name in face_dir_dict]
         for d in self.data:
             d.face_direction = face_dir_dict[d.name]
     
@@ -60,7 +60,7 @@ class Dataset(object):
     def filter_target(self, ignored):
         self.data = [d for d in self.data if d.target not in ignored]
     
-    def filater_place(self, places):
+    def filter_place(self, places):
         self.data = [d for d in self.data if d.place in places]
     
     def skip(self, skip_num):
@@ -69,5 +69,6 @@ class Dataset(object):
         
     def delete_glasses(self):
         self.data = [d for d in self.data if not d.glasses]
+
         
     

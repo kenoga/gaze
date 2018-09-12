@@ -69,16 +69,33 @@ def load_triangles():
             triangles.append([int(p) for p in triangle])
     return triangles
 
-def extract_eyes_region_from_aligned_face(img):
+def extract_eyes_region_from_aligned_face(img, margin=0):
     assert img is not None
     assert img.shape[0] == img.shape[1]
     size = img.shape[0]
-    top = int(TEMPLATE[37][1]*size)
-    bottom = int(TEMPLATE[41][1]*size)
-    left = int(TEMPLATE[36][0]*size)
-    right = int(TEMPLATE[45][0]*size)
-    eyes = img[top: bottom, left: right]
+    top = int(TEMPLATE[37][1]*size) - margin
+    bottom = int(TEMPLATE[41][1]*size) + margin
+    right = int(TEMPLATE[36][0]*size) - margin
+    left = int(TEMPLATE[45][0]*size) + margin
+    eyes = img[top: bottom, right: left]
     return eyes
+
+def extract_eye_regions_from_aligned_face(img, margin=0):
+    assert img is not None
+    assert img.shape[0] == img.shape[1]
+    size = img.shape[0]
+    
+    eye_width = int(TEMPLATE[39][0]*size) - int(TEMPLATE[36][0]*size)
+    eye_height = int(TEMPLATE[41][1]*size) - int(TEMPLATE[37][1]*size)
+    
+    right_top = int(TEMPLATE[37][1]*size)
+    right_right = int(TEMPLATE[36][0]*size)
+    right_eye = img[right_top-margin: right_top+eye_height+margin, right_right-margin: right_right+eye_width+margin]
+   
+    left_top = int(TEMPLATE[44][1]*size)
+    left_right = int(TEMPLATE[42][0]*size)
+    left_eye = img[left_top-margin: left_top+eye_height+margin, left_right-margin: left_right+eye_width+margin]
+    return left_eye, right_eye
     
 def gray(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

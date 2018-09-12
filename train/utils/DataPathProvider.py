@@ -1,5 +1,6 @@
  # -*- coding: utf-8 -*-
 
+import os
 import random
 import glob
 import json
@@ -73,11 +74,12 @@ class DataPathProvider():
         self.load_conf_val(conf, 'locked_targets')
         self.load_conf_val(conf, 'bulking')
         self.load_conf_val(conf, 'pids')
+        self.load_conf_val(conf, 'places')
         self.load_conf_val(conf, 'nonlocked_rate')
-        self.load_conf_val(conf, 'noise_data_path')
+        self.load_conf_val(conf, 'noise_data_paths')
         self.load_conf_val(conf, 'annotation_path')
         self.load_conf_val(conf, 'ignored_targets')
-        self.load_conf_val(conf, 'face_direction_path')
+        self.load_conf_val(conf, 'face_direction_dir')
         self.load_conf_val(conf, 'skip_num')
         self.load_conf_val(conf, 'img_format')
         self.load_conf_val(conf, 'data_initiator')
@@ -97,7 +99,11 @@ class DataPathProvider():
             img_format=self.img_format)
         # データセットのフィルタリング，必要な情報の読み込みなど
         self.dataset.filter_pid(self.pids)
+
         self.dataset.set_label(self.locked_targets)
+        
+        if self.places:
+            self.dataset.filter_place(self.places)
         if self.skip_num:
             self.dataset.skip(self.skip_num)
  
@@ -118,7 +124,7 @@ class DataPathProvider():
         if not self.glasses:
             self.dataset.delete_glasses()
             
-        if self.face_direction_path:
+        if self.face_direction_dir:
             face_dir_dict = {}
             dir_path = self.face_direction_dir
             json_fnames = [fname for fname in os.listdir(dir_path) if 'json' in fname]
@@ -129,7 +135,6 @@ class DataPathProvider():
                     for k, v in d.items():
                         face_dir_dict[k] = v
             self.dataset.load_face_direction_feature(face_dir_dict)
-            
         self.dataset.data = [d for d in self.dataset.data if not (d.pid == 12 and (d.place == "B" or d.place == "C"))]
     
     def load_conf_val(self, config, key):

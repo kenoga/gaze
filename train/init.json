@@ -13,27 +13,79 @@
         "face_direction_path": false,
         "skip_num": 4,
         "ignored_targets": [3,4,5,6],
-        "annotation_path": "../data/omni/annotations.json",
+        "annotation_path": false,
         "bulking": true,
         "nonlocked_rate": false,
         "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
         "group_num": 6,
-        "noise_data_path": false,
+        "noise_data_paths": false,
         "img_format": "jpg",
-        "data_initiator": "OmniDataInitiator"
+        "data_initiator": "OmniDataInitiator",
+        "glasses": false
+    },
+    "default_detail": {
+        "group_num": 17
     },
     "without_noise": {
-        "noise_data_path": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"]
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"]
+    },
+    "without_noise_detail": {
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"],
+        "group_num": 17
+    },
+    "without_noise_sample_unlock": {
+        "nonlocked_rate": 1,
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"],
+        "group_num": 17
+    },
+    
+    "without_noise_face_feature": {
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"],
+        "face_direction_dir": "../data/omni/face_direction_feature",
+        "group_num": 17
+    },
+    
+    "placeAB_detail": {
+        "group_num": 17,
+        "places": ["A", "B"]
+    },
+    "placeCD_detail": {
+        "group_num": 17,
+        "places": ["C", "D"]
     },
     
     "sample_unlock": {
         "nonlocked_rate": 1
     },
+    
+    "katayama": {
+        "group_num": 27,
+        "places": false,
+        "locked_targets": [1],
+        "dataset_path": "../data/katayama/both_eyes_from_aligned_face",
+        "face_direction_path": false,
+        "skip_num": false,
+        "ignored_targets": [],
+        "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],
+        "img_format": "png",
+        "data_initiator": "KatayamaDataInitiator",
+        "annotation_path": false
+    },
+    "katayama17": {
+        "group_num": 17,
+        "places": false,
+        "locked_targets": [1],
+        "dataset_path": "../data/katayama/both_eyes_from_aligned_face",
+        "face_direction_path": false,
+        "skip_num": false,
+        "ignored_targets": [],
+        "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
+        "img_format": "png",
+        "data_initiator": "KatayamaDataInitiator",
+        "annotation_path": false
+    },
 
-    "large_img": {
-        "img_size": [55, 255],
-        "dataset_path": "../data/omni/both_eyes_from_aligned_face"
-    }, 
+
     "without40": {
         "ignored_targets": [3,4,5,6,40]
     },    
@@ -50,18 +102,8 @@
     "easy2": {
         "ignored_targets": [1,2,3,4,5,6,31,32,40,50]
     },
-    "katayama": {
-        "places": false,
-        "locked_targets": [1],
-        "dataset_path": "../data/katayama/both_eyes_from_aligned_face",
-        "face_direction_path": false,
-        "skip_num": false,
-        "ignored_targets": [],
-        "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],
-        "img_format": "png",
-        "data_initiator": "KatayamaDataInitiator",
-        "annotation_path": false
-    },
+    
+
     "katayama_fullface": {
         "places": false,
         "locked_targets": [1],
