@@ -77,6 +77,7 @@ class DataPathProvider():
         self.load_conf_val(conf, 'places')
         self.load_conf_val(conf, 'nonlocked_rate')
         self.load_conf_val(conf, 'noise_data_paths')
+        self.load_conf_val(conf, 'blink_noise_path')
         self.load_conf_val(conf, 'annotation_path')
         self.load_conf_val(conf, 'ignored_targets')
         self.load_conf_val(conf, 'face_direction_dir')
@@ -112,6 +113,10 @@ class DataPathProvider():
                 with open(path, 'r') as fr:
                     noise_dict = json.load(fr)
                     self.dataset.filter_noise(noise_dict)
+        if self.blink_noise_path:
+            with open(self.blink_noise_path, "r") as fr:
+                noise_dict = json.load(fr)
+                self.dataset.blink_as_nonlocked(noise_dict)
 
         if self.annotation_path:
             with open(self.annotation_path, 'r') as fr:
@@ -125,6 +130,7 @@ class DataPathProvider():
             self.dataset.delete_glasses()
             
         if self.face_direction_dir:
+            print("loading face direction features...")
             face_dir_dict = {}
             dir_path = self.face_direction_dir
             json_fnames = [fname for fname in os.listdir(dir_path) if 'json' in fname]

@@ -69,6 +69,12 @@ class Dataset(object):
         
     def delete_glasses(self):
         self.data = [d for d in self.data if not d.glasses]
+        
+    def blink_as_nonlocked(self, blink_dict):
+        for d in self.data:
+            if d.name in blink_dict:
+                d.locked = False
+                
 
         
     

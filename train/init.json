@@ -17,34 +17,38 @@
         "bulking": true,
         "nonlocked_rate": false,
         "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
-        "group_num": 6,
+        "group_num": 17,
         "noise_data_paths": false,
         "img_format": "jpg",
         "data_initiator": "OmniDataInitiator",
-        "glasses": false
-    },
-    "default_detail": {
-        "group_num": 17
-    },
-    "without_noise": {
-        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"]
-    },
-    "without_noise_detail": {
-        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"],
-        "group_num": 17
-    },
-    "without_noise_sample_unlock": {
-        "nonlocked_rate": 1,
-        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"],
-        "group_num": 17
+        "glasses": false,
+        "blink_noise_path": false
     },
     
-    "without_noise_face_feature": {
-        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise.json"],
+    "tmp": {
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
+        "blink_noise_path": "../data/omni/blink.json"
+    },
+    
+    "with_face_feature": {
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
+        "blink_noise_path": "../data/omni/blink.json",
+        "face_direction_dir": "../data/omni/face_direction_feature"
+    },
+    
+    "decrease_noise": {
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
+        "blink_noise_path": "../data/omni/blink.json"
+    },
+
+    
+    "fullface_with_face_feature": {
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "face_direction_dir": "../data/omni/face_direction_feature",
-        "group_num": 17
+        "dataset_path": "../data/omni/aligned_face2",
+        "img_size": [96, 96]
     },
-    
+
     "placeAB_detail": {
         "group_num": 17,
         "places": ["A", "B"]
@@ -85,23 +89,10 @@
         "annotation_path": false
     },
 
-
-    "without40": {
-        "ignored_targets": [3,4,5,6,40]
-    },    
-
-    "noise_as_nonlocked": {
-        "delete_noise": false
-    },
     "with_face_feature": {
         "face_direction_dir": "../data/omni/face_direction_feature"
     },
-    "easy1": {
-        "ignored_targets": [1,2,3,4,5,6,40,50]
-    },
-    "easy2": {
-        "ignored_targets": [1,2,3,4,5,6,31,32,40,50]
-    },
+
     
 
     "katayama_fullface": {
