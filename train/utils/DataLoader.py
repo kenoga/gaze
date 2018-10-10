@@ -21,7 +21,7 @@ class OmniDataLoader(DataLoader):
         img = Image.open(path.path).convert('L') ## Gray->L, RGB->RGB
         img = ImageOps.equalize(img)
 
-        img = img.resize((self.img_size[0], self.img_size[1]))
+        img = img.resize((self.img_size[1], self.img_size[0]))
 
         if path.mirror:
             img = ImageOps.mirror(img)
@@ -50,3 +50,38 @@ class OmniWithFaceFeatureDataLoader(OmniDataLoader):
         f = np.array(f_list, dtype=np.float32)
         assert len(f) == 136
         return x, f, t
+
+class OmniEachEyeDataLoader(OmniDataLoader):
+    def __init__(self, img_size):
+        super(OmniEachEyeDataLoader, self).__init__(img_size)
+        pass
+
+    def load(self, path):
+        img = Image.open(path.path).convert('L') ## Gray->L, RGB->RGB
+        img = ImageOps.equalize(img)
+
+        img = img.resize((self.img_size[1], self.img_size[0]))
+
+        if path.mirror:
+            img = ImageOps.mirror(img)
+        left_eye = img.crop((0, 0, int(self.img_size[1]/2), self.img_size[0]))
+        right_eye = img.crop((int(self.img_size[1]/2), 0, self.img_size[1], self.img_size[0]))
+
+        
+
+
+
+        x = np.array(img, dtype=np.float32)
+        x = x / 255.0 ## Normalize [0, 255] -> [0, 1]
+        x = x.reshape(1, self.img_size[0], self.img_size[1]) ## Reshape image to input shape of CNN
+
+        t = np.array(int(path.locked), dtype=np.int32)
+
+        return x, t
+
+
+
+
+
+
+
