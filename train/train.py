@@ -8,7 +8,7 @@ import chainer
 import pickle
 import copy
 
-from model.cnn import CNN, CNNWithFCFeature
+from model.cnn import *
 
 import numpy as np
 import chainer
@@ -34,28 +34,21 @@ def forward(dataloader, model, purpose, optimizer=None):
     while True:
         # train
         require_paths = False if purpose == "train" else True
-        batches = dataloader.get_batch(dtype=purpose, paths=require_paths)
-        if batches is None:
+        data = dataloader.get_batch(dtype=purpose, paths=require_paths)
+        if data is None:
             break
-        if purpose == "train":
-            x, t_batch = batches
-        else:
-            batches, paths = batches
-            x, t_batch = batches
 
-        if type(model) == CNNWithFCFeature:
-            x_batch, f_batch = x
-            x_batch = cuda.to_gpu(x_batch)
-            f_batch = chainer.Variable(cuda.to_gpu(f_batch))
-            y = model(x_batch, f_batch)
-        else:
-            x_batch = x
-            x_batch = cuda.to_gpu(x_batch)
-            y= model(x_batch)
+        if require_paths:
+            data, paths = data
 
-        t_batch = cuda.to_gpu(t_batch)
-        t = chainer.Variable(t_batch)
+        assert len(data) > 2 # 入力1つ、出力1つは必須なのでチェック
+        inputs = data[:-1]
+        output = data[-1]
 
+        for i in range(len(inputs)):
+            inputs[i] = chainer.Variable(cuda.to_gpu(inputs[i]))
+        y = model(*inputs)
+        t = chainer.Variable(cuda.to_gpu(output))
         loss = F.softmax_cross_entropy(y, t)
         accuracy = F.accuracy(y, t)
 
