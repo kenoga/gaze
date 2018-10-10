@@ -114,7 +114,7 @@ class CNNEachEye(chainer.Chain):
             self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
             self.fc1 = L.Linear(None, 256, nobias=False)
             self.fc2 = L.Linear(None, 128, nobias=False)
-            self.fc3 = L.Linear(None, 2, nobians=False)
+            self.fc3 = L.Linear(None, 2, nobias=False)
 
     def __call__(self, eye1, eye2):
         h = F.relu(self.conv1_1(eye1))
