@@ -9,7 +9,7 @@ from collections import defaultdict
 import chainer
 
 import train
-from model.cnn import CNN, CNNWithFCFeature
+from model.cnn import *
 from utils.DataPathProvider import DataPathProvider
 from utils.BatchProvider import BatchProvider
 from utils.DataLoader import *
@@ -60,13 +60,12 @@ def main(conf_id, gpu=0):
     GivenDataLoader = globals()[conf["data_loader"]]
     data_loader = GivenDataLoader(conf["img_size"])
 
+    cnn = globals()[conf["model"]]
+
     # cross validation
     result_all = {}
     while path_provider.remains():
-        if face_dir_dict:
-            model = CNNWithFCFeature(2)
-        else:
-            model = CNN(2)
+        model = cnn()
 
         result_path = os.path.join(conf['result_path'], conf_id, "%02d" % path_provider.get_test_index())
         model_path = os.path.join(conf['model_path'], conf_id, "%02d" % path_provider.get_test_index())

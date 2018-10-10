@@ -2,33 +2,42 @@
     "default": {
         "result_path": "./result",
         "model_path": "./trained",
-        "places": ["A", "B", "C", "D"],
-        "locked_targets": [0,1,2,31,32,50],
+
         "batch_size": 64,
         "block_size": 512,
         "img_size": [32, 96],
         "epoch": 10,
         "learn_rate": 0.01,
-        "dataset_path": "../data/omni/both_eyes_from_aligned_face2",
-        "face_direction_path": false,
-        "skip_num": 4,
+
+        "places": ["A", "B", "C", "D"],
+        "locked_targets": [0,1,2,31,32,50],
         "ignored_targets": [3,4,5,6],
-        "annotation_path": false,
+        "glasses": false,
+        "skip_num": 4,
         "bulking": true,
         "nonlocked_rate": false,
         "pids": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
         "group_num": 17,
-        "noise_data_paths": false,
+
         "img_format": "jpg",
+        "model": "CNN",
         "data_initiator": "OmniDataInitiator",
         "data_loader": "OmniDataLoader",
-        "glasses": false,
-        "blink_noise_path": false
+        "dataset_path": "../data/omni/both_eyes_from_aligned_face2",
+        "blink_noise_path": false,
+        "face_direction_path": false,
+        "noise_data_paths": false,
+        "annotation_path": false
     },
 
     "tmp": {
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "blink_noise_path": "../data/omni/blink.json"
+    },
+
+    "each_eye": {
+        "data_loader": "OmniEachEyeDataLoader",
+        "model": "CNNEachEye"
     },
 
     "with_face_feature": {
