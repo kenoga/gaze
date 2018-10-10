@@ -140,7 +140,7 @@ class CNNEachEye(chainer.Chain):
         return y
 
 
-class CNNWithAttention(chainer.Chain):
+class CNNEachEyeWithAttention(chainer.Chain):
 
     def __init__(self, class_num):
         super(CNNWithFCFeature, self).__init__()
@@ -153,6 +153,8 @@ class CNNWithAttention(chainer.Chain):
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobians=False)
 
+            self.fc_for_attention = L.Linear(136, 128, nobias=False)
+
 #             self.conv1_1 = L.Convolution2D(None, 20, ksize=5, nobias=False)
 #             self.conv1_2 = L.Convolution2D(None, 50, ksize=5, nobias=False)
 #             # self.conv2_1 = L.Convolution2D(None, 256, ksize=3, nobias=False)
@@ -161,13 +163,30 @@ class CNNWithAttention(chainer.Chain):
 #             self.fc2 = L.Linear(None, 128, nobias=False)
 #             self.fc3 = L.Linear(None, 2, nobias=False)
 
-    def __call__(self, x, feature):
-        h = F.relu(self.conv1_1(x))
+    def __call__(self, eye1, eye2, face):
+        h = F.relu(self.conv1_1(eye1))
         h = F.relu(self.conv1_2(h))
         h = F.max_pooling_2d(h, ksize=3)
         h = F.relu(self.conv2_1(h))
         h = F.relu(self.conv2_2(h))
+        eye1_h = F.max_pooling_2d(h, ksize=3)
+        eye1_h = F.dropout(F.relu(self.fc1(eye1_h)))
+        eye1_h = F.dropout(F.relu(self.fc2(eye1_h)))
+
+
+        h = F.relu(self.conv1_1(eye2))
+        h = F.relu(self.conv1_2(h))
         h = F.max_pooling_2d(h, ksize=3)
+        h = F.relu(self.conv2_1(h))
+        h = F.relu(self.conv2_2(h))
+        eye2_h = F.max_pooling_2d(h, ksize=3)
+        eye2_h = F.dropout(F.relu(self.fc1(eye2_h)))
+        eye2_h = F.dropout(F.relu(self.fc2(eye2_h)))
+
+        ats = self.fc_for_attention(face)
+
+        h = F.concat(eye1_h.flatten(), eye2_h.flatten())
+
         h = F.dropout(F.relu(self.fc1(h)))
         h = F.hstack((h, feature))
         h = F.dropout(F.relu(self.fc2(h)))
