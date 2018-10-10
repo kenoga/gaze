@@ -72,8 +72,8 @@ class OmniEachEyeDataLoader(OmniDataLoader):
         l = np.array(left_eye, dtype=np.float32) / 255.0
         r = np.array(right_eye, dtype=np.float32) / 255.0
 
-        l = l.reshape(1, int(self.img_size[1]/2), self.img_size[1]) ## Reshape image to input shape of CNN
-        r = r.reshape(1, int(self.img_size[1]/2), self.img_size[1]) ## Reshape image to input shape of CNN
+        l = l.reshape(1, int(self.img_size[1]/2), self.img_size[0]) ## Reshape image to input shape of CNN
+        r = r.reshape(1, int(self.img_size[1]/2), self.img_size[0]) ## Reshape image to input shape of CNN
 
         t = np.array(int(path.locked), dtype=np.int32)
 
