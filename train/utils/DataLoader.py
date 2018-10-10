@@ -64,24 +64,17 @@ class OmniEachEyeDataLoader(OmniDataLoader):
 
         if path.mirror:
             img = ImageOps.mirror(img)
+
         left_eye = img.crop((0, 0, int(self.img_size[1]/2), self.img_size[0]))
         right_eye = img.crop((int(self.img_size[1]/2), 0, self.img_size[1], self.img_size[0]))
+        right_eye = ImageOps.mirror(right_eye) # 反転させる
 
-        
+        l = np.array(left_eye, dtype=np.float32) / 255.0
+        r = np.array(right_eye, dtype=np.float32) / 255.0
 
-
-
-        x = np.array(img, dtype=np.float32)
-        x = x / 255.0 ## Normalize [0, 255] -> [0, 1]
-        x = x.reshape(1, self.img_size[0], self.img_size[1]) ## Reshape image to input shape of CNN
+        l = l.reshape(1, self.img_size[0], self.img_size[1]) ## Reshape image to input shape of CNN
+        r = r.reshape(1, self.img_size[0], self.img_size[1]) ## Reshape image to input shape of CNN
 
         t = np.array(int(path.locked), dtype=np.int32)
 
-        return x, t
-
-
-
-
-
-
-
+        return l, r, t
