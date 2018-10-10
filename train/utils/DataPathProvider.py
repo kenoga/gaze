@@ -140,9 +140,16 @@ class DataPathProvider():
                     d = json.load(fr)
                     for k, v in d.items():
                         face_dir_dict[k] = v
+                        
             self.dataset.load_face_direction_feature(face_dir_dict)
         self.dataset.data = [d for d in self.dataset.data if not (d.pid == 12 and (d.place == "B" or d.place == "C"))]
-    
+        self.dataset.print_data()
+
+    def save_dataset(path):
+        with open(path, "w") as fw:
+            pickle.dump(self.dataset, fw)
+        
+        
     def load_conf_val(self, config, key):
         assert config is not None 
         assert key in config

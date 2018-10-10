@@ -42,11 +42,16 @@ def get_subdirs(img_type='face_image', dataset_path=DS_ROOT):
 
 
 # person_id -> bb_and_landmarks dictのdictを返す
-def get_bb_and_landmarks_dict(dataset_path=DS_ROOT):
+def get_bb_and_landmarks_dict():
     result = {}
-    json_path = os.path.join(dataset_path, 'face_bb_and_landmarks', 'all.json')
-    with open(json_path, 'r') as fr:
-            return json.load(fr)
+    dir_path = os.path.join(DS_ROOT, 'face_bb_and_landmarks')
+    jsons = [path for path in glob.glob(os.path.join(dir_path, '*.json')) if "all.json" not in path]
+    for json_file in jsons:
+        json_path = os.path.join(DS_ROOT, json_file)
+        with open(json_path, 'r') as fr:
+            person_id = os.path.basename(json_file).split('.')[0]
+            result[person_id] = json.load(fr)
+    return result
 
 
 def get_face_direction_feature_dict():

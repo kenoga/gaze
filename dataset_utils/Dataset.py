@@ -74,7 +74,17 @@ class Dataset(object):
         for d in self.data:
             if d.name in blink_dict:
                 d.locked = False
-                
+    
+    def print_data(self):
+        counter = {}
+        for d in self.data:
+            if d.pid in counter:
+                counter[d.pid] += 1
+            else:
+                counter[d.pid] = 0
+        for pid, count in sorted(counter.items()):
+            print("pid %d-> %d" % (pid, count))
+        
 
         
     

@@ -41,7 +41,6 @@
         "blink_noise_path": "../data/omni/blink.json"
     },
 
-    
     "fullface_with_face_feature": {
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "face_direction_dir": "../data/omni/face_direction_feature",
@@ -111,10 +110,9 @@
     
     "test": {
         "epoch": 1,
-        "pids": [1,2,3],
+        "pids": [5,7,9],
         "group_num": 3,
-        "bulking": false,
-        "skip_num": 2
+        "face_direction_dir": "../data/omni/face_direction_feature"
     }
     
    
