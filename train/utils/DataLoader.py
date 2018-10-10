@@ -1,4 +1,4 @@
-]# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import numpy as np
 from PIL import Image, ImageOps
@@ -14,6 +14,7 @@ class DataLoader(object):
 
 class OmniDataLoader(DataLoader):
     def __init__(self, img_size):
+        self.img_size = img_size
         pass
 
     def load(self, path):
@@ -34,7 +35,8 @@ class OmniDataLoader(DataLoader):
         return x, t
 
 class OmniWithFaceFeatureDataLoader(OmniDataLoader):
-    def __init__(self):
+    def __init__(self, img_size):
+        super(OmniWithFaceFeatureDataLoader, self).__init__(img_size)
         pass
 
     def load(self, path):

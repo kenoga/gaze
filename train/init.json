@@ -23,7 +23,7 @@
         "data_initiator": "OmniDataInitiator",
         "data_loader": "OmniDataLoader",
         "glasses": false,
-        "blink_noise_path": false,
+        "blink_noise_path": false
     },
 
     "tmp": {

@@ -49,8 +49,7 @@ class BatchProvider():
             result[i] = np.array(result[i], dtype=dtype)
 
         if return_paths:
-            result.append(paths)
-
+            return tuple(result), paths  
         return tuple(result)
 
 

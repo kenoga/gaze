@@ -12,7 +12,7 @@ import train
 from model.cnn import CNN, CNNWithFCFeature
 from utils.DataPathProvider import DataPathProvider
 from utils.BatchProvider import BatchProvider
-from utils.DataProvider import *
+from utils.DataLoader import *
 
 def load_conf(conf_fpath, conf_id, conf=None):
     assert os.path.exists(conf_fpath)
@@ -58,7 +58,7 @@ def main(conf_id, gpu=0):
     path_provider.report()
 
     GivenDataLoader = globals()[conf["data_loader"]]
-    data_loader = GivenDataLoader()
+    data_loader = GivenDataLoader(conf["img_size"])
 
     # cross validation
     result_all = {}
@@ -80,8 +80,7 @@ def main(conf_id, gpu=0):
             test_paths,
             conf['batch_size'],
             conf['block_size'],
-            conf['img_size'],
-            face_dir_dict=face_dir_dict
+            conf['img_size']
         )
 
         result = train.train_and_test(model, batch_provider, result_path, model_path, \
