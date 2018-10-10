@@ -41,8 +41,8 @@ def forward(dataloader, model, purpose, optimizer=None):
         if require_paths:
             data, paths = data
 
-        assert len(data) > 2 # 入力1つ、出力1つは必須なのでチェック
-        inputs = data[:-1]
+        assert len(data) >= 2 # 入力1つ、出力1つは必須なのでチェック
+        inputs = list(data[:-1])
         output = data[-1]
 
         for i in range(len(inputs)):
