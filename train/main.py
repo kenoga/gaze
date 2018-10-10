@@ -39,8 +39,6 @@ def main(conf_id, gpu=0):
     conf['conf_id'] = conf_id
     report_conf(conf)
 
-    model = CNN(2)
-
     face_dir_dict = None
     if conf['face_direction_dir']:
         face_dir_dict = {}
