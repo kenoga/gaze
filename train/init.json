@@ -21,21 +21,22 @@
         "noise_data_paths": false,
         "img_format": "jpg",
         "data_initiator": "OmniDataInitiator",
+        "data_loader": "OmniDataLoader",
         "glasses": false,
-        "blink_noise_path": false
+        "blink_noise_path": false,
     },
-    
+
     "tmp": {
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "blink_noise_path": "../data/omni/blink.json"
     },
-    
+
     "with_face_feature": {
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "blink_noise_path": "../data/omni/blink.json",
         "face_direction_dir": "../data/omni/face_direction_feature"
     },
-    
+
     "decrease_noise": {
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "blink_noise_path": "../data/omni/blink.json"
@@ -56,11 +57,11 @@
         "group_num": 17,
         "places": ["C", "D"]
     },
-    
+
     "sample_unlock": {
         "nonlocked_rate": 1
     },
-    
+
     "katayama": {
         "group_num": 27,
         "places": false,
@@ -92,7 +93,7 @@
         "face_direction_dir": "../data/omni/face_direction_feature"
     },
 
-    
+
 
     "katayama_fullface": {
         "places": false,
@@ -107,13 +108,13 @@
         "annotation_path": false,
         "img_size": [96, 96]
     },
-    
+
     "test": {
         "epoch": 1,
         "pids": [5,7,9],
         "group_num": 3,
         "face_direction_dir": "../data/omni/face_direction_feature"
     }
-    
-   
+
+
 }

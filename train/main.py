@@ -12,34 +12,35 @@ import train
 from model.cnn import CNN, CNNWithFCFeature
 from utils.DataPathProvider import DataPathProvider
 from utils.BatchProvider import BatchProvider
+from utils.DataProvider import *
 
 def load_conf(conf_fpath, conf_id, conf=None):
     assert os.path.exists(conf_fpath)
-    
+
     if conf is None:
         conf = defaultdict(lambda: None)
-        
+
     with open(conf_fpath, 'r') as fr:
         conf_raw = json.load(fr)[conf_id]
-    
+
     for key in conf_raw.keys():
         conf[key] = conf_raw[key]
-    
+
     return conf
 
 def report_conf(conf):
     print(' '.join(['-' * 25, 'conf', '-' * 25]))
     for key, value in sorted(conf.items()):
         print('%s => %s' % (key, value))
-        
+
 def main(conf_id, gpu=0):
     conf_def = load_conf('./init.json', 'default')
     conf = load_conf('./init.json', conf_id, conf=conf_def)
     conf['conf_id'] = conf_id
     report_conf(conf)
-    
+
     model = CNN(2)
-    
+
     face_dir_dict = None
     if conf['face_direction_dir']:
         face_dir_dict = {}
@@ -51,11 +52,14 @@ def main(conf_id, gpu=0):
                 d = json.load(fr)
                 for k, v in d.items():
                     face_dir_dict[k] = v
-    
-    
+
+
     path_provider = DataPathProvider(conf)
     path_provider.report()
-    
+
+    GivenDataLoader = globals()[conf["data_loader"]]
+    data_loader = GivenDataLoader()
+
     # cross validation
     result_all = {}
     while path_provider.remains():
@@ -63,19 +67,20 @@ def main(conf_id, gpu=0):
             model = CNNWithFCFeature(2)
         else:
             model = CNN(2)
-        
+
         result_path = os.path.join(conf['result_path'], conf_id, "%02d" % path_provider.get_test_index())
         model_path = os.path.join(conf['model_path'], conf_id, "%02d" % path_provider.get_test_index())
-        
+
         train_paths, validation_paths, test_paths = path_provider.get_paths()
-        
+
         batch_provider = BatchProvider(
+            data_loader,
             train_paths,
             validation_paths,
             test_paths,
-            conf['batch_size'], 
-            conf['block_size'], 
-            conf['img_size'], 
+            conf['batch_size'],
+            conf['block_size'],
+            conf['img_size'],
             face_dir_dict=face_dir_dict
         )
 
@@ -83,7 +88,7 @@ def main(conf_id, gpu=0):
             epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=gpu)
         index = path_provider.get_test_index()
         result_all[index] = result
-    
+
     result_path = os.path.join(conf['result_path'], conf_id, 'all.json')
     print('save all results as .json --> {}'.format(result_path))
     with open(result_path, 'w') as fw:

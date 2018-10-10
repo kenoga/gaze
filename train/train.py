@@ -22,7 +22,7 @@ from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 def forward(dataloader, model, purpose, optimizer=None):
     assert purpose in {"train", "validation", "test"}
-    
+
     losses = []
     if purpose == "train":
         accuracies = []
@@ -30,7 +30,7 @@ def forward(dataloader, model, purpose, optimizer=None):
         y_all = np.array([])
         t_all = np.array([])
         paths_all = []
-    
+
     while True:
         # train
         require_paths = False if purpose == "train" else True
@@ -42,7 +42,7 @@ def forward(dataloader, model, purpose, optimizer=None):
         else:
             batches, paths = batches
             x, t_batch = batches
-        
+
         if type(model) == CNNWithFCFeature:
             x_batch, f_batch = x
             x_batch = cuda.to_gpu(x_batch)
@@ -55,7 +55,7 @@ def forward(dataloader, model, purpose, optimizer=None):
 
         t_batch = cuda.to_gpu(t_batch)
         t = chainer.Variable(t_batch)
-        
+
         loss = F.softmax_cross_entropy(y, t)
         accuracy = F.accuracy(y, t)
 
@@ -70,7 +70,7 @@ def forward(dataloader, model, purpose, optimizer=None):
             t_all = np.hstack((t_all, cuda.to_cpu(t.data)))
             paths_all.extend([path.name for path in paths])
         losses.append(cuda.to_cpu(loss.data))
-    
+
     loss = np.mean(losses)
     if purpose == "train":
         accuracy = np.mean(accuracies)
@@ -85,7 +85,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     print(' '.join(['-' * 25, 'training and validation', '-' * 25]))
     print('# epoch: {}'.format(epoch))
     # print('# learnrate: {}'.format(learn_rate))
-    
+
     ## Set gpu device
     if gpu is not None:
         cuda.get_device(gpu).use()
@@ -99,7 +99,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
 
     ## Training start!!
     start = time.time()
-    
+
     result = {}
     result['train'] = {}
     result['train']['loss'] = []
@@ -115,16 +115,16 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     result['test']['y'] = []
     result['test']['t'] = []
     result['test']['miss'] = []
-    
+
     best_model = None
     best_score = None
     updated = False
-    
+
     print('epoch  train_loss  train_accuracy  val_loss  val_accuracy  val_precision  val_recall  val_fscore  updated  Elapsed-Time')
     for epoch_i in range(epoch):
         # initialize data loader
         dataloader.init()
-        
+
         with chainer.using_config('train', True):
             train_loss, train_accuracy = forward(dataloader, model, "train", optimizer)
         with chainer.using_config('train', False):
@@ -136,8 +136,8 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
             updated = True
         else:
             updated = False
-            
-        
+
+
         print('{:>5}  {:^10.4f}  {:^14.4f}  {:^8.4f}  {:^12.4f}  {:^13.4f}  {:^10.4f}  {:^10.4f}  {:^7s}  {:^12.2f}' \
               .format( \
                 epoch_i, \
@@ -150,7 +150,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
                 np.mean(val_fscore),
                 str(updated),
                 time.time()-start))
-        
+
         result['train']['loss'].append(float(train_loss))
         result['train']['accuracy'].append(float(train_accuracy))
         result['val']['loss'].append(float(val_loss))
@@ -158,17 +158,17 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
         result['val']['precision'].append(float(val_precision))
         result['val']['recall'].append(float(val_recall))
         result['val']['fscore'].append(float(val_fscore))
-    
+
     print("the best score in validation set: %f" % best_score)
-    
+
     print(' '.join(['-' * 25, 'test', '-' * 25]))
     with chainer.using_config('train', False):
         (test_loss, test_accuracy), (test_precision, test_recall, test_fscore), (t, y, paths) = forward(dataloader, best_model, "test")
 
     print("loss: %f" % test_loss)
     print("accuracy: %f" % test_accuracy)
-    print("precision: %f" % test_precision) 
-    print("recall: %f" % test_recall) 
+    print("precision: %f" % test_precision)
+    print("recall: %f" % test_recall)
     print("fscore: %f" % test_fscore)
     result['test']['loss'] = float(test_loss)
     result['test']['accuracy'] = float(test_accuracy)
@@ -178,7 +178,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     result['test']['t'] = t
     result['test']['y'] = y
     result['test']['paths'] = paths
-    
+
     save_result(result_path, result)
     save_model(model_path, model)
     return result
@@ -193,7 +193,7 @@ def save_result(result_path, result):
         json.dump(result, fw, indent=2)
 
 
-def save_model(model_path, model):        
+def save_model(model_path, model):
     print('save the model as .npz --> {}'.format(model_path + '.npz') )
     dirpath = os.path.dirname(model_path)
     if not os.path.exists(dirpath):
@@ -203,5 +203,3 @@ def save_model(model_path, model):
     #     pickle.dump(model, open(model_path + '.pkl', 'wb'))
     #     print('save the optimizer --> {}'.format(model_path + '.state'))
     #     serializers.save_npz(model_path + '.state', optimizer)
-
-    
