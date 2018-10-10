@@ -131,7 +131,7 @@ class CNNEachEye(chainer.Chain):
         h = F.relu(self.conv2_2(h))
         eye2_h = F.max_pooling_2d(h, ksize=3)
 
-        h = F.concat(eye1_h.flatten(), eye2_h.flatten())
+        h = F.concat(F.flatten(eye1_h), F.flatten(eye2_h))
 
         h = F.dropout(F.relu(self.fc1(h)))
         h = F.hstack((h, feature))
