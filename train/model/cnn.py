@@ -133,7 +133,7 @@ class CNNEachEye(chainer.Chain):
         eye2_h = F.max_pooling_2d(h, ksize=3)
         eye2_h = F.dropout(F.relu(self.fc1(h)))
 
-        h = F.concat((eye1_h, eye2_h), axis=0)
+        h = F.concat((eye1_h, eye2_h), axis=1)
 
         h = F.dropout(F.relu(self.fc2(h)))
         y = self.fc3(h)
