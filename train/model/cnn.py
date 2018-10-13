@@ -178,7 +178,7 @@ class CNNEachEyeWithAttention(chainer.Chain):
         eye1_h = eye1_h * ats
         eye2_h = eye2_h * ats
 
-        h = F.concat(eye1_h, eye2_h)
+        h = F.concat(eye1_h, eye2_h, axis=1)
 
         y = self.fc3(h)
         return y
