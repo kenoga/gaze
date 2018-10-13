@@ -40,7 +40,7 @@ class OmniWithFaceFeatureDataLoader(OmniDataLoader):
         pass
 
     def load(self, path):
-        x, t = super(OmniWithFaceFeatureLoader, self).load(path)
+        x, t = super(OmniWithFaceFeatureDataLoader, self).load(path)
 
         f_list_nest = path.face_direction
         if path.mirror:

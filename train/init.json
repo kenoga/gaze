@@ -43,7 +43,9 @@
     "with_face_feature": {
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "blink_noise_path": "../data/omni/blink.json",
-        "face_direction_dir": "../data/omni/face_direction_feature"
+        "face_direction_dir": "../data/omni/face_direction_feature",
+        "data_loader": "OmniWithFaceFeatureDataLoader",
+        "model": "CNNWithFCFeature"
     },
 
     "decrease_noise": {
@@ -97,12 +99,6 @@
         "data_initiator": "KatayamaDataInitiator",
         "annotation_path": false
     },
-
-    "with_face_feature": {
-        "face_direction_dir": "../data/omni/face_direction_feature"
-    },
-
-
 
     "katayama_fullface": {
         "places": false,
