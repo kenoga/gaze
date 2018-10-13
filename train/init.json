@@ -57,8 +57,8 @@
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "blink_noise_path": "../data/omni/blink.json",
         "face_direction_dir": "../data/omni/face_direction_feature",
-        "data_loader": "OmniWithFaceFeatureDataLoader",
-        "model": "CNNWithFCFeature"
+        "data_loader": "OmniEachEyeWithFaceFeatureDataLoader",
+        "model": "CNNEachEyeWithAttention"
     },
 
     "fullface_with_face_feature": {
