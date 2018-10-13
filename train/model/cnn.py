@@ -142,7 +142,7 @@ class CNNEachEye(chainer.Chain):
 
 class CNNEachEyeWithAttention(chainer.Chain):
 
-    def __init__(self, class_num):
+    def __init__(self):
         super(CNNWithFCFeature, self).__init__()
         with self.init_scope():
             self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
