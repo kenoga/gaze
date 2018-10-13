@@ -155,14 +155,6 @@ class CNNEachEyeWithAttention(chainer.Chain):
 
             self.fc_for_attention = L.Linear(136, 128, nobias=False)
 
-#             self.conv1_1 = L.Convolution2D(None, 20, ksize=5, nobias=False)
-#             self.conv1_2 = L.Convolution2D(None, 50, ksize=5, nobias=False)
-#             # self.conv2_1 = L.Convolution2D(None, 256, ksize=3, nobias=False)
-#             # self.conv2_2 = L.Convolution2D(None, 128, ksize=3, nobias=False)
-#             self.fc1 = L.Linear(None, 256, nobias=False)
-#             self.fc2 = L.Linear(None, 128, nobias=False)
-#             self.fc3 = L.Linear(None, 2, nobias=False)
-
     def __call__(self, eye1, eye2, face):
         h = F.relu(self.conv1_1(eye1))
         h = F.relu(self.conv1_2(h))
@@ -173,7 +165,6 @@ class CNNEachEyeWithAttention(chainer.Chain):
         eye1_h = F.dropout(F.relu(self.fc1(eye1_h)))
         eye1_h = F.dropout(F.relu(self.fc2(eye1_h)))
 
-
         h = F.relu(self.conv1_1(eye2))
         h = F.relu(self.conv1_2(h))
         h = F.max_pooling_2d(h, ksize=3)
@@ -183,12 +174,11 @@ class CNNEachEyeWithAttention(chainer.Chain):
         eye2_h = F.dropout(F.relu(self.fc1(eye2_h)))
         eye2_h = F.dropout(F.relu(self.fc2(eye2_h)))
 
-        ats = self.fc_for_attention(face)
+        ats = F.sigmoid(self.fc_for_attention(face))
+        eye1_h = eye1_h * ats
+        eye2_h = eye2_h * ats
 
-        h = F.concat(eye1_h.flatten(), eye2_h.flatten())
+        h = F.concat(eye1_h, eye2_h)
 
-        h = F.dropout(F.relu(self.fc1(h)))
-        h = F.hstack((h, feature))
-        h = F.dropout(F.relu(self.fc2(h)))
         y = self.fc3(h)
         return y
