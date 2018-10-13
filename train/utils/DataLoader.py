@@ -81,7 +81,7 @@ class OmniEachEyeDataLoader(OmniDataLoader):
 
 class OmniEachEyeWithFaceFeatureDataLoader(OmniDataLoader):
     def __init__(self, img_size):
-        super(OmniEachEyeDataLoader, self).__init__(img_size)
+        super(OmniEachEyeWithFaceFeatureDataLoader, self).__init__(img_size)
         pass
 
     def load(self, path):
