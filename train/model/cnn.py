@@ -329,7 +329,7 @@ class CNNEachEyeWithAttention3(chainer.Chain):
 class CNNEachEyeWithAttention3(chainer.Chain):
 
     def __init__(self):
-        super(CNNEachEyeWithAttention2, self).__init__()
+        super(CNNEachEyeWithAttention3, self).__init__()
         with self.init_scope():
             self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
             self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
