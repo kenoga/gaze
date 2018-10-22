@@ -6,7 +6,7 @@ import glob
 import json
 import copy
 from collections import deque
-import dataset_utils.Dataset 
+import dataset_utils.Dataset
 import dataset_utils.DataInitiator
 
 
@@ -14,7 +14,7 @@ def balance_train_data(imgs, nonlocked_rate):
     assert type(imgs) == list
     assert len(imgs) > 0
     assert nonlocked_rate >= 1
-    
+
     result = []
     pid2imgs = {}
     for img in imgs:
@@ -29,7 +29,7 @@ def balance_train_data(imgs, nonlocked_rate):
         nonlocked_imgs = pid2imgs[pid][False]
         if len(nonlocked_imgs) > (len(locked_imgs) * nonlocked_rate):
             nonlocked_imgs = random.sample(nonlocked_imgs, len(locked_imgs) * nonlocked_rate)
-        
+
         result.extend(locked_imgs)
         result.extend(nonlocked_imgs)
     return result
@@ -48,12 +48,12 @@ def group_list(li, group_num):
     # listをgroup_num個に分割する
     # その際groupに含まれる要素の数の差が小さくなるように分割する
     result = []
-    
+
     dq = deque()
     for e in li:
         dq.append(e)
     li = dq
-        
+
     size = len(li)
     while group_num > 0:
         tmp = []
@@ -63,12 +63,12 @@ def group_list(li, group_num):
         result.append(tmp)
         size -= group_size
         group_num -= 1
-    
+
     return result
-        
+
 class DataPathProvider():
 
-    def __init__(self, conf): 
+    def __init__(self, conf):
         self.load_conf_val(conf, 'dataset_path')
         self.load_conf_val(conf, 'group_num')
         self.load_conf_val(conf, 'locked_targets')
@@ -92,7 +92,7 @@ class DataPathProvider():
         # データセットの分割数は最低でも3 (train, validation, test)
         assert self.group_num >= 3
         self.grouped_pids = group_list(self.pids, self.group_num)
-        
+
         self.test_index = 0
         self.dataset = dataset_utils.Dataset.Dataset( \
             self.dataset_path, \
@@ -102,12 +102,12 @@ class DataPathProvider():
         self.dataset.filter_pid(self.pids)
 
         self.dataset.set_label(self.locked_targets)
-        
+
         if self.places:
             self.dataset.filter_place(self.places)
         if self.skip_num:
             self.dataset.skip(self.skip_num)
- 
+
         if self.noise_data_paths:
             for path in self.noise_data_paths:
                 with open(path, 'r') as fr:
@@ -122,13 +122,13 @@ class DataPathProvider():
             with open(self.annotation_path, 'r') as fr:
                 self.noise_dict = json.load(fr)
                 self.dataset.filter_noise2(self.noise_dict)
-            
+
         if self.ignored_targets:
             self.dataset.filter_target(self.ignored_targets)
-        
+
         if not self.glasses:
             self.dataset.delete_glasses()
-            
+
         if self.face_direction_dir:
             print("loading face direction features...")
             face_dir_dict = {}
@@ -140,21 +140,22 @@ class DataPathProvider():
                     d = json.load(fr)
                     for k, v in d.items():
                         face_dir_dict[k] = v
-                        
+
             self.dataset.load_face_direction_feature(face_dir_dict)
         self.dataset.data = [d for d in self.dataset.data if not (d.pid == 12 and (d.place == "B" or d.place == "C"))]
+        self.dataset.data = [d for d in self.dataset.data if not ((d.place == "A" and d.target == 10) or (d.place == "B" and d.target == 9))]
         self.dataset.print_data()
 
     def save_dataset(path):
         with open(path, "w") as fw:
             pickle.dump(self.dataset, fw)
-        
-        
+
+
     def load_conf_val(self, config, key):
-        assert config is not None 
+        assert config is not None
         assert key in config
         self.__dict__[key] = config[key]
- 
+
     def remains(self):
         return True if self.test_index < self.group_num else False
 
@@ -178,14 +179,14 @@ class DataPathProvider():
                 ipath.type = 'train'
         if self.bulking:
             ipaths = bulk_train_data(ipaths)
-        
+
         if self.nonlocked_rate:
             ipaths = balance_train_data(ipaths, self.nonlocked_rate)
 
         train = []
         validation = []
         test = []
-        
+
         for ipath in ipaths:
             if ipath.type == 'test':
                 test.append(ipath)
@@ -193,9 +194,9 @@ class DataPathProvider():
                 validation.append(ipath)
             else:
                 train.append(ipath)
-        
+
         self.test_index += 1
-        
+
         # report dataset details
         print(' '.join(['-' * 25, 'dataset', '-' * 25]))
         print("test ids: " + ",".join([str(pid) for pid in test_ids]))
@@ -209,10 +210,8 @@ class DataPathProvider():
         print("test nonlocked size: %d" % len([0 for path in test if path.locked == False]))
         print("all locked sizes: %d" % len([0 for path in ipaths if path.locked == True]))
         print("all unlocked sizes: %d" % len([0 for path in ipaths if path.locked == False]))
-        
+
         return train, validation, test
-    
+
     def report(self):
         pass
-
-          

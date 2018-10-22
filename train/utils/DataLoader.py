@@ -41,7 +41,6 @@ class OnlyFaceFeatureDataLoader(DataLoader):
         pass
 
     def load(self, path):
-
         t = np.array(int(path.locked), dtype=np.int32)
 
         f_list_nest = path.face_direction
@@ -51,6 +50,7 @@ class OnlyFaceFeatureDataLoader(DataLoader):
         f_list = [e / 255.0 for position in f_list_nest for e in position]
         f = np.array(f_list, dtype=np.float32)
         assert len(f) == 136
+        
         return f, t
 
 

@@ -115,7 +115,7 @@ class NNOnlyFCFeature(chainer.Chain):
             self.fc4 = L.Linear(None, 2, nobias=False)
 
     def __call__(self, x):
-        h = F.dropout(F.relu(self.fc1(x)))
+        h = F.relu(self.fc1(x))
         h = F.dropout(F.relu(self.fc2(h)))
         h = F.dropout(F.relu(self.fc3(h)))
         y = self.fc4(h)
