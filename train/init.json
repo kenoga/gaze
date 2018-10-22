@@ -66,24 +66,9 @@
         "blink_noise_path": "../data/omni/blink.json",
         "face_direction_dir": "../data/omni/face_direction_feature",
         "data_loader": "OmniEachEyeWithFaceFeatureDataLoader",
-        "model": "CNNEachEyeWithAttention1"
+        "model": "CNNEachEyeWithAttention4"
     },
 
-    "attention02": {
-        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
-        "blink_noise_path": "../data/omni/blink.json",
-        "face_direction_dir": "../data/omni/face_direction_feature",
-        "data_loader": "OmniEachEyeWithFaceFeatureDataLoader",
-        "model": "CNNEachEyeWithAttention2"
-    },
-
-    "attention03": {
-        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
-        "blink_noise_path": "../data/omni/blink.json",
-        "face_direction_dir": "../data/omni/face_direction_feature",
-        "data_loader": "OmniEachEyeWithFaceFeatureDataLoader",
-        "model": "CNNEachEyeWithAttention3"
-    },
 
     "only_face_feature": {
       "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
