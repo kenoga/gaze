@@ -30,6 +30,14 @@
         "annotation_path": false
     },
 
+    "default1": {
+    },
+    "default2": {
+    },
+    "default3": {
+    },
+
+
     "each_eye": {
         "data_loader": "OmniEachEyeDataLoader",
         "model": "CNNEachEye"
