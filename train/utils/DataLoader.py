@@ -37,7 +37,7 @@ class OmniDataLoader(DataLoader):
 
 class OnlyFaceFeatureDataLoader(DataLoader):
     def __init__(self, img_size):
-        super(OnlyFaceFeatureDataLoader, self).__init__(img_size)
+        self.img_size = img_size
         pass
 
     def load(self, path):
