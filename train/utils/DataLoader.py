@@ -34,6 +34,27 @@ class OmniDataLoader(DataLoader):
 
         return x, t
 
+
+class OnlyFaceFeatureDataLoader(DataLoader):
+    def __init__(self, img_size):
+        super(OnlyFaceFeatureDataLoader, self).__init__(img_size)
+        pass
+
+    def load(self, path):
+
+        t = np.array(int(path.locked), dtype=np.int32)
+
+        f_list_nest = path.face_direction
+        if path.mirror:
+            # xを反転 (positionはx, yの順になっている
+            f_list_nest = [[1-position[0], position[1]]for position in f_list_nest]
+        f_list = [e / 255.0 for position in f_list_nest for e in position]
+        f = np.array(f_list, dtype=np.float32)
+        assert len(f) == 136
+        return f, t
+
+
+
 class OmniWithFaceFeatureDataLoader(OmniDataLoader):
     def __init__(self, img_size):
         super(OmniWithFaceFeatureDataLoader, self).__init__(img_size)
