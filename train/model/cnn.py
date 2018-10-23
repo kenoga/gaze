@@ -88,7 +88,7 @@ class SpatialWeightsCNN(chainer.Chain):
             self.conv_sw_3 = L.Convolution2D(in_channels=128, out_channels=1, ksize=1, nobias=False)
 
 
-    def __call__(self, x, feature):
+    def __call__(self, x):
         h = F.relu(self.conv1_1(x))
         h = F.relu(self.conv1_2(h))
         h = F.max_pooling_2d(h, ksize=3)
