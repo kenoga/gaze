@@ -37,12 +37,10 @@
     "default3": {
     },
 
-
     "each_eye": {
         "data_loader": "OmniEachEyeDataLoader",
         "model": "CNNEachEye"
     },
-
 
     "all_target_with_face_feature": {
       "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
@@ -118,6 +116,14 @@
       "face_direction_dir": "../data/omni/face_direction_feature",
       "data_loader": "OnlyFaceFeatureDataLoader",
       "model": "NNOnlyFCFeature"
+    },
+
+    "each_eye": {
+      "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
+      "blink_noise_path": "../data/omni/blink.json",
+      "face_direction_dir": "../data/omni/face_direction_feature",
+      "data_loader": "OmniEachEyeDataLoader",
+      "model": "CNNEachEye"
     },
 
     "fullface_with_face_feature": {
