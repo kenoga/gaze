@@ -38,7 +38,7 @@
     },
 
     "spatial_weights": {
-      "model": "SpatialWeightsCNN",
+      "model": "SpatialWeightsCNN"
     },
 
     "each_eye": {
