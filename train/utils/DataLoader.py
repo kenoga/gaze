@@ -50,7 +50,7 @@ class OnlyFaceFeatureDataLoader(DataLoader):
         f_list = [e / 255.0 for position in f_list_nest for e in position]
         f = np.array(f_list, dtype=np.float32)
         assert len(f) == 136
-        
+
         return f, t
 
 
