@@ -104,8 +104,7 @@ class SpatialWeightsCNN(chainer.Chain):
         h = h * map
 
         h = F.dropout(F.relu(self.fc1(h)))
-        # h = F.hs
-        tack((h, feature))
+        # h = F.hstack((h, feature))
         h = F.dropout(F.relu(self.fc2(h)))
         y = self.fc3(h)
         return y
