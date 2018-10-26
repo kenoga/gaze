@@ -75,10 +75,10 @@ class SpatialWeightsCNN(chainer.Chain):
     def __init__(self):
         super(SpatialWeightsCNN, self).__init__()
         with self.init_scope():
-            self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
-            self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
-            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
-            self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
+            self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=2, nobias=False)
+            self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=2, nobias=False)
+            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=2, nobias=False)
+            self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=2, nobias=False)
             self.fc1 = L.Linear(None, 256, nobias=False)
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)
