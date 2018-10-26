@@ -83,9 +83,9 @@ class SpatialWeightsCNN(chainer.Chain):
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)
 
-            self.conv_sw_1 = L.Convolution2D(in_channels=128, out_channels=128, ksize=1, nobias=False)
-            self.conv_sw_2 = L.Convolution2D(in_channels=128, out_channels=128, ksize=1, nobias=False)
-            self.conv_sw_3 = L.Convolution2D(in_channels=128, out_channels=1, ksize=1, nobias=False)
+            self.conv_sw_1 = L.Convolution2D(in_channels=128, out_channels=64, ksize=1, nobias=False)
+            self.conv_sw_2 = L.Convolution2D(in_channels=None, out_channels=32, ksize=1, nobias=False)
+            self.conv_sw_3 = L.Convolution2D(in_channels=None, out_channels=1, ksize=1, nobias=False)
 
 
     def __call__(self, x):
@@ -104,7 +104,8 @@ class SpatialWeightsCNN(chainer.Chain):
         h = h * map
 
         h = F.dropout(F.relu(self.fc1(h)))
-        # h = F.hstack((h, feature))
+        # h = F.hs
+        tack((h, feature))
         h = F.dropout(F.relu(self.fc2(h)))
         y = self.fc3(h)
         return y
