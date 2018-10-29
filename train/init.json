@@ -44,6 +44,9 @@
     "spatial_weights_v3": {
       "model": "SpatialWeightsCNN_v3"
     },
+    "spatial_weights_fine_grained": {
+      "model": "SpatialWeightsCNN"
+    },
 
     "each_eye_v1": {
         "data_loader": "OmniEachEyeDataLoader",
