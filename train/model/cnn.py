@@ -218,7 +218,7 @@ class CNNEachEye1(chainer.Chain):
         h = F.max_pooling_2d(h, ksize=3)
         h = F.relu(self.conv2_1(h))
         h = F.relu(self.conv2_2(h))
-        eye1_h = F.max_pooling_2d(h, ksize=3)
+        h = F.max_pooling_2d(h, ksize=3)
         eye1_h = F.dropout(F.relu(self.fc1(h)))
 
         h = F.relu(self.conv1_1(eye2))
@@ -226,7 +226,7 @@ class CNNEachEye1(chainer.Chain):
         h = F.max_pooling_2d(h, ksize=3)
         h = F.relu(self.conv2_1(h))
         h = F.relu(self.conv2_2(h))
-        eye2_h = F.max_pooling_2d(h, ksize=3)
+        h = F.max_pooling_2d(h, ksize=3)
         eye2_h = F.dropout(F.relu(self.fc1(h)))
 
         h = F.concat((eye1_h, eye2_h), axis=1)
@@ -240,8 +240,8 @@ class CNNEachEye2(chainer.Chain):
     def __init__(self):
         super(CNNEachEye2, self).__init__()
         with self.init_scope():
-            self.conv1_1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
-            self.conv1_1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
+            self.conv1_1_1 = L.Convolution2D(in_channels=None, out_channels=32, ksize=3, nobias=False)
+            self.conv1_1_2 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
             self.conv1_2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
             self.conv1_2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
 
@@ -259,7 +259,7 @@ class CNNEachEye2(chainer.Chain):
         h = F.max_pooling_2d(h, ksize=3)
         h = F.relu(self.conv1_2_1(h))
         h = F.relu(self.conv1_2_2(h))
-        eye1_h = F.max_pooling_2d(h, ksize=3)
+        h = F.max_pooling_2d(h, ksize=3)
         eye1_h = F.dropout(F.relu(self.fc1(h)))
 
         h = F.relu(self.conv2_1_1(eye2))
@@ -267,7 +267,7 @@ class CNNEachEye2(chainer.Chain):
         h = F.max_pooling_2d(h, ksize=3)
         h = F.relu(self.conv2_2_1(h))
         h = F.relu(self.conv2_2_2(h))
-        eye2_h = F.max_pooling_2d(h, ksize=3)
+        h = F.max_pooling_2d(h, ksize=3)
         eye2_h = F.dropout(F.relu(self.fc1(h)))
 
         h = F.concat((eye1_h, eye2_h), axis=1)

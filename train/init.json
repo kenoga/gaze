@@ -39,7 +39,7 @@
       "model": "SpatialWeightsCNN"
     },
 
-    "each_eye": {
+    "each_eye_v1": {
         "data_loader": "OmniEachEyeDataLoader",
         "model": "CNNEachEye"
     },
