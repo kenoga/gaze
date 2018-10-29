@@ -35,8 +35,14 @@
         "ignored_targets": [11,12,13,14,15,16,17,18,19,20,21,40]
     },
 
-    "spatial_weights": {
+    "spatial_weights_v1": {
       "model": "SpatialWeightsCNN"
+    },
+    "spatial_weights_v2": {
+      "model": "SpatialWeightsCNN_v2"
+    },
+    "spatial_weights_v3": {
+      "model": "SpatialWeightsCNN_v3"
     },
 
     "each_eye_v1": {
