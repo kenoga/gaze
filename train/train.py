@@ -75,6 +75,8 @@ def forward(dataloader, model, purpose, optimizer=None):
 
 
 def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False):
+    print("gpu: %d" % gpu)
+    
     print(' '.join(['-' * 25, 'training and validation', '-' * 25]))
     print('# epoch: {}'.format(epoch))
     # print('# learnrate: {}'.format(learn_rate))
@@ -82,7 +84,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     ## Set gpu device
     if gpu is not None:
         cuda.get_device(gpu).use()
-        model.to_gpu()
+        model.to_gpu(gpu)
 
     ## Set Optimizer
     # optimizer = chainer.optimizers.MomentumSGD(learn_rate)
