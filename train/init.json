@@ -172,7 +172,7 @@
     "test": {
         "epoch": 1,
         "pids": [5,7,9],
-        "group_num": 3,
+        "group_num": 3
     }
 
 
