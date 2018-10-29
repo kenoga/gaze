@@ -1,5 +1,6 @@
 {
     "default": {
+        "exp_num": 1,
         "result_path": "./result",
         "model_path": "./trained",
 
@@ -28,13 +29,6 @@
         "face_direction_path": false,
         "noise_data_paths": false,
         "annotation_path": false
-    },
-
-    "default1": {
-    },
-    "default2": {
-    },
-    "default3": {
     },
 
     "spatial_weights": {
@@ -159,6 +153,7 @@
         "data_initiator": "KatayamaDataInitiator",
         "annotation_path": false
     },
+
     "katayama17": {
         "group_num": 17,
         "places": false,
@@ -178,7 +173,6 @@
         "epoch": 1,
         "pids": [5,7,9],
         "group_num": 3,
-        "face_direction_dir": "../data/omni/face_direction_feature"
     }
 
 

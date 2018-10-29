@@ -168,23 +168,6 @@ class CNNWithFCFeature2(chainer.Chain):
         return y
 
 
-class NNOnlyFCFeature(chainer.Chain):
-
-    def __init__(self):
-        super(NNOnlyFCFeature, self).__init__()
-        with self.init_scope():
-            self.fc1 = L.Linear(None, 128, nobias=False)
-            self.fc2 = L.Linear(None, 64, nobias=False)
-            self.fc3 = L.Linear(None, 32, nobias=False)
-            self.fc4 = L.Linear(None, 2, nobias=False)
-
-    def __call__(self, x):
-        h = F.relu(self.fc1(x))
-        h = F.dropout(F.relu(self.fc2(h)))
-        h = F.dropout(F.relu(self.fc3(h)))
-        y = self.fc4(h)
-        return y
-
 class CNNEachEye(chainer.Chain):
     def __init__(self):
         super(CNNEachEye, self).__init__()

@@ -60,35 +60,38 @@ def main(conf_id, gpu=0):
 
     cnn = globals()[conf["model"]]
 
-    # cross validation
-    result_all = {}
-    while path_provider.remains():
-        model = cnn()
+    for expi in range(conf["exp_num"]):
+        path_provider.init()
 
-        result_path = os.path.join(conf['result_path'], conf_id, "%02d" % path_provider.get_test_index())
-        model_path = os.path.join(conf['model_path'], conf_id, "%02d" % path_provider.get_test_index())
+        # cross validation
+        result_all = {}
+        while path_provider.remains():
+            model = cnn()
 
-        train_paths, validation_paths, test_paths = path_provider.get_paths()
+            result_path = os.path.join(conf['result_path'], conf_id, "%02d" % path_provider.get_test_index())
+            model_path = os.path.join(conf['model_path'], conf_id, "%02d" % path_provider.get_test_index())
 
-        batch_provider = BatchProvider(
-            data_loader,
-            train_paths,
-            validation_paths,
-            test_paths,
-            conf['batch_size'],
-            conf['block_size'],
-            conf['img_size']
-        )
+            train_paths, validation_paths, test_paths = path_provider.get_paths()
 
-        result = train.train_and_test(model, batch_provider, result_path, model_path, \
-            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=gpu)
-        index = path_provider.get_test_index()
-        result_all[index] = result
+            batch_provider = BatchProvider(
+                data_loader,
+                train_paths,
+                validation_paths,
+                test_paths,
+                conf['batch_size'],
+                conf['block_size'],
+                conf['img_size']
+            )
 
-    result_path = os.path.join(conf['result_path'], conf_id, 'all.json')
-    print('save all results as .json --> {}'.format(result_path))
-    with open(result_path, 'w') as fw:
-        json.dump(result_all, fw, indent=2)
+            result = train.train_and_test(model, batch_provider, result_path, model_path, \
+                epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=gpu)
+            index = path_provider.get_test_index()
+            result_all[index] = result
+
+        result_path = os.path.join(conf['result_path'], "_".join([conf_id, "%02d"%expi]), 'all.json')
+        print('save all results as .json --> {}'.format(result_path))
+        with open(result_path, 'w') as fw:
+            json.dump(result_all, fw, indent=2)
 
 
 if __name__ == "__main__":

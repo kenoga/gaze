@@ -213,5 +213,8 @@ class DataPathProvider():
 
         return train, validation, test
 
+    def init(self):
+        self.test_index = 0
+
     def report(self):
         pass
