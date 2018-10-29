@@ -101,4 +101,4 @@ if __name__ == "__main__":
     parser.add_argument("config_id")
     parser.add_argument("--gpu", default=0)
     args = parser.parse_args()
-    main(args.config_id, args.gpu)
+    main(args.config_id, int(args.gpu))
