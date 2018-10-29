@@ -61,6 +61,8 @@ def main(conf_id, gpu=0):
     cnn = globals()[conf["model"]]
 
     for expi in range(conf["exp_num"]):
+        conf_id = "_".join([conf_id, "%02d"%expi])
+
         path_provider.init()
 
         # cross validation
@@ -88,7 +90,7 @@ def main(conf_id, gpu=0):
             index = path_provider.get_test_index()
             result_all[index] = result
 
-        result_path = os.path.join(conf['result_path'], "_".join([conf_id, "%02d"%expi]), 'all.json')
+        result_path = os.path.join(conf['result_path'], conf_id, 'all.json')
         print('save all results as .json --> {}'.format(result_path))
         with open(result_path, 'w') as fw:
             json.dump(result_all, fw, indent=2)
