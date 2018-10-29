@@ -276,6 +276,48 @@ class CNNEachEye2(chainer.Chain):
         y = self.fc3(h)
         return y
 
+class CNNEachEye3(chainer.Chain):
+    def __init__(self):
+        super(CNNEachEye3, self).__init__()
+        with self.init_scope():
+            self.conv1_1_1 = L.Convolution2D(in_channels=None, out_channels=32, ksize=3, nobias=False)
+            self.conv1_1_2 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
+            self.conv1_2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
+            self.conv1_2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
+
+            self.conv2_1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
+            self.conv2_1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
+            self.conv2_2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
+            self.conv2_2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
+            self.fc1 = L.Linear(None, 256, nobias=False)
+            self.fc2 = L.Linear(None, 128, nobias=False)
+            self.fc3 = L.Linear(None, 2, nobias=False)
+
+    def __call__(self, eye1, eye2):
+        h = F.relu(self.conv1_1_1(eye1))
+        h = F.relu(self.conv1_1_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        h = F.relu(self.conv1_2_1(h))
+        h = F.relu(self.conv1_2_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        eye1_h = F.reshape(h, (h.shape[0], h.shape[1] * h.shape[2] * h.shape[3]))
+
+        h = F.relu(self.conv2_1_1(eye2))
+        h = F.relu(self.conv2_1_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        h = F.relu(self.conv2_2_1(h))
+        h = F.relu(self.conv2_2_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        eye2_h = F.reshape(h, (h.shape[0], h.shape[1] * h.shape[2] * h.shape[3]))
+
+        h = F.concat((eye1_h, eye2_h), axis=1)
+
+        h = F.dropout(F.relu(self.fc1(h)))
+        h = F.dropout(F.relu(self.fc2(h)))
+        y = self.fc3(h)
+        return y
+
+
 class CNNEachEyeWithAttention1(chainer.Chain):
 
     def __init__(self):
