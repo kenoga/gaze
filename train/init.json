@@ -36,28 +36,11 @@
     },
 
     "spatial_weights_v1": {
-      "batch_size": 64,
       "model": "SpatialWeightsCNN"
     },
-    "spatial_weights_v2": {
+    "spatial_weights_many": {
+      "exp_num": 5,
       "batch_size": 64,
-      "model": "SpatialWeightsCNN_v2"
-    },
-    "spatial_weights_v3": {
-      "batch_size": 64,
-      "model": "SpatialWeightsCNN_v3"
-    },
-    "spatial_weights_v4": {
-      "batch_size": 32,
-      "model": "SpatialWeightsCNN_v4"
-    },
-    "spatial_weights_v5": {
-      "batch_size": 32,
-      "model": "SpatialWeightsCNN_v5"
-    },
-    "spatial_weights_fine_grained": {
-      "batch_size": 64,
-      "skip_num": 1,
       "model": "SpatialWeightsCNN"
     },
 
