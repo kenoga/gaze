@@ -49,7 +49,11 @@
     },
     "spatial_weights_v4": {
       "batch_size": 32,
-      "model": "SpatialWeightsCNN_v3"
+      "model": "SpatialWeightsCNN_v4"
+    },
+    "spatial_weights_v5": {
+      "batch_size": 32,
+      "model": "SpatialWeightsCNN_v5"
     },
     "spatial_weights_fine_grained": {
       "batch_size": 64,

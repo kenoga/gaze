@@ -109,6 +109,44 @@ class SpatialWeightsCNN(chainer.Chain):
         y = self.fc3(h)
         return y
 
+class SpatialWeightsCNN_v5(chainer.Chain):
+    def __init__(self):
+        super(SpatialWeightsCNN_v5, self).__init__()
+        with self.init_scope():
+            self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=2, nobias=False)
+            self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=2, nobias=False)
+            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=2, nobias=False)
+            self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=2, nobias=False)
+            self.fc1 = L.Linear(None, 256, nobias=False)
+            self.fc2 = L.Linear(None, 128, nobias=False)
+            self.fc3 = L.Linear(None, 2, nobias=False)
+
+            self.conv_sw_1 = L.Convolution2D(in_channels=128, out_channels=64, ksize=1, nobias=False)
+            self.conv_sw_2 = L.Convolution2D(in_channels=None, out_channels=32, ksize=1, nobias=False)
+            self.conv_sw_3 = L.Convolution2D(in_channels=None, out_channels=1, ksize=1, nobias=False)
+
+
+    def __call__(self, x):
+        h = F.relu(self.conv1_1(x))
+        h = F.relu(self.conv1_2(h))
+        h = F.max_pooling_2d(h, ksize=2)
+        h = F.relu(self.conv2_1(h))
+        h = F.relu(self.conv2_2(h))
+        h = F.max_pooling_2d(h, ksize=2)
+
+        map = F.relu(self.conv_sw_1(h))
+        map = F.relu(self.conv_sw_2(map))
+        map = F.relu(self.conv_sw_3(map))
+
+        map = F.tile(map, (1,128,1,1))
+        h = h * map
+
+        h = F.dropout(F.relu(self.fc1(h)))
+        # h = F.hstack((h, feature))
+        h = F.dropout(F.relu(self.fc2(h)))
+        y = self.fc3(h)
+        return y
+
 
 class SpatialWeightsCNN_v2(chainer.Chain):
     def __init__(self):
