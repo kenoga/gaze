@@ -116,13 +116,13 @@ class SpatialWeightsCNN_v2(chainer.Chain):
         with self.init_scope():
             self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
             # self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=2, nobias=False)
-            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
+            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
             # self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=2, nobias=False)
             self.fc1 = L.Linear(None, 256, nobias=False)
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)
 
-            self.conv_sw_1 = L.Convolution2D(in_channels=128, out_channels=64, ksize=1, nobias=False)
+            self.conv_sw_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=1, nobias=False)
             self.conv_sw_2 = L.Convolution2D(in_channels=None, out_channels=32, ksize=1, nobias=False)
             self.conv_sw_3 = L.Convolution2D(in_channels=None, out_channels=1, ksize=1, nobias=False)
 
@@ -155,13 +155,13 @@ class SpatialWeightsCNN_v3(chainer.Chain):
         with self.init_scope():
             self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
             # self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=2, nobias=False)
-            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
+            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
             # self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=2, nobias=False)
             self.fc1 = L.Linear(None, 256, nobias=False)
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)
 
-            self.conv_sw_1 = L.Convolution2D(in_channels=128, out_channels=64, ksize=1, nobias=False)
+            self.conv_sw_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=1, nobias=False)
             # self.conv_sw_2 = L.Convolution2D(in_channels=None, out_channels=32, ksize=1, nobias=False)
             self.conv_sw_3 = L.Convolution2D(in_channels=None, out_channels=1, ksize=1, nobias=False)
 
