@@ -31,6 +31,10 @@
         "annotation_path": false
     },
 
+    "fine_grained": {
+        "ignored_targets": [11,12,13,14,15,16,17,18,19,20,21,40]
+    },
+
     "spatial_weights": {
       "model": "SpatialWeightsCNN"
     },
