@@ -49,23 +49,8 @@
       "ignored_targets": []
     },
 
-    "with_face_feature1": {
-        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
-        "blink_noise_path": "../data/omni/blink.json",
-        "face_direction_dir": "../data/omni/face_direction_feature",
-        "data_loader": "OmniWithFaceFeatureDataLoader",
-        "model": "CNNWithFCFeature"
-    },
-
-    "with_face_feature2": {
-        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
-        "blink_noise_path": "../data/omni/blink.json",
-        "face_direction_dir": "../data/omni/face_direction_feature",
-        "data_loader": "OmniWithFaceFeatureDataLoader",
-        "model": "CNNWithFCFeature"
-    },
-
-    "with_face_feature3": {
+    "with_face_feature_v1": {
+        "exp_num": 3,
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "blink_noise_path": "../data/omni/blink.json",
         "face_direction_dir": "../data/omni/face_direction_feature",
@@ -74,6 +59,7 @@
     },
 
     "with_face_feature_v2": {
+        "exp_num": 3,
         "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
         "blink_noise_path": "../data/omni/blink.json",
         "face_direction_dir": "../data/omni/face_direction_feature",
