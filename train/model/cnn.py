@@ -175,7 +175,7 @@ class SpatialWeightsCNN_v3(chainer.Chain):
         h = F.max_pooling_2d(h, ksize=3)
 
         map = F.relu(self.conv_sw_1(h))
-        map = F.relu(self.conv_sw_2(map))
+        # map = F.relu(self.conv_sw_2(map))
         map = F.relu(self.conv_sw_3(map))
 
         map = F.tile(map, (1,128,1,1))
