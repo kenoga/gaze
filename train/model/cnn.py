@@ -122,7 +122,6 @@ class CNNWithFCFeature(chainer.Chain):
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)
 
-
     def __call__(self, x, feature):
         h = F.relu(self.conv1_1(x))
         h = F.relu(self.conv1_2(h))
