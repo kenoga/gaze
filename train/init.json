@@ -45,6 +45,7 @@
       "model": "SpatialWeightsCNN_v3"
     },
     "spatial_weights_fine_grained": {
+      "skip_num": 1,
       "model": "SpatialWeightsCNN"
     },
 
