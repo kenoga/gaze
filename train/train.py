@@ -74,7 +74,7 @@ def forward(dataloader, model, purpose, optimizer=None):
     else:
         accuracy = accuracy_score(t_all, y_all)
         precision, recall, fscore, _ = precision_recall_fscore_support(t_all, y_all, average='binary')
-        return (loss, accuracy), (precision, recall, fscore), (t_all.tolist(), y_all.tolist(), paths_all, prob_all.tolist())
+        return (loss, accuracy), (precision, recall, fscore), (t_all.tolist(), y_all.tolist(), paths_all, prob_all)
 
 
 def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False):
