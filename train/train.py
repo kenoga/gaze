@@ -30,6 +30,7 @@ def forward(dataloader, model, purpose, optimizer=None):
         y_all = np.array([])
         t_all = np.array([])
         paths_all = []
+        prob_all = np.array([])
 
     while True:
         # train
@@ -62,6 +63,8 @@ def forward(dataloader, model, purpose, optimizer=None):
             y_all = np.hstack((y_all, cuda.to_cpu(argmax_y)))
             t_all = np.hstack((t_all, cuda.to_cpu(t.data)))
             paths_all.extend([path.name for path in paths])
+            prob = F.softmax(y).data
+            prob_all = np.hstack((prob_all, cuda.to_cpu(prob)))
         losses.append(cuda.to_cpu(loss.data))
 
     loss = np.mean(losses)
@@ -71,12 +74,12 @@ def forward(dataloader, model, purpose, optimizer=None):
     else:
         accuracy = accuracy_score(t_all, y_all)
         precision, recall, fscore, _ = precision_recall_fscore_support(t_all, y_all, average='binary')
-        return (loss, accuracy), (precision, recall, fscore), (t_all.tolist(), y_all.tolist(), paths_all)
+        return (loss, accuracy), (precision, recall, fscore), (t_all.tolist(), y_all.tolist(), paths_all, prob_all.tolist())
 
 
 def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False):
     print("gpu: %d" % gpu)
-    
+
     print(' '.join(['-' * 25, 'training and validation', '-' * 25]))
     print('# epoch: {}'.format(epoch))
     # print('# learnrate: {}'.format(learn_rate))
@@ -158,7 +161,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
 
     print(' '.join(['-' * 25, 'test', '-' * 25]))
     with chainer.using_config('train', False):
-        (test_loss, test_accuracy), (test_precision, test_recall, test_fscore), (t, y, paths) = forward(dataloader, best_model, "test")
+        (test_loss, test_accuracy), (test_precision, test_recall, test_fscore), (t, y, paths, probs) = forward(dataloader, best_model, "test")
 
     print("loss: %f" % test_loss)
     print("accuracy: %f" % test_accuracy)
@@ -173,6 +176,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     result['test']['t'] = t
     result['test']['y'] = y
     result['test']['paths'] = paths
+    result['test']['probs'] = probs
 
     save_result(result_path, result)
     save_model(model_path, model)
