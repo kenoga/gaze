@@ -30,7 +30,7 @@ def forward(dataloader, model, purpose, optimizer=None):
         y_all = np.array([])
         t_all = np.array([])
         paths_all = []
-        prob_all = np.array([])
+        prob_all = []
 
     while True:
         # train
@@ -63,8 +63,8 @@ def forward(dataloader, model, purpose, optimizer=None):
             y_all = np.hstack((y_all, cuda.to_cpu(argmax_y)))
             t_all = np.hstack((t_all, cuda.to_cpu(t.data)))
             paths_all.extend([path.name for path in paths])
-            prob = F.softmax(y).data
-            prob_all = np.hstack((prob_all, cuda.to_cpu(prob)))
+            prob = F.softmax(y).data.tolist()
+            prob_all.extend(prob)
         losses.append(cuda.to_cpu(loss.data))
 
     loss = np.mean(losses)
