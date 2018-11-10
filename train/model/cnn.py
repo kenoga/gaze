@@ -351,6 +351,38 @@ class CNNWithFCFeature3(chainer.Chain):
         y = self.fc3(h)
         return y
 
+class CNNWithFCFeature4(chainer.Chain):
+    def __init__(self):
+        super(CNNWithFCFeature4, self).__init__()
+        with self.init_scope():
+            self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
+            self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
+            self.conv2_1 = L.Convolution2D(in_channels=None, out_channels=256, ksize=3, nobias=False)
+            self.conv2_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
+            self.fc1 = L.Linear(None, 256, nobias=False)
+            self.fc2 = L.Linear(None, 128, nobias=False)
+            self.fc3 = L.Linear(None, 2, nobias=False)
+
+            self.fc_for_feature1 = L.Linear(136, 32)
+
+
+    def __call__(self, x, feature):
+        h = F.relu(self.conv1_1(x))
+        h = F.relu(self.conv1_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        h = F.relu(self.conv2_1(h))
+        h = F.relu(self.conv2_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        h = F.dropout(F.relu(self.fc1(h)))
+
+        feature = F.relu(self.fc_for_feature1(feature))
+        feature = F.relu(self.fc_for_feature2(feature))
+
+        h = F.hstack((h, feature))
+        h = F.dropout(F.relu(self.fc2(h)))
+        y = self.fc3(h)
+        return y
+
 
 class CNNEachEye1(chainer.Chain):
     def __init__(self):

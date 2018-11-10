@@ -78,8 +78,9 @@ def forward(dataloader, model, purpose, optimizer=None):
 
 
 def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False):
-    print("gpu: %d" % gpu)
+    chainer.using_config('cudnn_deterministic', True)
 
+    print("gpu: %d" % gpu)
     print(' '.join(['-' * 25, 'training and validation', '-' * 25]))
     print('# epoch: {}'.format(epoch))
     # print('# learnrate: {}'.format(learn_rate))
