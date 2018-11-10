@@ -138,13 +138,14 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
                 time.time()-start))
 
         result.add_train_result(train_loss, train_accuracy)
-        result.add_validation_result(val_loss, train_accuracy, precision, recall, fscore)
+        result.add_validation_result(val_loss, train_accuracy, val_precision, val_recall, val_fscore)
 
     print("the best score in validation set: %f" % best_score)
 
     print(' '.join(['-' * 25, 'test', '-' * 25]))
     with chainer.using_config('train', False):
         (test_loss, test_accuracy), (test_precision, test_recall, test_fscore), (t, y, paths, probs) = forward(dataloader, best_model, "test")
+
 
     print("loss: %f" % test_loss)
     print("accuracy: %f" % test_accuracy)
