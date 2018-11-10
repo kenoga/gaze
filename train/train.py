@@ -19,6 +19,7 @@ from chainer import cuda
 
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
+from utils.ExperimentResult import ExperimentResult
 
 def forward(dataloader, model, purpose, optimizer=None):
     assert purpose in {"train", "validation", "test"}
@@ -99,21 +100,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     ## Training start!!
     start = time.time()
 
-    result = {}
-    result['train'] = {}
-    result['train']['loss'] = []
-    result['train']['accuracy'] = []
-    result['val'] = {}
-    result['val']['loss'] = []
-    result['val']['accuracy'] = []
-    result['val']['precision'] = []
-    result['val']['recall'] = []
-    result['val']['fscore'] = []
-    result['test'] = {}
-    result['test']['imgs'] = []
-    result['test']['y'] = []
-    result['test']['t'] = []
-    result['test']['miss'] = []
+    result = ExperimentResult()
 
     best_model = None
     best_score = None
@@ -122,7 +109,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     print('epoch  train_loss  train_accuracy  val_loss  val_accuracy  val_precision  val_recall  val_fscore  updated  Elapsed-Time')
     for epoch_i in range(epoch):
         # initialize data loader
-        dataloader.init()
+        dataloader.init()1
 
         with chainer.using_config('train', True):
             train_loss, train_accuracy = forward(dataloader, model, "train", optimizer)
@@ -150,13 +137,8 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
                 str(updated),
                 time.time()-start))
 
-        result['train']['loss'].append(float(train_loss))
-        result['train']['accuracy'].append(float(train_accuracy))
-        result['val']['loss'].append(float(val_loss))
-        result['val']['accuracy'].append(float(val_accuracy))
-        result['val']['precision'].append(float(val_precision))
-        result['val']['recall'].append(float(val_recall))
-        result['val']['fscore'].append(float(val_fscore))
+        result.add_train_result(train_loss, train_accuracy)
+        result.add_validation_result(val_loss, train_accuracy, precision, recall, fscore)
 
     print("the best score in validation set: %f" % best_score)
 
@@ -169,20 +151,11 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     print("precision: %f" % test_precision)
     print("recall: %f" % test_recall)
     print("fscore: %f" % test_fscore)
-    result['test']['loss'] = float(test_loss)
-    result['test']['accuracy'] = float(test_accuracy)
-    result['test']['precision'] = float(test_precision)
-    result['test']['recall'] = float(test_recall)
-    result['test']['fscore'] = float(test_fscore)
-    result['test']['t'] = t
-    result['test']['y'] = y
-    result['test']['paths'] = paths
-    result['test']['probs'] = probs
 
+    result.add_test_result(test_loss, test_accuracy, test_precision, test_recall, test_fscore, t, y, paths, probs)
     save_result(result_path, result)
     save_model(model_path, model)
     return result
-
 
 def save_result(result_path, result):
     print('save the result as .json --> {}'.format(result_path + '.json') )
@@ -190,8 +163,7 @@ def save_result(result_path, result):
     if not os.path.exists(dirpath):
         os.makedirs(dirpath)
     with open(result_path + '.json', 'w') as fw:
-        json.dump(result, fw, indent=2)
-
+        json.dump(result.content, fw, indent=2)
 
 def save_model(model_path, model):
     print('save the model as .npz --> {}'.format(model_path + '.npz') )
