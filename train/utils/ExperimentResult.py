@@ -15,6 +15,7 @@ class ExperimentResult():
         self.content['val']['recall'] = []
         self.content['val']['fscore'] = []
         self.content['test'] = {}
+        self.content['val']['loss'] = []
         self.content['test']['accuracy'] = []
         self.content['test']['precision'] = []
         self.content['test']['recall'] = []
