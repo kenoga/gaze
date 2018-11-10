@@ -144,7 +144,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     result.add_test_result(test_loss, test_accuracy, test_precision, test_recall, test_fscore, t, y, paths, probs)
     save_result(result_path, result)
     save_model(model_path, model)
-    return result
+    return result.content
 
 def save_result(result_path, result):
     print('save the result as .json --> {}'.format(result_path + '.json') )
