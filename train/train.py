@@ -106,7 +106,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     best_score = None
     updated = False
 
-    print('epoch  train_loss  train_accuracy  val_loss  val_accuracy  val_precision  val_recall  val_fscore  updated  Elapsed-Time')
+    result.show_header()
     for epoch_i in range(epoch):
         # initialize data loader
         dataloader.init()1
@@ -123,22 +123,10 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
         else:
             updated = False
 
-
-        print('{:>5}  {:^10.4f}  {:^14.4f}  {:^8.4f}  {:^12.4f}  {:^13.4f}  {:^10.4f}  {:^10.4f}  {:^7s}  {:^12.2f}' \
-              .format( \
-                epoch_i, \
-                np.mean(train_loss), \
-                np.mean(train_accuracy), \
-                np.mean(val_loss), \
-                np.mean(val_accuracy), \
-                np.mean(val_precision),
-                np.mean(val_recall),
-                np.mean(val_fscore),
-                str(updated),
-                time.time()-start))
-
+        result.print_tmp_result(epoch_i, train_loss, train_accuracy, val_loss, val_accuracy, val_precision, val_recall, val_fscore, updated, time.time()-start)
         result.add_train_result(train_loss, train_accuracy)
         result.add_validation_result(val_loss, train_accuracy, val_precision, val_recall, val_fscore)
+
 
     print("the best score in validation set: %f" % best_score)
 
