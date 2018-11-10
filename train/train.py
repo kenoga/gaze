@@ -109,7 +109,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     result.show_header()
     for epoch_i in range(epoch):
         # initialize data loader
-        dataloader.init()1
+        dataloader.init()
 
         with chainer.using_config('train', True):
             train_loss, train_accuracy = forward(dataloader, model, "train", optimizer)
@@ -121,7 +121,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
             best_model = copy.deepcopy(model)
             updated = True
         else:
-            updated = False
+            updated = Falsego
 
         result.print_tmp_result(epoch_i, train_loss, train_accuracy, val_loss, val_accuracy, val_precision, val_recall, val_fscore, updated, time.time()-start)
         result.add_train_result(train_loss, train_accuracy)
