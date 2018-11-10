@@ -106,7 +106,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     best_score = None
     updated = False
 
-    result.show_header()
+    result.print_header()
     for epoch_i in range(epoch):
         # initialize data loader
         dataloader.init()

@@ -1,3 +1,4 @@
+import numpy as np
 
 class ExperimentResult():
     def __init__(self):
@@ -44,7 +45,7 @@ class ExperimentResult():
     def print_header(self):
         print('epoch  train_loss  train_accuracy  val_loss  val_accuracy  val_precision  val_recall  val_fscore  updated  Elapsed-Time')
 
-    def show_tmp_result(self, epoch_i, tr_loss, tr_acc, val_loss, val_acc, val_pre, val_rec, val_fscore, updated, time):
+    def print_tmp_result(self, epoch_i, tr_loss, tr_acc, val_loss, val_acc, val_pre, val_rec, val_fscore, updated, time):
         print('{:>5}  {:^10.4f}  {:^14.4f}  {:^8.4f}  {:^12.4f}  {:^13.4f}  {:^10.4f}  {:^10.4f}  {:^7s}  {:^12.2f}' \
               .format( \
                 epoch_i, \
@@ -56,4 +57,4 @@ class ExperimentResult():
                 np.mean(val_rec),
                 np.mean(val_fscore),
                 str(updated),
-                time.time()-start))
+                time))
