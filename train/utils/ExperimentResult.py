@@ -14,10 +14,10 @@ class ExperimentResult():
         self.content['val']['recall'] = []
         self.content['val']['fscore'] = []
         self.content['test'] = {}
-        self.content['test']['imgs'] = []
-        self.content['test']['y'] = []
-        self.content['test']['t'] = []
-        self.content['test']['miss'] = []
+        self.content['test']['accuracy'] = []
+        self.content['test']['precision'] = []
+        self.content['test']['recall'] = []
+        self.content['test']['fscore'] = []
 
     def add_train_result(self, loss, accuracy):
         self.content['train']['loss'].append(float(loss))
