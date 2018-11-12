@@ -72,6 +72,22 @@ class OmniWithFaceFeatureDataLoader(OmniDataLoader):
         assert len(f) == 136
         return x, f, t
 
+
+class OmniFaceFeaturePlaceDataLoader(OmniWithFaceFeatureDataLoader):
+    def __init__(self, img_size):
+        self.img_size = img_size
+        pass
+
+    def _place_to_place_id(self, place):
+        place_map = {"A": 0, "B": 0, "C": 1, "D": 1}
+        return place_map[place]
+
+    def load(self, path):
+        x, f, t = super(OmniFaceFeaturePlaceDataLoader, self).load(path)
+        place_id = self._place_to_place_id(path.place)
+        return x, f, place_id, t
+
+
 class OmniEachEyeDataLoader(OmniDataLoader):
     def __init__(self, img_size):
         super(OmniEachEyeDataLoader, self).__init__(img_size)
