@@ -85,7 +85,7 @@ class OmniFaceFeaturePlaceDataLoader(OmniWithFaceFeatureDataLoader):
     def load(self, path):
         x, f, t = super(OmniFaceFeaturePlaceDataLoader, self).load(path)
         place_id = self._place_to_place_id(path.place)
-        place_id = np.array([place_id], dtype=np.int32)
+        place_id = np.array([place_id], dtype=np.float32)
         return x, f, place_id, t
 
 
