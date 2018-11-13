@@ -52,6 +52,14 @@
         "model": "CNNBothEyeAttention"
     },
 
+    "both_attention_with_landmark_feature": {
+        "exp_num": 3,
+        "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
+        "blink_noise_path": "../data/omni/blink.json",
+        "face_direction_dir": "../data/omni/face_direction_feature",
+        "data_loader": "OmniWithFaceFeatureDataLoader",
+        "model": "CNNBothEyeAttentionWithLandmarkFeature"
+    },
 
     "fine_grained": {
         "ignored_targets": [11,12,13,14,15,16,17,18,19,20,21,40]
