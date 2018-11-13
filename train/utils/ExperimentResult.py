@@ -34,10 +34,10 @@ class ExperimentResult():
 
     def add_test_result(self, loss, accuracy, precision, recall, fscore, t, y, paths, probs):
         self.content['test']['loss'].append(float(loss))
-        self.content['test']['accuracy'].append(float(loss))
-        self.content['test']['precision'].append(float(loss))
-        self.content['test']['recall'].append(float(loss))
-        self.content['test']['fscore'].append(float(loss))
+        self.content['test']['accuracy'].append(float(accracy))
+        self.content['test']['precision'].append(float(precision))
+        self.content['test']['recall'].append(float(recall))
+        self.content['test']['fscore'].append(float(fscore))
         self.content['test']['t'] = t
         self.content['test']['y'] = y
         self.content['test']['paths'] = paths
