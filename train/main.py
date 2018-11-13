@@ -4,6 +4,9 @@ import os, sys
 import json
 import argparse
 import pickle
+import random
+import numpy as np
+import cupy as cp
 from collections import defaultdict
 
 import chainer
@@ -33,6 +36,11 @@ def report_conf(conf):
     for key, value in sorted(conf.items()):
         print('%s => %s' % (key, value))
 
+def set_random_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    cp.random.seed(seed)
+
 def main(conf_id, gpu=0):
     conf_def = load_conf('./init.json', 'default')
     conf = load_conf('./init.json', conf_id, conf=conf_def)
@@ -50,6 +58,9 @@ def main(conf_id, gpu=0):
                 d = json.load(fr)
                 for k, v in d.items():
                     face_dir_dict[k] = v
+
+
+    set_random_seed(conf["random_seed"])
 
 
     path_provider = DataPathProvider(conf)

@@ -1,5 +1,6 @@
 {
     "default": {
+        "random_seed": 1107,
         "exp_num": 1,
         "result_path": "./result",
         "model_path": "./trained",
