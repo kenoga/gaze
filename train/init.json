@@ -36,7 +36,7 @@
       "ignored_targets": [3,4,5,6,7,8]
     },
 
-    "decrese_noise_without_7_8": {
+    "decrease_noise_without_7_8": {
       "ignored_targets": [3,4,5,6,7,8],
       "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
       "blink_noise_path": "../data/omni/blink.json"
@@ -60,6 +60,13 @@
       "face_direction_dir": "../data/omni/face_direction_feature",
       "data_loader": "OmniWithFaceFeatureDataLoader",
       "model": "CNNWithFCFeature"
+    },
+
+    "every_frame_both_attention_with_landmark_feature": {
+      "skip_num": 0,
+      "face_direction_dir": "../data/omni/face_direction_feature",
+      "data_loader": "OmniWithFaceFeatureDataLoader",
+      "model": "CNNBothEyeAttentionWithLandmarkFeature"
     },
 
     "both_attention": {
