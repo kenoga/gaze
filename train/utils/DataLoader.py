@@ -74,12 +74,12 @@ class OmniWithFaceFeatureDataLoader(OmniDataLoader):
 
 class OmniWithFaceFeatureWithoutEyeRegionDataLoader(OmniDataLoader):
     def __init__(self, img_size):
-        super(OmniWithFaceFeatureDataLoader, self).__init__(img_size)
+        super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).__init__(img_size)
         pass
 
     def load(self, path):
         eye_region = set([i for i in range(36, 46)])
-        x, t = super(OmniWithFaceFeatureDataLoader, self).load(path)
+        x, t = super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).load(path)
 
         f_list_nest = []
         for i in range(len(path.face_direction)):
@@ -96,12 +96,12 @@ class OmniWithFaceFeatureWithoutEyeRegionDataLoader(OmniDataLoader):
 
 class OmniWithFaceFeatureOnlyEyeRegionDataLoader(OmniDataLoader):
     def __init__(self, img_size):
-        super(OmniWithFaceFeatureDataLoader, self).__init__(img_size)
+        super(OmniWithFaceFeatureOnlyEyeRegionDataLoader, self).__init__(img_size)
         pass
 
     def load(self, path):
         eye_region = set([i for i in range(36, 46)])
-        x, t = super(OmniWithFaceFeatureDataLoader, self).load(path)
+        x, t = super(OmniWithFaceFeatureOnlyEyeRegionDataLoader, self).load(path)
 
         f_list_nest = []
         for i in range(len(path.face_direction)):
