@@ -58,6 +58,20 @@
       "model": "CNNWithFCFeature"
     },
 
+    "with_face_feature_without_7_8_without_eye_region": {
+      "ignored_targets": [3,4,5,6,7,8],
+      "face_direction_dir": "../data/omni/face_direction_feature",
+      "data_loader": "OmniWithFaceFeatureWithoutEyeRegionDataLoader",
+      "model": "CNNWithFCFeature"
+    },
+
+    "with_face_feature_without_7_8_only_eye_region": {
+      "ignored_targets": [3,4,5,6,7,8],
+      "face_direction_dir": "../data/omni/face_direction_feature",
+      "data_loader": "OmniWithFaceFeatureOnlyEyeRegionDataLoader",
+      "model": "CNNWithFCFeature"
+    },
+
     "every_frame": {
       "skip_num": 0
     },
