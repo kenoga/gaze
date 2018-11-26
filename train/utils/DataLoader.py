@@ -78,12 +78,75 @@ class OmniWithFaceFeatureWithoutEyeRegionDataLoader(OmniDataLoader):
         pass
 
     def load(self, path):
-        eye_region = set([i for i in range(36, 46)])
+        region = set([i for i in range(36, 46)])
         x, t = super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).load(path)
 
         f_list_nest = []
         for i in range(len(path.face_direction)):
-            if i not in eye_region:
+            if i not in region:
+                f_list_nest.append(path.face_direction[i])
+
+        if path.mirror:
+            # xを反転 (positionはx, yの順になっている
+            f_list_nest = [[1-position[0], position[1]]for position in f_list_nest]
+        f_list = [e / 255.0 for position in f_list_nest for e in position]
+        f = np.array(f_list, dtype=np.float32)
+        return x, f, t
+
+class OmniWithFaceFeatureWithoutNoseRegionDataLoader(OmniDataLoader):
+    def __init__(self, img_size):
+        super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).__init__(img_size)
+        pass
+
+    def load(self, path):
+        region = set([i for i in range(27, 36)])
+        x, t = super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).load(path)
+
+        f_list_nest = []
+        for i in range(len(path.face_direction)):
+            if i not in region:
+                f_list_nest.append(path.face_direction[i])
+
+        if path.mirror:
+            # xを反転 (positionはx, yの順になっている
+            f_list_nest = [[1-position[0], position[1]]for position in f_list_nest]
+        f_list = [e / 255.0 for position in f_list_nest for e in position]
+        f = np.array(f_list, dtype=np.float32)
+        return x, f, t
+
+class OmniWithFaceFeatureWithoutMouseRegionDataLoader(OmniDataLoader):
+    def __init__(self, img_size):
+        super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).__init__(img_size)
+        pass
+
+    def load(self, path):
+        region = set([i for i in range(48, 68)])
+        x, t = super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).load(path)
+
+        f_list_nest = []
+        for i in range(len(path.face_direction)):
+            if i not in region:
+                f_list_nest.append(path.face_direction[i])
+
+        if path.mirror:
+            # xを反転 (positionはx, yの順になっている
+            f_list_nest = [[1-position[0], position[1]]for position in f_list_nest]
+        f_list = [e / 255.0 for position in f_list_nest for e in position]
+        f = np.array(f_list, dtype=np.float32)
+        return x, f, t
+
+class OmniWithFaceFeatureWithoutFaceRegionDataLoader(OmniDataLoader):
+    def __init__(self, img_size):
+        super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).__init__(img_size)
+        pass
+
+    def load(self, path):
+        region = set([i for i in range(0, 27)])
+        x, t = super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).load(path)
+
+        f_list_nest = []
+        for i in range(len(path.face_direction)):
+            if i not in region:
                 f_list_nest.append(path.face_direction[i])
 
         if path.mirror:
@@ -99,12 +162,12 @@ class OmniWithFaceFeatureOnlyEyeRegionDataLoader(OmniDataLoader):
         pass
 
     def load(self, path):
-        eye_region = set([i for i in range(36, 46)])
+        region = set([i for i in range(36, 46)])
         x, t = super(OmniWithFaceFeatureOnlyEyeRegionDataLoader, self).load(path)
 
         f_list_nest = []
         for i in range(len(path.face_direction)):
-            if i in eye_region:
+            if i in region:
                 f_list_nest.append(path.face_direction[i])
 
         if path.mirror:

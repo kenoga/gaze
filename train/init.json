@@ -70,6 +70,30 @@
       "model": "CNNWithFCFeature"
     },
 
+    "with_face_feature_without_7_8_without_nose_region": {
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "face_direction_dir": "../data/omni/face_direction_feature",
+      "data_loader": "OmniWithFaceFeatureWithoutNoseRegionDataLoader",
+      "model": "CNNWithFCFeature"
+    },
+
+    "with_face_feature_without_7_8_without_mouse_region": {
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "face_direction_dir": "../data/omni/face_direction_feature",
+      "data_loader": "OmniWithFaceFeatureWithoutMouseRegionDataLoader",
+      "model": "CNNWithFCFeature"
+    },
+
+    "with_face_feature_without_7_8_without_face_region": {
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "face_direction_dir": "../data/omni/face_direction_feature",
+      "data_loader": "OmniWithFaceFeatureWithoutFaceRegionDataLoader",
+      "model": "CNNWithFCFeature"
+    },
+
     "with_face_feature_without_7_8_only_eye_region": {
       "exp_num": 3,
       "ignored_targets": [3,4,5,6,7,8],
