@@ -384,7 +384,7 @@ class CNNWithFCFeature4(chainer.Chain):
         return y
 
 
-class CNNEachEye1(chainer.Chain):
+class CNNEachEyeShare(chainer.Chain):
     def __init__(self):
         super(CNNEachEye1, self).__init__()
         with self.init_scope():
@@ -420,7 +420,7 @@ class CNNEachEye1(chainer.Chain):
         return y
 
 
-class CNNEachEye2(chainer.Chain):
+class CNNEachEyeSeparate(chainer.Chain):
     def __init__(self):
         super(CNNEachEye2, self).__init__()
         with self.init_scope():
