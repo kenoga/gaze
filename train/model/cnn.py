@@ -386,7 +386,7 @@ class CNNWithFCFeature4(chainer.Chain):
 
 class CNNEachEyeShare(chainer.Chain):
     def __init__(self):
-        super(CNNEachEye1, self).__init__()
+        super(CNNEachEyeShare, self).__init__()
         with self.init_scope():
             self.conv1_1 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)
             self.conv1_2 = L.Convolution2D(in_channels=None, out_channels=128, ksize=3, nobias=False)
@@ -422,7 +422,7 @@ class CNNEachEyeShare(chainer.Chain):
 
 class CNNEachEyeSeparate(chainer.Chain):
     def __init__(self):
-        super(CNNEachEye2, self).__init__()
+        super(CNNEachEyeSeparate, self).__init__()
         with self.init_scope():
             self.conv1_1_1 = L.Convolution2D(in_channels=None, out_channels=32, ksize=3, nobias=False)
             self.conv1_1_2 = L.Convolution2D(in_channels=None, out_channels=64, ksize=3, nobias=False)

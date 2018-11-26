@@ -79,29 +79,21 @@
     },
 
     "each_eye_reversed_share_without_7_8": {
-      "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
-      "blink_noise_path": "../data/omni/blink.json",
       "data_loader": "OmniReversedEachEyeDataLoader",
       "model": "CNNEachEyeShare"
     },
 
     "each_eye_reversed_separate_without_7_8": {
-      "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
-      "blink_noise_path": "../data/omni/blink.json",
       "data_loader": "OmniReversedEachEyeDataLoader",
       "model": "CNNEachEyeSeparate"
     },
 
     "each_eye_share_without_7_8": {
-      "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
-      "blink_noise_path": "../data/omni/blink.json",
       "data_loader": "OmniEachEyeDataLoader",
       "model": "CNNEachEyeShare"
     },
 
     "each_eye_separate_without_7_8": {
-      "noise_data_paths": ["../data/omni/noise_data.json", "../data/omni/predicted_noise_each_eye.json", "../data/omni/invalid.json"],
-      "blink_noise_path": "../data/omni/blink.json",
       "data_loader": "OmniEachEyeDataLoader",
       "model": "CNNEachEyeSeparate"
     },
