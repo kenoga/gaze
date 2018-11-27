@@ -95,12 +95,12 @@ class OmniWithFaceFeatureWithoutEyeRegionDataLoader(OmniDataLoader):
 
 class OmniWithFaceFeatureWithoutNoseRegionDataLoader(OmniDataLoader):
     def __init__(self, img_size):
-        super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).__init__(img_size)
+        super(OmniWithFaceFeatureWithoutNoseRegionDataLoader, self).__init__(img_size)
         pass
 
     def load(self, path):
         region = set([i for i in range(27, 36)])
-        x, t = super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).load(path)
+        x, t = super(OmniWithFaceFeatureWithoutNoseRegionDataLoader, self).load(path)
 
         f_list_nest = []
         for i in range(len(path.face_direction)):
@@ -116,12 +116,12 @@ class OmniWithFaceFeatureWithoutNoseRegionDataLoader(OmniDataLoader):
 
 class OmniWithFaceFeatureWithoutMouseRegionDataLoader(OmniDataLoader):
     def __init__(self, img_size):
-        super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).__init__(img_size)
+        super(OmniWithFaceFeatureWithoutMouseRegionDataLoader, self).__init__(img_size)
         pass
 
     def load(self, path):
         region = set([i for i in range(48, 68)])
-        x, t = super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).load(path)
+        x, t = super(OmniWithFaceFeatureWithoutMouseRegionDataLoader, self).load(path)
 
         f_list_nest = []
         for i in range(len(path.face_direction)):
@@ -137,12 +137,12 @@ class OmniWithFaceFeatureWithoutMouseRegionDataLoader(OmniDataLoader):
 
 class OmniWithFaceFeatureWithoutFaceRegionDataLoader(OmniDataLoader):
     def __init__(self, img_size):
-        super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).__init__(img_size)
+        super(OmniWithFaceFeatureWithoutFaceRegionDataLoader, self).__init__(img_size)
         pass
 
     def load(self, path):
         region = set([i for i in range(0, 27)])
-        x, t = super(OmniWithFaceFeatureWithoutEyeRegionDataLoader, self).load(path)
+        x, t = super(OmniWithFaceFeatureWithoutFaceRegionDataLoader, self).load(path)
 
         f_list_nest = []
         for i in range(len(path.face_direction)):
