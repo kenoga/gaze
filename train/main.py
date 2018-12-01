@@ -22,8 +22,9 @@ def load_conf(conf_fpath, conf_id, default_conf_id):
     assert os.path.exists(conf_fpath)
 
     with open(conf_fpath, "r") as fr:
-        default_conf = json.load(fr)[default_conf_id]
-        conf = json.load(fr)[conf_id]
+        all_conf = json.load(fr)
+        default_conf = all_conf[default_conf_id]
+        conf = all_conf[conf_id]
 
     # defaultを書き換える
     for key, value in conf.items():
