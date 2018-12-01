@@ -14,6 +14,7 @@ import chainer
 import train
 from model.cnn import *
 from utils.DataPathProvider import DataPathProviderForCrossValidation
+from utils.DataPathProvider import DataPathProviderForTrain
 from utils.BatchProvider import BatchProvider
 from utils.DataLoader import *
 
