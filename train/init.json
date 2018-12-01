@@ -28,7 +28,7 @@
         "data_loader": "OmniDataLoader",
         "dataset_path": "../data/omni/both_eyes_from_aligned_face2",
         "blink_noise_path": false,
-        "face_direction_path": false,
+        "face_direction_dir": false,
         "noise_data_paths": false,
         "annotation_path": false
     },
