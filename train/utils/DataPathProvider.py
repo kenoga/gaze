@@ -9,7 +9,6 @@ from collections import deque
 import dataset_utils.Dataset
 import dataset_utils.DataInitiator
 
-
 def balance_train_data(imgs, nonlocked_rate):
     assert type(imgs) == list
     assert len(imgs) > 0
@@ -69,31 +68,22 @@ def group_list(li, group_num):
 class DataPathProvider():
 
     def __init__(self, conf):
-        self.load_conf_val(conf, 'dataset_path')
-        self.load_conf_val(conf, 'group_num')
-        self.load_conf_val(conf, 'locked_targets')
-        self.load_conf_val(conf, 'bulking')
-        self.load_conf_val(conf, 'pids')
-        self.load_conf_val(conf, 'places')
-        self.load_conf_val(conf, 'nonlocked_rate')
-        self.load_conf_val(conf, 'noise_data_paths')
-        self.load_conf_val(conf, 'blink_noise_path')
-        self.load_conf_val(conf, 'annotation_path')
-        self.load_conf_val(conf, 'ignored_targets')
-        self.load_conf_val(conf, 'face_direction_dir')
-        self.load_conf_val(conf, 'skip_num')
-        self.load_conf_val(conf, 'img_format')
-        self.load_conf_val(conf, 'data_initiator')
-        self.load_conf_val(conf, 'glasses')
+        self._load_conf_val(conf, 'dataset_path')
+        self._load_conf_val(conf, 'locked_targets')
+        self._load_conf_val(conf, 'bulking')
+        self._load_conf_val(conf, 'pids')
+        self._load_conf_val(conf, 'places')
+        self._load_conf_val(conf, 'nonlocked_rate')
+        self._load_conf_val(conf, 'noise_data_paths')
+        self._load_conf_val(conf, 'blink_noise_path')
+        self._load_conf_val(conf, 'annotation_path')
+        self._load_conf_val(conf, 'ignored_targets')
+        self._load_conf_val(conf, 'face_direction_dir')
+        self._load_conf_val(conf, 'skip_num')
+        self._load_conf_val(conf, 'img_format')
+        self._load_conf_val(conf, 'data_initiator')
+        self._load_conf_val(conf, 'glasses')
 
-
-        # データセットの分割数はデータセットの人数以下でなければならない
-        assert self.group_num <= len(self.pids)
-        # データセットの分割数は最低でも3 (train, validation, test)
-        assert self.group_num >= 3
-        self.grouped_pids = group_list(self.pids, self.group_num)
-
-        self.test_index = 0
         self.dataset = dataset_utils.Dataset.Dataset( \
             self.dataset_path, \
             data_initiator_name=self.data_initiator, \
@@ -150,11 +140,77 @@ class DataPathProvider():
         with open(path, "w") as fw:
             pickle.dump(self.dataset, fw)
 
-
-    def load_conf_val(self, config, key):
+    def _load_conf_val(self, config, key):
         assert config is not None
         assert key in config
         self.__dict__[key] = config[key]
+
+    def get_paths(self):
+        pass
+
+class DataPathProviderForTrain(DataPathProvider):
+    def __init__(self, conf):
+        super(DataPathProviderForTrain, self).__init__(conf)
+        self._load_conf_val(conf, 'validation_pids')
+        self._load_conf_val(conf, 'test_pids')
+
+    def get_paths(self):
+        ipaths = self.dataset.data
+        for ipath in ipaths:
+            if ipath.pid in self.test_pids:
+                ipath.type = 'test'
+            elif ipath.pid in self.validation_pids:
+                ipath.type = 'validation'
+            else:
+                ipath.type = 'train'
+        if self.bulking:
+            ipaths = bulk_train_data(ipaths)
+
+        if self.nonlocked_rate:
+            ipaths = balance_train_data(ipaths, self.nonlocked_rate)
+
+        train = []
+        validation = []
+        test = []
+
+        for ipath in ipaths:
+            if ipath.type == 'test':
+                test.append(ipath)
+            elif ipath.type == 'validation':
+                validation.append(ipath)
+            else:
+                train.append(ipath)
+
+        # report dataset details
+        print(' '.join(['-' * 25, 'dataset', '-' * 25]))
+        print("test ids: " + ",".join([str(pid) for pid in test_ids]))
+        print("validation ids: " + ",".join([str(pid) for pid in val_ids]))
+        print("train ids: " + ",".join([str(pid) for pid in self.pids if pid not in test_ids and pid not in val_ids]))
+        print("train locked size: %d" % len([0 for path in train if path.locked == True]))
+        print("train nonlocked size: %d" % len([0 for path in train if path.locked == False]))
+        print("validation locked size: %d" % len([0 for path in validation if path.locked == True]))
+        print("validation nonlocked size: %d" % len([0 for path in validation if path.locked == False]))
+        print("test locked size: %d" % len([0 for path in test if path.locked == True]))
+        print("test nonlocked size: %d" % len([0 for path in test if path.locked == False]))
+        print("all locked sizes: %d" % len([0 for path in ipaths if path.locked == True]))
+        print("all unlocked sizes: %d" % len([0 for path in ipaths if path.locked == False]))
+
+        return train, validation, test
+
+
+class DataPathProviderForCrossValidation(DataPathProvider):
+    def __init__(self, conf):
+        super(DataPathProviderForCrossValidation, self).__init__(conf)
+        self._load_conf_val(conf, 'group_num')
+        self.test_index = 0
+        # データセットの分割数はデータセットの人数以下でなければならない
+        assert self.group_num <= len(self.pids)
+        # データセットの分割数は最低でも3 (train, validation, test)
+        assert self.group_num >= 3
+        self.grouped_pids = group_list(self.pids, self.group_num)
+
+    def init_test_index(self):
+        self.test_index = 0
 
     def remains(self):
         return True if self.test_index < self.group_num else False
@@ -212,9 +268,3 @@ class DataPathProvider():
         print("all unlocked sizes: %d" % len([0 for path in ipaths if path.locked == False]))
 
         return train, validation, test
-
-    def init(self):
-        self.test_index = 0
-
-    def report(self):
-        pass
