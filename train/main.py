@@ -149,8 +149,8 @@ def simple_train(conf):
         fname = "_".join([conf_id, "%02d"%expi])
         model = cnn()
 
-        result_path = os.path.join(conf['result_path'], fname)
-        model_path = os.path.join(conf['model_path'], fname)
+        result_path = os.path.join(conf['result_path'], conf_id, fname)
+        model_path = os.path.join(conf['model_path'], conf_id, fname)
         train_paths, validation_paths, test_paths = path_provider.get_paths()
 
         batch_provider = BatchProvider(
@@ -164,12 +164,7 @@ def simple_train(conf):
         )
 
         result = train.train_and_test(model, batch_provider, result_path, model_path, \
-            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
-
-        result_path = os.path.join(conf['result_path'], fname, 'all.json')
-        print('save all results as .json --> {}'.format(result_path))
-        with open(result_path, 'w') as fw:
-            json.dump(result, fw, indent=2)
+            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'], save_model=conf['save_model'])
 
 
 if __name__ == "__main__":

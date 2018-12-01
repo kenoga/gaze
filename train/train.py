@@ -78,7 +78,7 @@ def forward(dataloader, model, purpose, optimizer=None):
         return (loss, accuracy), (precision, recall, fscore), (t_all.tolist(), y_all.tolist(), paths_all, prob_all)
 
 
-def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False):
+def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False, save_model=False):
     chainer.using_config('cudnn_deterministic', True)
 
     print("gpu: %d" % gpu)
@@ -143,7 +143,8 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
 
     result.add_test_result(test_loss, test_accuracy, test_precision, test_recall, test_fscore, t, y, paths, probs)
     save_result(result_path, result)
-    save_model(model_path, model)
+    if save_model:
+        save_model(model_path, best_model)
     return result.content
 
 def save_result(result_path, result):
@@ -160,7 +161,7 @@ def save_model(model_path, model):
     if not os.path.exists(dirpath):
         os.makedirs(dirpath)
     serializers.save_npz(model_path + '.npz', model)
-    #     print('save the model as .pkl --> {}'.format(model_path + '.pkl'))
-    #     pickle.dump(model, open(model_path + '.pkl', 'wb'))
-    #     print('save the optimizer --> {}'.format(model_path + '.state'))
-    #     serializers.save_npz(model_path + '.state', optimizer)
+    print('save the model as .pkl --> {}'.format(model_path + '.pkl'))
+    pickle.dump(model, open(model_path + '.pkl', 'wb'))
+    print('save the optimizer --> {}'.format(model_path + '.state'))
+    serializers.save_npz(model_path + '.state', optimizer)
