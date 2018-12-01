@@ -65,7 +65,7 @@ def group_list(li, group_num):
 
     return result
 
-class DataPathProvider(Object):
+class DataPathProvider(object):
 
     def __init__(self, conf):
         self._load_conf_val(conf, 'dataset_path')
