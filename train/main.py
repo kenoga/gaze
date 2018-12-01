@@ -135,7 +135,7 @@ def cross_validation(conf):
         with open(result_path, 'w') as fw:
             json.dump(result_all, fw, indent=2)
 
-def train(conf):
+def simple_train(conf):
     set_random_seed(conf["random_seed"])
 
     path_provider = DataPathProviderForTrain(conf)
@@ -185,6 +185,6 @@ if __name__ == "__main__":
     if conf['type'] == 'cross_validation':
         cross_validation(conf)
     elif conf['type'] == 'train':
-        train(conf)
+        simple_train(conf)
     else:
         raise "no such a type %s" % conf['type']
