@@ -126,7 +126,7 @@ def cross_validation(conf):
             )
 
             result = train.train_and_test(model, batch_provider, result_path, model_path, \
-                epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=gpu)
+                epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
             index = path_provider.get_test_index()
             result_all[index] = result
 
@@ -164,7 +164,7 @@ def simple_train(conf):
         )
 
         result = train.train_and_test(model, batch_provider, result_path, model_path, \
-            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=gpu)
+            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'])
 
         result_path = os.path.join(conf['result_path'], fname, 'all.json')
         print('save all results as .json --> {}'.format(result_path))
