@@ -182,9 +182,9 @@ class DataPathProviderForTrain(DataPathProvider):
 
         # report dataset details
         print(' '.join(['-' * 25, 'dataset', '-' * 25]))
-        print("test ids: " + ",".join([str(pid) for pid in test_ids]))
-        print("validation ids: " + ",".join([str(pid) for pid in val_ids]))
-        print("train ids: " + ",".join([str(pid) for pid in self.pids if pid not in test_ids and pid not in val_ids]))
+        print("test ids: " + ",".join([str(pid) for pid in self.test_ids]))
+        print("validation ids: " + ",".join([str(pid) for pid in self.validation_ids]))
+        print("train ids: " + ",".join([str(pid) for pid in self.pids if pid not in self.test_ids and pid not in self.validation_ids]))
         print("train locked size: %d" % len([0 for path in train if path.locked == True]))
         print("train nonlocked size: %d" % len([0 for path in train if path.locked == False]))
         print("validation locked size: %d" % len([0 for path in validation if path.locked == True]))
