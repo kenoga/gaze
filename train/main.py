@@ -134,7 +134,7 @@ def cross_validation(conf):
         with open(result_path, 'w') as fw:
             json.dump(result_all, fw, indent=2)
 
-def train():
+def train(conf):
     set_random_seed(conf["random_seed"])
 
     path_provider = DataPathProviderForCrossValidation(conf)
