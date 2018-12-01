@@ -78,7 +78,7 @@ def forward(dataloader, model, purpose, optimizer=None):
         return (loss, accuracy), (precision, recall, fscore), (t_all.tolist(), y_all.tolist(), paths_all, prob_all)
 
 
-def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False, save_model=False):
+def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, epoch=20, gpu=1, use_fc_feature=False, save_model_flag=False):
     chainer.using_config('cudnn_deterministic', True)
 
     print("gpu: %d" % gpu)
@@ -143,7 +143,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
 
     result.add_test_result(test_loss, test_accuracy, test_precision, test_recall, test_fscore, t, y, paths, probs)
     save_result(result_path, result)
-    if save_model:
+    if save_model_flag:
         save_model(model_path, best_model)
     return result.content
 
