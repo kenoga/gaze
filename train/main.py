@@ -65,8 +65,8 @@ def cross_validation(conf):
         while path_provider.remains():
             model = cnn()
 
-            result_path = os.path.join(conf['result_path'], fname, "%02d" % path_provider.get_test_index())
-            model_path = os.path.join(conf['model_path'], fname, "%02d" % path_provider.get_test_index())
+            result_path = os.path.join(conf['result_path'], fname)
+            model_path = os.path.join(conf['model_path'], fname)
 
             train_paths, validation_paths, test_paths = path_provider.get_paths()
 
