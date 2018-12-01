@@ -1,5 +1,6 @@
 {
     "default": {
+        "type": "cross_validation",
         "random_seed": 1107,
         "exp_num": 1,
         "result_path": "./result",
@@ -31,6 +32,15 @@
         "noise_data_paths": false,
         "annotation_path": false
     },
+
+    "training_01": {
+      "type": "train",
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "validation_pids": [16],
+      "test_pids": [2]
+    },
+
 
     "default_without_7_8": {
       "exp_num": 3,
