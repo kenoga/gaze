@@ -137,7 +137,7 @@ def cross_validation(conf):
 def train(conf):
     set_random_seed(conf["random_seed"])
 
-    path_provider = DataPathProviderForCrossValidation(conf)
+    path_provider = DataPathProviderForTrain(conf)
 
     GivenDataLoader = globals()[conf["data_loader"]]
     data_loader = GivenDataLoader(conf["img_size"])
@@ -185,3 +185,5 @@ if __name__ == "__main__":
         cross_validation(conf)
     elif conf['type'] == 'train':
         train(conf)
+    else:
+        raise "no such a type %s" % conf['type']
