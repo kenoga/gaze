@@ -144,7 +144,7 @@ def train_and_test(model, dataloader, result_path, model_path, learn_rate=0.01, 
     result.add_test_result(test_loss, test_accuracy, test_precision, test_recall, test_fscore, t, y, paths, probs)
     save_result(result_path, result)
     if save_model_flag:
-        save_model(model_path, best_model)
+        save_model(model_path, best_model, optimizer)
     return result.content
 
 def save_result(result_path, result):
@@ -155,7 +155,7 @@ def save_result(result_path, result):
     with open(result_path + '.json', 'w') as fw:
         json.dump(result.content, fw, indent=2)
 
-def save_model(model_path, model):
+def save_model(model_path, model, optimizer):
     print('save the model as .npz --> {}'.format(model_path + '.npz') )
     dirpath = os.path.dirname(model_path)
     if not os.path.exists(dirpath):
