@@ -164,7 +164,7 @@ def simple_train(conf):
         )
 
         result = train.train_and_test(model, batch_provider, result_path, model_path, \
-            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'], save_model=conf['save_model'])
+            epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'], save_model_flag=conf['save_model'])
 
 
 if __name__ == "__main__":
