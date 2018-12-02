@@ -16,13 +16,13 @@ from chainer import cuda
 
 class GazeDetector(object):
     def __init__(self, model, model_path, size=(32, 96), gpu=True):
-        img_loader = ImageLoader(size)
+        self.img_loader = ImageLoader(size)
         serializers.load_npz(model_path, model)
         if gpu:
             model.to_gpu()
 
     def detect(self, path):
-        x = img_loader.load(path)
+        x = self.img_loader.load(path)
         if gpu:
             x = cuda.to_gpu(x)
         x = chainer.Variable(x)
