@@ -21,10 +21,11 @@ class GazeDetector(object):
         self.gpu = gpu
         if self.gpu:
             model.to_gpu()
+        self.model = model
 
     def detect(self, path):
         x = self.img_loader.load(path)
         if self.gpu:
             x = cuda.to_gpu(x)
         x = chainer.Variable(x)
-        return model(x)
+        return self.model(x)
