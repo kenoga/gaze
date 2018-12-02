@@ -29,4 +29,4 @@ class GazeDetector(object):
         if self.gpu:
             x = cuda.to_gpu(x)
         x = chainer.Variable(x)
-        return F.softmax(self.model(x))
+        return F.softmax(self.model(x)).data.tolist()
