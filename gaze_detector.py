@@ -25,6 +25,7 @@ class GazeDetector(object):
 
     def detect(self, path):
         x = self.img_loader.load(path)
+        x = np.array([x], dtype=x.dtype)
         if self.gpu:
             x = cuda.to_gpu(x)
         x = chainer.Variable(x)
