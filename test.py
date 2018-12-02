@@ -18,7 +18,7 @@ for movie_id in movie_ids:
     results = {}
     json_path = os.path.join(tgt_dir, "%s.json" % movie_id)
     src_sub_dir = os.path.join(src_dir, movie_id)
-    img_paths = glob.glob(os.path.join(src_sub_dir, "*.jpg"))
+    img_paths = sorted(glob.glob(os.path.join(src_sub_dir, "*.jpg")))
     for img_path in img_paths:
         result = gaze_detector.detect(img_path)
         img_name = os.path.basename(img_path)
