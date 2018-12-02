@@ -11,6 +11,25 @@ class DataLoader(object):
     def load(self):
         pass
 
+class ImageLoader(DataLoader):
+    def __init__(self, img_size):
+        self.img_size = img_size
+
+    def load(self, path, mirror=False):
+        img = Image.open(path).convert('L') ## Gray->L, RGB->RGB
+        img = ImageOps.equalize(img)
+
+        img = img.resize((self.img_size[1], self.img_size[0]))
+
+        if mirror:
+            img = ImageOps.mirror(img)
+
+        x = np.array(img, dtype=np.float32)
+        x = x / 255.0 ## Normalize [0, 255] -> [0, 1]
+        x = x.reshape(1, self.img_size[0], self.img_size[1]) ## Reshape image to input shape of CNN
+
+        return x
+
 
 class OmniDataLoader(DataLoader):
     def __init__(self, img_size):
