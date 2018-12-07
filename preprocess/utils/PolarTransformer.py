@@ -1,6 +1,42 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+import math
+import cv2
+
 class PolarTransformer():
+
+    def __init__(self, h_src, w_src):
+        self.h_src = h_src
+        self.w_src = w_src
+        
+        self.x_center, self.y_center = h_src // 2, w_src//2
+        
+        self.w_dst = w_src * 2
+        self.h_dst = h_src // 2
+
+        self.dst = np.zeros((self.h_dst, self.w_dst, 3), np.float32)
+        self.__create_polar_map()
+    
+    def __create_polar_map(self):
+        self.map_x = np.zeros((self.h_dst, self.w_dst), np.float32)
+        self.map_y = np.zeros((self.h_dst, self.w_dst), np.float32)
+        
+        for h_px in range(self.h_dst):
+            r = h_px
+            for w_px in range(self.w_dst):
+                t = 2 * math.pi * (float(w_px + 1) / self.w_dst)
+                x = r * math.cos(t)
+                y = -r * math.sin(t)
+                self.map_x.itemset((h_px, w_px), self.x_center + x)
+                self.map_y.itemset((h_px, w_px), self.y_center + y)
+                
+    def transform(self, src):
+        return cv2.remap(src, self.map_x, self.map_y, cv2.INTER_LINEAR, dst=self.dst)
+
+
+
+class PolarTransformerOld():
 
     def __init__(self, h_src, w_src):
         self.h_src = h_src

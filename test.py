@@ -8,7 +8,8 @@ gaze_detector = GazeDetector(model, model_path)
 
 
 src_dir = "./data/omni_dialog/pilot/both_eyes_from_aligned_face"
-movie_ids = ["omni_dialog_pilot_01"]
+# movie_ids = ["omni_dialog_pilot_01"]
+movie_ids = ["omni_dialog_pilot_02_01", "omni_dialog_pilot_02_02"]
 tgt_dir = "./data/omni_dialog/pilot/detection_result"
 
 if not os.path.exists(tgt_dir):

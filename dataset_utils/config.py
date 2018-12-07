@@ -1,4 +1,6 @@
 ROOT = '/root/gaze'
 DS_ROOT = '/root/gaze/data/omni'
+DS_DIALOG_PILOT = '/root/gaze/data/omni_dialog/pilot'
+DS_DIALOG = '/root/gaze/data/omni_dialog/real'
 DS_FUJIKAWA = '/root/gaze/data/fujikawa'
 DS_KATAYAMA= '/root/gaze/data/katayama'

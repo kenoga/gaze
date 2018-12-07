@@ -2,14 +2,44 @@
 
 import os
 import json
+import requests
 import cv2
 import glob
 import csv
 from PIL import Image
 from config import DS_ROOT
 from IPython.display import Image, display
-from openface.align_dlib import TEMPLATE
+try:
+    from openface.align_dlib import TEMPLATE
+except ImportError:
+    pass
 
+def notify(text):
+    requests.post('https://hooks.slack.com/services/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', data = json.dumps({
+        'text': text, # 投稿するテキスト
+        'username': u'notification', # 投稿のユーザー名
+        'icon_emoji': u':ghost:', # 投稿のプロフィール画像に入れる絵文字
+        'link_names': 1, # メンションを有効にする
+    }))
+    
+def get_place_region_in_panorama(img, place):
+    height, width = tuple(img.shape[:2])
+    if place == "A":
+        return img[height//2:, width//2+2200:width//2+2880]
+    elif place == "B":
+        return img[height//2:, width//2+70:width//2+750]
+    elif place == "C":
+        return img[height//2:, width//2+1750:width//2+2200]
+    elif place == "D":
+        return img[height//2:, width//2+750:width//2+1200]
+    else:
+        raise Exception
+    
+def imwrite(path, img):
+    cv2.imwrite(path, img)
+
+def imread(path):
+    return cv2.imread(path)
 
 def imshow(img, format='.png'):
     decoded_bytes = cv2.imencode(format, img)[1].tobytes()
