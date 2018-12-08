@@ -9,7 +9,7 @@ import dataset_utils.utils as utils
 import dataset_utils.config as config
 
 frame_rate = 20
-movie_files = ["01_01.MP4", "01_02.MP4", "02_01.MP4", "02_02.MP4"]
+movie_files = ["03_01.MP4", "03_02.MP4", "04_01.MP4", "04_02.MP4"]
 src_img_dir = os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/transformed_split")
 src_spc_dir =  os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/speech")
 dst_dir = os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/ant_movie")
@@ -32,4 +32,4 @@ for movie_file in movie_files:
         subprocess.call(attach_speech)
         os.remove(tmp_dst_path)
         
-utils.notify("make_movie done!!!")
+utils.notify("@nogaken make_movie done!!!")

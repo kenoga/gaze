@@ -10,7 +10,7 @@ import dataset_utils.config as config
 
 
 src_dir = os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/movie")
-movie_files = ["01_01.MP4", "01_02.MP4", "02_01.MP4", "02_02.MP4", "03_01.MP4", "03_02.MP4"]
+movie_files = ["03_01.MP4", "03_02.MP4", "04_01.MP4", "04_02.MP4"]
 tgt_dir =  os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/speech")
 
 for movie_file in movie_files:
@@ -24,4 +24,4 @@ for movie_file in movie_files:
     
     print(' '.join(command))
     subprocess.call(command)
-utils.notify("movie2images done!!!")
+utils.notify("extract_speech done!!!")
