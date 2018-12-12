@@ -34,6 +34,9 @@ def get_place_region_in_panorama(img, place):
         return img[height//2:, width//2+750:width//2+1200]
     else:
         raise Exception
+
+def crop_bb(img, bb):
+    return img[bb[1]:bb[3], bb[0]:bb[2]]
     
 def imwrite(path, img):
     cv2.imwrite(path, img)

@@ -24,6 +24,13 @@ class FaceAligner():
         if img_path:
             img = cv2.imread(imgpath)
         return self.aligner.getLargestFaceBoundingBox(img)
+  
+    def bbs(self, img_path=None, img=None):
+        if img_path is None and img is None:
+            raise RuntimeError("Please give a imgpath or a img.")
+        if img_path:
+            img = cv2.imread(imgpath)
+        return self.aligner.getAllFaceBoundingBoxes(img)
     
     def landmarks(self, img_path=None, img=None, bb=None):
         if bb is None:

@@ -136,6 +136,7 @@ def cross_validation(conf):
             json.dump(result_all, fw, indent=2)
 
 def simple_train(conf):
+    conf_id = conf["conf_id"]
     set_random_seed(conf["random_seed"])
 
     path_provider = DataPathProviderForTrain(conf)
@@ -166,16 +167,10 @@ def simple_train(conf):
         result = train.train_and_test(model, batch_provider, result_path, model_path, \
             epoch=conf['epoch'], learn_rate=conf['learn_rate'], gpu=conf['gpu'], save_model_flag=conf['save_model'])
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("config_id")
-    parser.add_argument("--gpu", default=0)
-    args = parser.parse_args()
-
-    conf_id = args.config_id
+def main(conf_id, gpu=0):
     conf = load_conf('./init.json', conf_id, 'default')
-    conf['gpu'] = args.gpu
+    conf['gpu'] = gpu
+    conf['conf_id'] = conf_id
     report_conf(conf)
     if conf['type'] == 'cross_validation':
         cross_validation(conf)
@@ -183,3 +178,13 @@ if __name__ == "__main__":
         simple_train(conf)
     else:
         raise "no such a type %s" % conf['type']
+    
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("config_id")
+    parser.add_argument("--gpu", default=0)
+    args = parser.parse_args()
+    
+    main(args.config_id, args.gpu)
+

@@ -10,8 +10,7 @@ import dataset_utils.config as config
 
 
 src_dir = os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/movie")
-movie_files = ["03_02.MP4"]
-# movie_files = ["02_02.MP4"]
+movie_files = ["04_01.MP4", "04_02.MP4", "05_01.MP4", "05_02.MP4"]
 tgt_dir =  os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/image")
 
 for movie_file in movie_files:

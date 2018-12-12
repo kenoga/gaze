@@ -34,7 +34,7 @@
         "annotation_path": false
     },
 
-    "training_01": {
+    "for_pid_02": {
       "type": "train",
       "save_model": true,
       "exp_num": 3,
@@ -42,7 +42,54 @@
       "validation_pids": [16],
       "test_pids": [2]
     },
-
+    "for_pid_03": {
+      "type": "train",
+      "save_model": true,
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "validation_pids": [16],
+      "test_pids": [3]
+    },
+    "for_pid_04": {
+      "type": "train",
+      "save_model": true,
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "validation_pids": [16],
+      "test_pids": [4]
+    },
+    "for_pid_07": {
+      "type": "train",
+      "save_model": true,
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "validation_pids": [16],
+      "test_pids": [7]
+    },
+    "for_pid_09": {
+      "type": "train",
+      "save_model": true,
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "validation_pids": [16],
+      "test_pids": [9]
+    },
+    "for_pid_12": {
+      "type": "train",
+      "save_model": true,
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "validation_pids": [16],
+      "test_pids": [12]
+    },
+    "for_pid_16": {
+      "type": "train",
+      "save_model": true,
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "validation_pids": [15],
+      "test_pids": [16]
+    },
 
     "default_without_7_8": {
       "exp_num": 3,
