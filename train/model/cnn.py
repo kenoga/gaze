@@ -19,56 +19,41 @@ class CNN(chainer.Chain):
             self.fc1 = L.Linear(None, 256, nobias=False)
             self.fc2 = L.Linear(None, 128, nobias=False)
             self.fc3 = L.Linear(None, 2, nobias=False)
-        self.init_flag = True
 
     def __call__(self, x):
-
-        if self.init_flag:
-            self._pshape(x)
-
         h = F.relu(self.conv1_1(x))
-        if self.init_flag:
-            self._pshape(h, "conv1_1")
-
         h = F.relu(self.conv1_2(h))
-        if self.init_flag:
-            self._pshape(h, "conv1_2")
-
         h = F.max_pooling_2d(h, ksize=3)
-        if self.init_flag:
-            self._pshape(h, "mp_1")
-
         h = F.relu(self.conv2_1(h))
-        if self.init_flag:
-            self._pshape(h, "conv2_1")
-
         h = F.relu(self.conv2_2(h))
-        if self.init_flag:
-            self._pshape(h, "conv2_2")
-
         h = F.max_pooling_2d(h, ksize=3)
-        if self.init_flag:
-            self._pshape(h, "conv2_2")
-
         h = F.dropout(F.relu(self.fc1(h)))
-        if self.init_flag:
-            self._pshape(h, "fc1")
-
         h = F.dropout(F.relu(self.fc2(h)))
-        if self.init_flag:
-            self._pshape(h, "fc2")
-
         y = self.fc3(h)
-        if self.init_flag:
-            self._pshape(h, "fc3")
-
-        if self.init_flag:
-            self.init_flag = False
         return y
+    
+    def get_fc1(self, x):
+        h = F.relu(self.conv1_1(x))
+        h = F.relu(self.conv1_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        h = F.relu(self.conv2_1(h))
+        h = F.relu(self.conv2_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        h = F.dropout(F.relu(self.fc1(h)))
+        return h
 
-    def _pshape(self, layer, label=""):
-        print("-> (%s)" % label)
-        print(layer.shape)
+
+    def get_fc2(self, x):
+        h = F.relu(self.conv1_1(x))
+        h = F.relu(self.conv1_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        h = F.relu(self.conv2_1(h))
+        h = F.relu(self.conv2_2(h))
+        h = F.max_pooling_2d(h, ksize=3)
+        h = F.dropout(F.relu(self.fc1(h)))
+        h = F.dropout(F.relu(self.fc2(h)))
+        return h
+        
 
 
 class SpatialWeightsCNN(chainer.Chain):

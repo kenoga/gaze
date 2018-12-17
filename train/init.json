@@ -90,6 +90,14 @@
       "validation_pids": [15],
       "test_pids": [16]
     },
+    "for_multi_frame": {
+      "type": "train",
+      "save_model": true,
+      "exp_num": 3,
+      "ignored_targets": [3,4,5,6,7,8],
+      "validation_pids": [15],
+      "test_pids": [6]
+    },
 
     "default_without_7_8": {
       "exp_num": 3,

@@ -9,7 +9,7 @@ import dataset_utils.utils as utils
 import dataset_utils.config as config
 
 frame_rate = 20
-movie_files = ["03_01.MP4", "03_02.MP4", "04_01.MP4", "04_02.MP4"]
+movie_files = ["04_01.MP4", "04_02.MP4", "05_01.MP4", "05_02.MP4"]
 src_img_dir = os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/transformed_split")
 src_spc_dir =  os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/speech")
 dst_dir = os.path.abspath("/mnt/aoni02/nogawa/gaze/data/omni_dialog/real/ant_movie")

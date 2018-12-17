@@ -29,9 +29,9 @@ def get_place_region_in_panorama(img, place):
     elif place == "B":
         return img[height//2:, width//2+70:width//2+750]
     elif place == "C":
-        return img[height//2:, width//2+1750:width//2+2200]
+        return img[height//2:, width//2+1550:width//2+2200]
     elif place == "D":
-        return img[height//2:, width//2+750:width//2+1200]
+        return img[height//2:, width//2+750:width//2+1400]
     else:
         raise Exception
 
