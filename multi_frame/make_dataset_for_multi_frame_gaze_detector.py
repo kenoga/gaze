@@ -37,7 +37,6 @@ def load_ts(movie_id, seat_id, ant_dir, frame_num):
         start = ms2frameid(ms_start)
         end = ms2frameid(ms_end)
         slots.append((start, end))
-#     labels = [np.array([0], dtype=np.float32) for _ in range(frame_num)]
     labels = [0 for _ in range(frame_num)]
     for start, end in slots:
         try:
@@ -82,11 +81,10 @@ def make_dataset(movie_ids, x_type):
     img_dir = os.path.join(base_path, "image")
     meta_dir = os.path.join(base_path, "meta_info")
     
-    dataset = {}
+    dataset = defaultdict(defaultdict)
     for movie_id in movie_ids:
         dialog_id = int(movie_id.split("_")[0])
         session_id = int(movie_id.split("_")[1])
-        dataset[dialog_id] = {}
         dataset[dialog_id][session_id] = {}
         meta_path = os.path.join(meta_dir, "%s.json" % (movie_id.split("_")[0]))
         with open(meta_path, "r") as fr:
@@ -99,7 +97,6 @@ def make_dataset(movie_ids, x_type):
             dataset[dialog_id][session_id][seat_id] = (xs, ts)
     return dataset
         
-
     
 if __name__ == "__main__":
     movie_ids = ["01_01", "01_02", "02_01", "02_02", "03_01", "03_02", "04_01", "04_02", "05_01", "05_02"]

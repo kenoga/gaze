@@ -5,12 +5,11 @@ import chainer.functions as F
 
 
 class LSTM(chainer.Chain):
-    def __init__(self, n_layers=1, n_in=128, n_hidden=16, n_out=2, dropout=0.5, train=True):
+    def __init__(self, n_layers=1, n_in=128, n_hidden=16, n_out=2, dropout=0.5):
         super(LSTM, self).__init__()
         with self.init_scope():
             self.l1 = L.NStepLSTM(n_layers, n_in, n_hidden, dropout)
             self.l2 = L.Linear(n_hidden, n_out, initialW=chainer.initializers.Normal(scale=0.01))
-            self.train = train
         self.hx = None
         self.cx = None
         self.dropout_rate = dropout
@@ -28,6 +27,9 @@ class LSTM(chainer.Chain):
         except:
             import pdb; pdb.set_trace()
         return ys
+    
+    def __str__(self):
+        return "lstm"
 
     def compute_loss(self, xs, ts):
         """
@@ -57,12 +59,11 @@ class LSTM(chainer.Chain):
 
         
 class GRU(chainer.Chain):
-    def __init__(self, n_layers=1, n_in=128, n_hidden=16, n_out=2, dropout=0.5, train=True):
+    def __init__(self, n_layers=1, n_in=128, n_hidden=16, n_out=2, dropout=0.5):
         super(GRU, self).__init__()
         with self.init_scope():
             self.l1 = L.NStepGRU(n_layers, n_in, n_hidden, dropout)
             self.l2 = L.Linear(n_hidden, n_out, initialW=chainer.initializers.Normal(scale=0.01))
-            self.train = train
         self.hx = None
         self.dropout_rate = dropout
             
@@ -78,6 +79,9 @@ class GRU(chainer.Chain):
 #         ys = F.split_axis(concat_ys, window_size, axis=0)
         ys = F.split_axis(concat_ys, batch, axis=0)
         return ys
+    
+    def __str__(self):
+        return "gru"
 
     def compute_loss(self, xs, ts):
         """

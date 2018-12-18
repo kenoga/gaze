@@ -12,46 +12,57 @@ import dataset_utils.config as config
 
 
 class DatasetLoader(object):
-    def __init__(self, dataset_path):
-        self.datasets = pickle.load(open(dataset_path))
-        
-    def load(self, dialog_id, session_id, seat_id, batch_size, window_size, xp=np):
-        assert dialog_id in self.datasets
-        assert seat_id in self.datasets[dialog_id]
-        xs, ts = self.datasets[dialog_id][seat_id]
-        return DataIterator(xs, ts, batch_size, window_size, xp)
-
-
-class DatasetsIteratorForCrossValidation(object):
     def __init__(self, dataset_path, batch_size, window_size, xp=np):
         self.datasets = pickle.load(open(dataset_path))
-        self.dialog_ids = sorted(self.datasets.keys())
         self.batch_size = batch_size
         self.window_size = window_size
         self.xp = xp
+        
+    def load(self, dialog_id, session_id, seat_id):
+        assert dialog_id in self.datasets
+        assert seat_id in self.datasets[dialog_id]
+        xs, ts = self.datasets[dialog_id][seat_id]
+        return DataIterator(xs, ts, self.batch_size, self.window_size, self.xp)
+    
+    def load_by_dialog_id(self, dialog_id):
+        assert dialog_id in self.datasets
+        data_iters = []
+        for session_id in self.datasets[dialog_id]:
+            for seat_id in self.datasets[dialog_id][session_id]:
+                data_iters.append(self.load(dialog_id, session_id, seat_id))
+
+
+class DatasetsIteratorForCrossValidation(object):
+    # test_dialog_idで指定されたデータはtestデータなので返さない
+    # testデータで評価したい場合は上のDatasetLoaderでload_by_dialog_idでデータを読み込む
+    def __init__(self, dataset_path, batch_size, window_size, test_dialog_id, xp=np):
+        self.datasets = pickle.load(open(dataset_path))
+        self.dialog_ids = [did for did in sorted(self.datasets.keys()) if did != test_dialog_id]
+        self.batch_size = batch_size
+        self.window_size = window_size
+        self.test_dialog_id = test_dialog_id
+        self.xp = xp
 
     def __iter__(self):
-        self.test_i = 0
+        self.val_i = 0
+        self.current_val_dialog_id = self.dialog_ids[self.val_i]
         return self
 
     def next(self):
-        if self.test_i >= len(self.dialog_ids):
+        if self.val_i >= len(self.dialog_ids):
             raise StopIteration
-        trains, vals, tests = [], [], []
+        train_datasets, val_datasets = [], []
 
-        test_ids = [self.dialog_ids[self.test_i]]
-        val_i = (self.test_i + 1) % len(self.dialog_ids)
-        val_ids = [self.dialog_ids[val_i]]
-        train_ids = [dialog_id for dialog_id in self.dialog_ids if dialog_id not in test_ids and dialog_id not in val_ids]
+        val_id = self.dialog_ids[self.val_i]
+        self.current_val_dialog_id = val_id
         
-        for did in train_ids:
-            trains.extend(self._get_data_iterators(did))
-        for did in val_ids:
-            vals.extend(self._get_data_iterators(did))
-        for did in test_ids:
-            tests.extend(self._get_data_iterators(did))
-        self.test_i += 1
-        return trains, vals, tests
+        for did in self.dialog_ids:
+            if did == val_id:
+                val_datasets.extend(self._get_data_iterators(did))
+            else:
+                train_datasets.extend(self._get_data_iterators(did))
+        self.val_i += 1
+        return train_datasets, val_datasets
 
     def _get_data_iterators(self, dialog_id):
         assert dialog_id in self.datasets
@@ -65,9 +76,6 @@ class DatasetsIteratorForCrossValidation(object):
         return iterators
                 
         
-        
-    
-
 class DataIterator(object):
     def __init__(self, xs, ts, batch_size, window_size, xp=np):
         self.xp = xp
