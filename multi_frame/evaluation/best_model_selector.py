@@ -1,4 +1,5 @@
 import os
+import math
 from collections import defaultdict
 
 def confstr2conf(conf_str):
@@ -24,9 +25,13 @@ def select_best_model_conf(log_dir, log_files, num=1, verbose=False):
             conf_and_val_id = val_report_s[1]
             conf = "_".join(conf_and_val_id.split("_")[:5])
             score = float(val_report_s[3])
+            if math.isnan(score):
+                continue
             conf2scores[conf].append(score)
 
         for conf, scores in conf2scores.items():
+            if len(scores) < 4:
+                continue
             conf2avescore.append((conf, sum(scores) / len(scores)))
 
     conf2avescores = list(reversed(sorted(conf2avescore, key=lambda x: x[1])))
@@ -42,7 +47,8 @@ def select_best_model_conf(log_dir, log_files, num=1, verbose=False):
 
 if __name__ == "__main__":
     log_dir = "./training/output/test_dialog_id_05/log"
-    log_files = ["train_log_20181219202934.txt", "train_log_20181219205625.txt"]
+    log_files = ["train_log_20181219202934.txt", "train_log_20181219205625.txt", "20181223190430.txt"]
+#     log_files = []
     best_conf = select_best_model_conf(log_dir, log_files, verbose=True)
     
     

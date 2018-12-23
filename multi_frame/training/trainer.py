@@ -15,8 +15,7 @@ from chainer import optimizers, serializers
 from dataset_loader import DatasetsIteratorForCrossValidation
 from network.lstm import LSTM, GRU, RNN
 
-
-class Trainer(object):
+class TrainerBase(object):
     def __init__(self, conf):
         for key, value in conf.items():
             self.__dict__[key] = value
@@ -81,19 +80,6 @@ class Trainer(object):
             return f1_score, (ts_all, ys_all)
         return f1_score
     
-    def get_exp_id(self, val_dialog_id):
-        if self.network == LSTM:
-            network = "lstm"
-        elif self.network == GRU:
-            network = "gru"
-        elif self.network == RNN:
-            network = "rnn"
-        else:
-            network = "unknown"
-        # network_inputType_rnnHidden_batchSize_windowSize_trainSize_valDialogId
-        return "%s_%s_%04d_%02d_%02d_%02d_%02d" % \
-        (network, self.input_type, self.rnn_hidden, self.batch_size, self.window_size, len(self.train_ids)-1, val_dialog_id)
-    
     def _setup(self):
         self.model = self.network(self.rnn_layer, self.rnn_input, self.rnn_hidden, self.rnn_output, self.dropout)
         if self.gpu >= 0:
@@ -102,7 +88,12 @@ class Trainer(object):
         # Optimizer
         self.optimizer = optimizers.Adam()
         self.optimizer.setup(self.model)
+        
     
+class CrossValidationTrainer(TrainerBase):
+    def __init__(self, config):
+        super(CrossValidationTrainer, self).__init__(config)
+ 
     def cross_validate(self):
         '''
         test_dialog_id: テスト用であるために、学習, 検証から外したいdialog_id
@@ -152,5 +143,18 @@ class Trainer(object):
                 report = ", ".join(["VALIDATION_REPORT", exp_id, "%.4f" % min_val_loss, "%.4f" % ave_score])
                 print(report)
                 fr.write(report + "\n")
-    
+
+    def get_exp_id(self, val_dialog_id):
+        if self.network == LSTM:
+            network = "lstm"
+        elif self.network == GRU:
+            network = "gru"
+        elif self.network == RNN:
+            network = "rnn"
+        else:
+            network = "unknown"
+        # network_inputType_rnnHidden_batchSize_windowSize_trainSize_valDialogId
+        return "%s_%s_%04d_%02d_%02d_%02d_%02d" % \
+        (network, self.input_type, self.rnn_hidden, self.batch_size, self.window_size, len(self.train_ids)-1, val_dialog_id)
+
     

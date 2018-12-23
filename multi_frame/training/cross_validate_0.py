@@ -6,14 +6,14 @@ import chainer
 import cupy as cp
 from chainer import optimizers
 from network.lstm import LSTM, GRU, RNN
-from training.trainer import Trainer
+from training.trainer import CrossValidationTrainer
 from training.default_conf import get_default_conf
 
-####  LSTM :)
-networks = [RNN]
+####  GRU :)
+networks = [GRU]
 batch_sizes = [4,8,16]
 # dataset_path_and_rnn_inputs = [("./dataset/dataset_fc2.pickle", 128, "fc2"), ("./dataset/dataset_fc3.pickle", 1, "fc3")]
-dataset_path_and_rnn_inputs = [("./dataset/dataset_fc2.pickle", 128, "fc2")]
+dataset_path_and_rnn_inputs = [("./dataset/dataset_fc1.pickle", 256, "fc1")]
 window_sizes = [8,16,32]
 rnn_hiddens = [16,32,64,128]
 
@@ -22,9 +22,11 @@ print("default conf:")
 for key, value in sorted(conf.items()):
     print("%s -> %s" % (key, value))
 
-####  config
-test_dialog_id = 5
-output_dir = os.path.join("training", "output", "test_dialog_id_%02d" % test_dialog_id)
+####  Configuration
+conf["gpu"] = 1
+conf["test_ids"] = [5]
+conf["train_ids"] = [1,2,3,4]
+output_dir = os.path.join("training", "output", "test_dialog_id_%02d" % conf["test_ids"][0])
 npz_dir = os.path.join(output_dir, "npz")
 loss_dir = os.path.join(output_dir, "loss")
 log_dir = os.path.join(output_dir, "log")
@@ -53,5 +55,5 @@ for network in networks:
                     conf["batch_size"] = batch_size
                     conf["window_size"] = window_size
                     conf["rnn_hidden"] = rnn_hidden
-                    train = Trainer(conf)
-                    train.cross_validate(test_dialog_id)
+                    train = CrossValidationTrainer(conf)
+                    train.cross_validate()
