@@ -66,7 +66,7 @@ def load_xs(movie_id, seat_id, detection_result_dir, frame_num, x_type):
         xs[fid-1] = output
     return xs
 
-def visualize(labels, predictions, frame_num, title, target=None, fig_path=None, big=True):
+def visualize(labels, predictions, frame_num, title, target=None, fig_path=None, big=True, start_t=None):
     x = [i for i in range(1, frame_num+1)]
     if target:
         x = x[target[0]:target[1]]
@@ -97,7 +97,10 @@ def visualize(labels, predictions, frame_num, title, target=None, fig_path=None,
         ml = MultipleLocator(20)
         ml.MAXTICKS = 5000
         axes.set_xticks([i for i in range(0, frame_num+1, 200)])
-        axes.set_xticklabels([i/20 for i in range(0, frame_num+1, 200)])
+        if start_t:
+            axes.set_xticklabels([i/20+start_t for i in range(0, frame_num+1, 200)])
+        else:
+            axes.set_xticklabels([i/20 for i in range(0, frame_num+1, 200)])
         axes.xaxis.set_minor_locator(ml)
         
     if fig_path:

@@ -10,8 +10,8 @@ import pickle
 
 from training.trainer import TrainerBase
 from training.default_conf import get_default_conf
-from training.dataset_loader import DatasetLoader
-from network.lstm import LSTM, GRU, RNN
+from training.dataset_loader import DatasetLoader, EachDataIterator
+from network.lstm import LSTM, GRU, RNN, AttentionLSTM
 
 
 def translate_conf(conf):
@@ -21,6 +21,8 @@ def translate_conf(conf):
         conf["network"] = LSTM
     elif conf["network"] == "rnn":
         conf["network"] = RNN
+    elif conf["network"] == "atlstm":
+        conf["network"] = AttentionLSTM
     else:
         raise RuntimeError("invalid conf")
     
@@ -30,7 +32,9 @@ def translate_conf(conf):
     elif conf["input_type"] == "fc3":
         conf["rnn_input"] = 1
         conf["dataset_path"] = "./dataset/dataset_fc3.pickle"
-        
+    elif conf["input_type"] == "fc1":
+        conf["rnn_input"] = 256
+        conf["dataset_path"] = "./dataset/dataset_fc1.pickle"       
     else:
         raise RuntimeError("invalid conf")
     return conf
@@ -53,14 +57,17 @@ def test(target_model_path, output_dir):
     conf = translate_conf(conf)
 
     # Load model
-    model = conf["network"](1, conf["rnn_input"], conf["rnn_hidden"], 2, 0.5)
+    if conf["network"] == AttentionLSTM:
+        model = conf["network"](1, conf["rnn_input"], conf["rnn_hidden"], 2, conf["window_size"], 0.5)
+    else:
+        model = conf["network"](1, conf["rnn_input"], conf["rnn_hidden"], 2, 0.5)
     model.to_gpu()
     chainer.cuda.get_device(0).use()
     serializers.load_npz(target_model_path, model)
     conf["model"] = model
     
     # Load test datasets
-    dataset_loader = DatasetLoader(conf["dataset_path"], conf["batch_size"], conf["window_size"], cp)
+    dataset_loader = DatasetLoader(conf["dataset_path"], conf["batch_size"], conf["window_size"], cp, iterator=EachDataIterator)
     test_datasets = dataset_loader.load_by_dialog_id(5)
     
     tester = TrainerBase(conf)
@@ -101,14 +108,54 @@ def test(target_model_path, output_dir):
 #         test(target_path, output_dir)
 
 # fc3
+# if __name__ == "__main__":
+#     target_files = ["lstm_fc3_0016_08_16_04.npz"]
+#     target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
+#     for target_file in target_files:
+#         print(target_file)
+#         output_dir = os.path.join("evaluation", "test_result", "fc3")
+#         if not os.path.exists(output_dir):
+#             os.makedirs(output_dir)
+#         target_path = os.path.join(target_dir, target_file)
+#         test(target_path, output_dir)
+
+
+def test_by_trained_model(model_path, output_dir):
+    print("test: %s" % model_path)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    test(model_path, output_dir)
+
+ 
+
 if __name__ == "__main__":
-    target_files = ["lstm_fc3_0016_08_16_04.npz"]
-    target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
-    for target_file in target_files:
-        print(target_file)
-        output_dir = os.path.join("evaluation", "test_result", "fc3")
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        target_path = os.path.join(target_dir, target_file)
-        test(target_path, output_dir)
+#     target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
+    
+#     # model_compare_lstm
+#     model_path = os.path.join(target_dir, "lstm_fc1_0016_04_16_03_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "model_compare_lstm")
+#     test_by_trained_model(model_path, output_dir)
+
+#     # model_compare_gru
+#     model_path = os.path.join(target_dir, "gru_fc1_0064_04_16_03_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "model_compare_gru")
+#     test_by_trained_model(model_path, output_dir)
+    
+#     # input_compare_fc1(gru)
+#     model_path = os.path.join(target_dir, "gru_fc1_0064_04_16_03_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "input_compare_fc1")
+#     test_by_trained_model(model_path, output_dir)
+
+#     # input_compare_fc2(lstm)
+#     model_path = os.path.join(target_dir, "lstm_fc2_0128_08_32_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "input_compare_fc2")
+#     test_by_trained_model(model_path, output_dir)
+
+    # model_compare_atlstm
+    target_dir = os.path.join(".", "training", "output", "attention_test_dialog_id_05", "npz")
+    model_path = os.path.join(target_dir, "atlstm_fc2_0016_32_32_03_02.npz")
+    output_dir = os.path.join("evaluation", "test_result", "model_compare_atlstm_02")
+    test_by_trained_model(model_path, output_dir)
+
+
     

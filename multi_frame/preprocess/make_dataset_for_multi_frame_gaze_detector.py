@@ -99,14 +99,19 @@ def make_dataset(movie_ids, x_type):
     
 if __name__ == "__main__":
     movie_ids = ["01_01", "01_02", "02_01", "02_02", "03_01", "03_02", "04_01", "04_02", "05_01", "05_02"]
-    x_type = "score"
-    dataset = make_dataset(movie_ids, x_type)
-    with open("./dataset/dataset_fc3.pickle", "w") as fw:
-        pickle.dump(dataset, fw)
+#     x_type = "score"
+#     dataset = make_dataset(movie_ids, x_type)
+#     with open("./dataset/dataset_fc3.pickle", "w") as fw:
+#         pickle.dump(dataset, fw)
         
-    x_type = "fc2"
+#     x_type = "fc2"
+#     dataset = make_dataset(movie_ids, x_type)
+#     with open("./dataset/dataset_fc2.pickle", "w") as fw:
+#         pickle.dump(dataset, fw)
+
+    x_type = "fc1"
     dataset = make_dataset(movie_ids, x_type)
-    with open("./dataset/dataset_fc2.pickle", "w") as fw:
+        with open("./dataset/dataset_fc1.pickle", "w") as fw:
         pickle.dump(dataset, fw)
     
     

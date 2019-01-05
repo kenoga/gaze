@@ -3,6 +3,7 @@
 import os
 import datetime
 import cupy as cp
+from training.dataset_loader import DataIterator
 
 
 def get_default_conf():
@@ -13,6 +14,8 @@ def get_default_conf():
     conf["dropout"] 
     conf["gpu"]
     conf["epoch"]
+    conf["data_iterator"] 
+   
     
     #### Non-Default Config
     conf["network"]
@@ -32,5 +35,6 @@ def get_default_conf():
     conf["gpu"] = 0
     conf["epoch"] = 10
     conf["xp"] = cp
+    conf["data_iterator"] = DataIterator
     return conf
 

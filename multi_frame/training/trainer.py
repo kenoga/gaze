@@ -13,7 +13,7 @@ import chainer.cuda
 import chainer.functions as F
 from chainer import optimizers, serializers
 from dataset_loader import DatasetsIteratorForCrossValidation
-from network.lstm import LSTM, GRU, RNN
+from network.lstm import LSTM, GRU, RNN, AttentionLSTM
 
 class TrainerBase(object):
     def __init__(self, conf):
@@ -29,8 +29,9 @@ class TrainerBase(object):
     def train(self, train_datasets):
         losses = []
         for train_dataset in train_datasets:
+            print("train: %s" % train_dataset)
             batch_losses = []
-            for batch in train_dataset:
+            for i, batch in enumerate(train_dataset):
                 xs, ts = batch
                 with chainer.using_config('train', True):
                     loss = self.model.compute_loss(xs, ts)
@@ -42,6 +43,9 @@ class TrainerBase(object):
                 loss.unchain_backward()
                 # バッチ単位で更新する。
                 self.optimizer.update()
+                 # AttetionLSTMのときはバッチごとに状態をリセット
+                if self.network == AttentionLSTM:
+                    self.model.reset_state()
             losses.append(sum(batch_losses)/len(batch_losses))
             self.model.reset_state()
         return sum(losses)/len(losses)
@@ -81,7 +85,10 @@ class TrainerBase(object):
         return f1_score
     
     def _setup(self):
-        self.model = self.network(self.rnn_layer, self.rnn_input, self.rnn_hidden, self.rnn_output, self.dropout)
+        if self.network == AttentionLSTM:
+            self.model = self.network(self.rnn_layer, self.rnn_input, self.rnn_hidden, self.rnn_output, self.window_size, self.dropout)
+        else:
+            self.model = self.network(self.rnn_layer, self.rnn_input, self.rnn_hidden, self.rnn_output, self.dropout)
         if self.gpu >= 0:
             chainer.cuda.get_device(self.gpu).use()
             self.model.to_gpu()
@@ -98,7 +105,7 @@ class CrossValidationTrainer(TrainerBase):
         '''
         test_dialog_id: テスト用であるために、学習, 検証から外したいdialog_id
         '''
-        cross_validation_dataset_loader = DatasetsIteratorForCrossValidation(self.dataset_path, self.batch_size, self.window_size, xp=self.xp, test_ids=self.test_ids, train_ids=self.train_ids)
+        cross_validation_dataset_loader = DatasetsIteratorForCrossValidation(self.dataset_path, self.batch_size, self.window_size, xp=self.xp, test_ids=self.test_ids, train_ids=self.train_ids, iterator=self.data_iterator)
 
         for train_datasets, val_datasets in cross_validation_dataset_loader:
             val_dialog_id = cross_validation_dataset_loader.current_val_dialog_id
@@ -151,6 +158,8 @@ class CrossValidationTrainer(TrainerBase):
             network = "gru"
         elif self.network == RNN:
             network = "rnn"
+        elif self.network == AttentionLSTM:
+            network = "atlstm"
         else:
             network = "unknown"
         # network_inputType_rnnHidden_batchSize_windowSize_trainSize_valDialogId
