@@ -67,7 +67,10 @@ def test(target_model_path, output_dir):
     conf["model"] = model
     
     # Load test datasets
-    dataset_loader = DatasetLoader(conf["dataset_path"], conf["batch_size"], conf["window_size"], cp, iterator=EachDataIterator)
+    if conf["network"] == AttentionLSTM:
+        dataset_loader = DatasetLoader(conf["dataset_path"], conf["batch_size"], conf["window_size"], cp, iterator=EachDataIterator)
+    else:
+        dataset_loader = DatasetLoader(conf["dataset_path"], conf["batch_size"], conf["window_size"], cp)
     test_datasets = dataset_loader.load_by_dialog_id(5)
     
     tester = TrainerBase(conf)
@@ -75,7 +78,7 @@ def test(target_model_path, output_dir):
     # Test
     for i, test_dataset in enumerate(test_datasets):
         print(test_dataset)
-        with chainer.using_config('train', True):
+        with chainer.using_config('train', False):
             score, (ts_all, ys_all) = tester.test(test_dataset, True)
         print(score)
         ys_all = chainer.functions.softmax(ys_all)
@@ -151,11 +154,32 @@ if __name__ == "__main__":
 #     output_dir = os.path.join("evaluation", "test_result", "input_compare_fc2")
 #     test_by_trained_model(model_path, output_dir)
 
-    # model_compare_atlstm
-    target_dir = os.path.join(".", "training", "output", "attention_test_dialog_id_05", "npz")
-    model_path = os.path.join(target_dir, "atlstm_fc2_0016_32_32_03_02.npz")
-    output_dir = os.path.join("evaluation", "test_result", "model_compare_atlstm_02")
+#     # model_compare_atlstm
+#     target_dir = os.path.join(".", "training", "output", "attention_test_dialog_id_05", "npz")
+#     model_path = os.path.join(target_dir, "atlstm_fc2_0016_32_32_03_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "model_compare_atlstm_02")
+#     test_by_trained_model(model_path, output_dir)
+
+    # model_compare_rnn
+    target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
+    model_path = os.path.join(target_dir, "rnn_fc2_0064_08_32_02.npz")
+    output_dir = os.path.join("evaluation", "test_result", "model_compare_rnn_02")
     test_by_trained_model(model_path, output_dir)
 
+    # model_compare_gru
+    target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
+    model_path = os.path.join(target_dir, "gru_fc2_0064_16_16_02.npz")
+    output_dir = os.path.join("evaluation", "test_result", "model_compare_gru_02")
+    test_by_trained_model(model_path, output_dir)
 
+    # model_compare_lstm
+    target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
+    model_path = os.path.join(target_dir, "lstm_fc2_0128_08_32_02.npz")
+    output_dir = os.path.join("evaluation", "test_result", "model_compare_lstm_02")
+    test_by_trained_model(model_path, output_dir)
     
+#     # model_compare_atlstm
+#     target_dir = os.path.join(".", "training", "output", "attention_test_dialog_id_05", "npz")
+#     model_path = os.path.join(target_dir, "atlstm_fc2_0016_32_32_03_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "model_compare_atlstm_02")
+#     test_by_trained_model(model_path, output_dir)

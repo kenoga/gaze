@@ -5,17 +5,19 @@ import datetime
 import chainer
 import cupy as cp
 from chainer import optimizers
-from network.lstm import LSTM, GRU, RNN, AttentionLSTM, TestAttentionLSTM
+from network.lstm import LSTM, GRU, RNN, AttentionLSTM
 from training.trainer import CrossValidationTrainer
 from training.default_conf import get_default_conf
-from training.dataset_loader import EachDataIterator, BigDataIterator
+from training.dataset_loader import EachDataIterator
 
 ####  AttentionLSTM :)
-networks = [TestAttentionLSTM]
-batch_sizes = [8, 16, 32]
+networks = [AttentionLSTM]
+# batch_sizes = [8, 16, 32]
+batch_sizes = [64, 128]
 dataset_path_and_rnn_inputs = [("./dataset/dataset_fc2.pickle", 128, "fc2")]
-window_sizes = [8,16,32]
-rnn_hiddens = [16,32,64,128]
+# window_sizes = [8,16,32]
+window_sizes = [32, 64]
+rnn_hiddens = [32]
 
 conf = get_default_conf()
 print("default conf:")
@@ -36,7 +38,7 @@ for d in [npz_dir, loss_dir, log_dir]:
 conf["npz_dir"] = npz_dir
 conf["loss_dir"] = loss_dir
 conf["log_path"] = os.path.join(log_dir, "{0:%Y%m%d%H%M%S}.txt".format(datetime.datetime.now()))
-conf["data_iterator"] = BigDataIterator
+conf["data_iterator"] = EachDataIterator
         
 #### Journey to the Best Hiper Parameter Search :)
 params = [networks, batch_sizes, dataset_path_and_rnn_inputs, window_sizes, rnn_hiddens]

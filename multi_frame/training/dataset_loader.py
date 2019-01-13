@@ -94,8 +94,8 @@ class EachDataIterator(object):
         assert len(self.xs_all) == len(self.ts_all) == batch_size
         for i in range(batch_size):
             assert len(self.xs_all[i])== len(self.ts_all[i])
-        assert len(set([len(xs) for xs in self.xs_all])) == 1
-        assert len(set([len(ts) for ts in self.ts_all])) == 1
+#         assert len(set([len(xs) for xs in self.xs_all])) == 1
+#         assert len(set([len(ts) for ts in self.ts_all])) == 1
         assert section_size_x == section_size_y
         self.section_size = section_size_x
         
@@ -148,8 +148,7 @@ class EachDataIterator(object):
     
     def __str__(self):
         return "%02d_%02d_%s" % (self.dialog_id, self.session_id, self.seat_id)
-
-
+    
 
 class DatasetLoader(object):
     def __init__(self, dataset_path, batch_size, window_size, xp=np, iterator=DataIterator):
@@ -221,7 +220,10 @@ class DatasetsIteratorForCrossValidation(object):
                 iterator.set_info(dialog_id, session_id, seat_id)
                 iterators.append(iterator)
         return iterators
+
     
+    
+ 
 if __name__ == "__main__":
     dsl  = DatasetLoader("./dataset/dataset_fc2.pickle", 64, 16, xp=cp, iterator=NormalDataIterator)
     iter = dsl.load(5, 1, "A").__iter__()

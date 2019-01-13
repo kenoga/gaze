@@ -13,7 +13,7 @@ import chainer.cuda
 import chainer.functions as F
 from chainer import optimizers, serializers
 from dataset_loader import DatasetsIteratorForCrossValidation
-from network.lstm import LSTM, GRU, RNN, AttentionLSTM
+from network.lstm import LSTM, GRU, RNN, AttentionLSTM, AttentionGRU
 
 class TrainerBase(object):
     def __init__(self, conf):
@@ -85,7 +85,7 @@ class TrainerBase(object):
         return f1_score
     
     def _setup(self):
-        if self.network == AttentionLSTM:
+        if self.network == AttentionLSTM or self.network == AttentionGRU:
             self.model = self.network(self.rnn_layer, self.rnn_input, self.rnn_hidden, self.rnn_output, self.window_size, self.dropout)
         else:
             self.model = self.network(self.rnn_layer, self.rnn_input, self.rnn_hidden, self.rnn_output, self.dropout)
@@ -160,6 +160,8 @@ class CrossValidationTrainer(TrainerBase):
             network = "rnn"
         elif self.network == AttentionLSTM:
             network = "atlstm"
+        elif self.network == AttentionGRU:
+            network = "atgru"
         else:
             network = "unknown"
         # network_inputType_rnnHidden_batchSize_windowSize_trainSize_valDialogId

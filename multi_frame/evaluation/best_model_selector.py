@@ -46,9 +46,15 @@ def select_best_model_conf(log_dir, log_files, num=1, verbose=False):
 
 
 if __name__ == "__main__":
-#     log_dir = "./training/output/test_dialog_id_05/log"
-#     log_files = ["train_log_20181219202934.txt", "train_log_20181219205625.txt", "20181223190430.txt", "20181224013506.txt", "20181224013735.txt"]
-
+    log_dir = "./training/output/test_dialog_id_05/log"
+#     # lstm
+#     log_files = ["20181219205625.txt"]
+#     # gru
+#     log_files = ["20181219202934.txt"]
+#     # rnn
+#     log_files = ["20181223190430.txt"]
+    
+    # atlstm
     log_dir = "./training/output/attention_test_dialog_id_05/log"
     log_files = ["20181228014132.txt"]
     best_conf = select_best_model_conf(log_dir, log_files, verbose=True)
