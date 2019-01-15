@@ -57,18 +57,6 @@ class CrossValidationDatasetsIterator(object):
                 train_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
         self.val_i += 1
         return train_datasets, val_datasets
-    #
-    # def _get_data_iterators(self, dialog_id):
-    #     assert dialog_id in self.datasets
-    #     iterators = []
-    #     for session_id in sorted(self.datasets[dialog_id].keys()):
-    #         for seat_id in sorted(self.datasets[dialog_id][session_id].keys()):
-    #             xs, ts = self.datasets[dialog_id][session_id][seat_id]
-    #             iterator = self.iterator(xs, ts)
-    #             iterator.set_info(dialog_id, session_id, seat_id)
-    #             iterators.append(iterator)
-    #     return iterators
-
 
 
 if __name__ == "__main__":
