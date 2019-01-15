@@ -9,8 +9,10 @@ from network.feedforward import *
 from training.trainer.single_frame_trainer import SingleFrameTrainer
 from training.trainer.trainer import CrossValidationTrainerWrapper
 from training.default_conf import get_default_conf
-from training.data_loader.single_frame_dataset_loader import SingleFrameDataIterator, SingleFrameCrossValidationDatasetsIterator
-from training.data_loader.dataset_loader import NStepCrossValidationDatasetIterator
+
+from training.data_loader.dataset_loader import CrossValidationDatasetsIterator
+from training.data_loader.data_iterator import SingleFrameDataIterator
+
 ####  Parameter Settings :)
 networks = [OneLayerFeedForwardNeuralNetwork]
 batch_sizes = [64]
