@@ -6,7 +6,7 @@ import chainer
 import cupy as cp
 from chainer import optimizers
 from network.lstm import LSTM, GRU, RNN
-from training.trainer import CrossValidationTrainer
+from training.trainer import NStepCrossValidationTrainer
 from training.default_conf import get_default_conf
 
 ####  GRU :)
@@ -26,7 +26,7 @@ for key, value in sorted(conf.items()):
 conf["gpu"] = 1
 conf["test_ids"] = [5]
 conf["train_ids"] = [1,2,3,4]
-output_dir = os.path.join("training", "output", "test_dialog_id_%02d" % conf["test_ids"][0])
+output_dir = os.path.join("training", "output", "tmp_test_dialog_id_%02d" % conf["test_ids"][0])
 npz_dir = os.path.join(output_dir, "npz")
 loss_dir = os.path.join(output_dir, "loss")
 log_dir = os.path.join(output_dir, "log")
@@ -55,5 +55,5 @@ for network in networks:
                     conf["batch_size"] = batch_size
                     conf["window_size"] = window_size
                     conf["rnn_hidden"] = rnn_hidden
-                    train = CrossValidationTrainer(conf)
+                    train = NStepCrossValidationTrainer(conf)
                     train.cross_validate()

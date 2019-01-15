@@ -9,9 +9,12 @@ from chainer import serializers
 import pickle
 
 from training.trainer import TrainerBase
+from training.single_frame_trainer import SingleFrameTrainer
 from training.default_conf import get_default_conf
 from training.dataset_loader import DatasetLoader, EachDataIterator
+from training.single_frame_dataset_loader import SingleFrameDatasetLoader, SingleFrameDataIterator
 from network.lstm import LSTM, GRU, RNN, AttentionLSTM
+from network.feedforward import *
 
 
 def translate_conf(conf):
@@ -23,6 +26,10 @@ def translate_conf(conf):
         conf["network"] = RNN
     elif conf["network"] == "atlstm":
         conf["network"] = AttentionLSTM
+    elif conf["network"] == "ff1":
+        conf["network"] = OneLayerFeedForwardNeuralNetwork
+    elif conf["network"] == "ff2":
+        conf["network"] = TwoLayerFeedForwardNeuralNetwork
     else:
         raise RuntimeError("invalid conf")
     
@@ -44,9 +51,12 @@ def confstr2conf(conf_str):
     conf_str_s = conf_str.split("_")
     conf["network"] = conf_str_s[0]
     conf["input_type"] = conf_str_s[1]
-    conf["rnn_hidden"] = int(conf_str_s[2])
-    conf["batch_size"] = int(conf_str_s[3])
-    conf["window_size"] = int(conf_str_s[4])
+    if conf["network"] == "ff1" or conf["network"] == "ff2":
+        conf["batch_size"] = int(conf_str_s[2])
+    else:
+        conf["rnn_hidden"] = int(conf_str_s[2])
+        conf["batch_size"] = int(conf_str_s[3])
+        conf["window_size"] = int(conf_str_s[4])
     return conf
 
 def test(target_model_path, output_dir):
@@ -59,6 +69,8 @@ def test(target_model_path, output_dir):
     # Load model
     if conf["network"] == AttentionLSTM:
         model = conf["network"](1, conf["rnn_input"], conf["rnn_hidden"], 2, conf["window_size"], 0.5)
+    elif conf["network"] == OneLayerFeedForwardNeuralNetwork or conf["network"] == TwoLayerFeedForwardNeuralNetwork:
+        model = conf["network"](conf["rnn_input"], conf["rnn_output"])
     else:
         model = conf["network"](1, conf["rnn_input"], conf["rnn_hidden"], 2, 0.5)
     model.to_gpu()
@@ -69,11 +81,15 @@ def test(target_model_path, output_dir):
     # Load test datasets
     if conf["network"] == AttentionLSTM:
         dataset_loader = DatasetLoader(conf["dataset_path"], conf["batch_size"], conf["window_size"], cp, iterator=EachDataIterator)
+    elif conf["network"] == OneLayerFeedForwardNeuralNetwork or conf["network"] == TwoLayerFeedForwardNeuralNetwork:
+        dataset_loader = SingleFrameDatasetLoader(conf["dataset_path"], conf["batch_size"], cp, iterator=SingleFrameDataIterator)
     else:
         dataset_loader = DatasetLoader(conf["dataset_path"], conf["batch_size"], conf["window_size"], cp)
     test_datasets = dataset_loader.load_by_dialog_id(5)
-    
-    tester = TrainerBase(conf)
+    if conf["network"] == OneLayerFeedForwardNeuralNetwork or conf["network"] == TwoLayerFeedForwardNeuralNetwork:
+        tester = SingleFrameTrainer(conf)
+    else:
+        tester = TrainerBase(conf)
     
     # Test
     for i, test_dataset in enumerate(test_datasets):
@@ -160,26 +176,41 @@ if __name__ == "__main__":
 #     output_dir = os.path.join("evaluation", "test_result", "model_compare_atlstm_02")
 #     test_by_trained_model(model_path, output_dir)
 
-    # model_compare_rnn
-    target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
-    model_path = os.path.join(target_dir, "rnn_fc2_0064_08_32_02.npz")
-    output_dir = os.path.join("evaluation", "test_result", "model_compare_rnn_02")
-    test_by_trained_model(model_path, output_dir)
+#     # model_compare_rnn
+#     target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
+#     model_path = os.path.join(target_dir, "rnn_fc2_0064_08_32_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "model_compare_rnn_02")
+#     test_by_trained_model(model_path, output_dir)
 
-    # model_compare_gru
-    target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
-    model_path = os.path.join(target_dir, "gru_fc2_0064_16_16_02.npz")
-    output_dir = os.path.join("evaluation", "test_result", "model_compare_gru_02")
-    test_by_trained_model(model_path, output_dir)
+#     # model_compare_gru
+#     target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
+#     model_path = os.path.join(target_dir, "gru_fc2_0064_16_16_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "model_compare_gru_02")
+#     test_by_trained_model(model_path, output_dir)
 
-    # model_compare_lstm
-    target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
-    model_path = os.path.join(target_dir, "lstm_fc2_0128_08_32_02.npz")
-    output_dir = os.path.join("evaluation", "test_result", "model_compare_lstm_02")
-    test_by_trained_model(model_path, output_dir)
+#     # model_compare_lstm
+#     target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
+#     model_path = os.path.join(target_dir, "lstm_fc2_0128_08_32_02.npz")
+#     output_dir = os.path.join("evaluation", "test_result", "model_compare_lstm_02")
+#     test_by_trained_model(model_path, output_dir)
     
 #     # model_compare_atlstm
 #     target_dir = os.path.join(".", "training", "output", "attention_test_dialog_id_05", "npz")
 #     model_path = os.path.join(target_dir, "atlstm_fc2_0016_32_32_03_02.npz")
 #     output_dir = os.path.join("evaluation", "test_result", "model_compare_atlstm_02")
 #     test_by_trained_model(model_path, output_dir)
+    
+    # single frame fc2 (layer 1)
+    target_dir = os.path.join(".", "training", "output", "single_frame_test_dialog_id_05", "npz")
+    model_path = os.path.join(target_dir, "ff1_fc2_0064_03_02.npz")
+    output_dir = os.path.join("evaluation", "test_result", "single_frame_02")
+    test_by_trained_model(model_path, output_dir)  
+    
+    # single frame fc1 (layer 2)
+    target_dir = os.path.join(".", "training", "output", "single_frame_test_dialog_id_05", "npz")
+    model_path = os.path.join(target_dir, "ff2_fc1_0064_03_02.npz")
+    output_dir = os.path.join("evaluation", "test_result", "fc1_single_frame_02")
+    test_by_trained_model(model_path, output_dir)  
+    
+    
+    

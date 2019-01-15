@@ -25,6 +25,25 @@ class TrainerBase(object):
         random.seed(seed)
         np.random.seed(seed)
         cp.random.seed(seed)
+    
+    def train(self, dataset):
+        pass
+    
+    def validate(self, dataset):
+        pass
+    
+    def test(self, dataset):
+        pass
+    
+
+class NStepTrainer(TrainerBase):
+    def __init__(self, config):
+        super(NStepTrainer, self).__init__(config)
+        
+    def set_random_seed(self, seed):
+        random.seed(seed)
+        np.random.seed(seed)
+        cp.random.seed(seed)
 
     def train(self, train_datasets):
         losses = []
@@ -97,9 +116,9 @@ class TrainerBase(object):
         self.optimizer.setup(self.model)
         
     
-class CrossValidationTrainer(TrainerBase):
+class NStepCrossValidationTrainer(NStepTrainer):
     def __init__(self, config):
-        super(CrossValidationTrainer, self).__init__(config)
+        super(NStepCrossValidationTrainer, self).__init__(config)
  
     def cross_validate(self):
         '''
