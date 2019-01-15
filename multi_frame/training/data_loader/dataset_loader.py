@@ -30,8 +30,9 @@ class CrossValidationDatasetsIterator(object):
     # test_dialog_idで指定されたデータはtestデータなので返さない
     # testデータで評価したい場合は上のDatasetLoaderでload_by_dialog_idでデータを読み込む
     def __init__(self, iterator, dataset_path, test_ids, train_ids):
-        self.datasets = pickle.load(open(dataset_path))
-        self.dialog_ids = [did for did in sorted(self.datasets.keys()) if did not in test_ids and did in train_ids]
+        self.dataset_loader = DatasetLoader(dataset_path, iterator)
+        self.dialog_ids = [did for did in sorted(self.dataset_loader.datasets.keys())\
+                            if did not in test_ids and did in train_ids]
         self.test_ids = test_ids
         self.train_ids = train_ids
         self.iterator = iterator
@@ -51,22 +52,22 @@ class CrossValidationDatasetsIterator(object):
 
         for did in self.dialog_ids:
             if did == val_id:
-                val_datasets.extend(self._get_data_iterators(did))
+                val_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
             else:
-                train_datasets.extend(self._get_data_iterators(did))
+                train_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
         self.val_i += 1
         return train_datasets, val_datasets
-
-    def _get_data_iterators(self, dialog_id):
-        assert dialog_id in self.datasets
-        iterators = []
-        for session_id in sorted(self.datasets[dialog_id].keys()):
-            for seat_id in sorted(self.datasets[dialog_id][session_id].keys()):
-                xs, ts = self.datasets[dialog_id][session_id][seat_id]
-                iterator = self.iterator(xs, ts)
-                iterator.set_info(dialog_id, session_id, seat_id)
-                iterators.append(iterator)
-        return iterators
+    #
+    # def _get_data_iterators(self, dialog_id):
+    #     assert dialog_id in self.datasets
+    #     iterators = []
+    #     for session_id in sorted(self.datasets[dialog_id].keys()):
+    #         for seat_id in sorted(self.datasets[dialog_id][session_id].keys()):
+    #             xs, ts = self.datasets[dialog_id][session_id][seat_id]
+    #             iterator = self.iterator(xs, ts)
+    #             iterator.set_info(dialog_id, session_id, seat_id)
+    #             iterators.append(iterator)
+    #     return iterators
 
 
 
