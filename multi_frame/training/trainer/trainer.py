@@ -37,7 +37,7 @@ class CrossValidationTrainerWrapper(object):
         self.dataset_iterator = dataset_iterator
 
     def cross_validate(self):
-        for train_dataset, val_dataset in self.dataset_iterator:
+        for train_datasets, val_datasets in self.dataset_iterator:
             val_dialog_id = self.dataset_iterator.current_val_dialog_id
             # 実験idを取得
             exp_id = self.trainer.get_exp_id(val_dialog_id)
@@ -52,8 +52,8 @@ class CrossValidationTrainerWrapper(object):
             min_val_loss = None
             min_val_model = None
             for epoch in range(self.trainer.epoch):
-                train_loss = self.trainer.train(train_dataset)
-                val_loss = self.trainer.validate(val_dataset)
+                train_loss = self.trainer.train(train_datasets)
+                val_loss = self.trainer.validate(val_datasets)
                 print('epoch:{}, loss:{}, val_loss:{}'.format(epoch, train_loss, val_loss))
 
                 if min_val_loss is None or val_loss <= min_val_loss:
@@ -72,11 +72,8 @@ class CrossValidationTrainerWrapper(object):
             npz_path = os.path.join(self.trainer.npz_dir, "%s.npz" % exp_id)
             serializers.save_npz(npz_path, min_val_model)
 
-            if type(val_dataset) == list:
-                f1_scores = [self.trainer.test(val_dataset) for val_dataset in val_datasets]
-                ave_score = sum(f1_scores) / len(f1_scores)
-            else:
-                ave_score = self.trainer.test(val_dataset)
+            f1_scores = [self.trainer.test(val_dataset) for val_dataset in val_datasets]
+            ave_score = sum(f1_scores) / len(f1_scores)
 
             with open(self.trainer.log_path, "a") as fr:
                 report = ", ".join(["VALIDATION_REPORT", exp_id, "%.4f" % min_val_loss, "%.4f" % ave_score])
