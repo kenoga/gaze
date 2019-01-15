@@ -35,13 +35,8 @@ class CrossValidationTrainerWrapper(object):
     def __init__(self, trainer, dataset_iterator):
         self.trainer = trainer
         self.dataset_iterator = dataset_iterator
-        # super(SingleFrameCrossValidationTrainer, self).__init__(config)
 
     def cross_validate(self):
-        '''
-        test_dialog_id: テスト用であるために、学習, 検証から外したいdialog_id
-        '''
-
         for train_dataset, val_dataset in self.dataset_iterator:
             val_dialog_id = self.dataset_iterator.current_val_dialog_id
             # 実験idを取得

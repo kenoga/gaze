@@ -6,8 +6,8 @@ import chainer
 import cupy as cp
 from chainer import optimizers
 from network.feedforward import *
-from training.single_frame_trainer import SingleFrameTrainer
-from training.trainer import CrossValidationTrainerWrapper
+from training.trainer.single_frame_trainer import SingleFrameTrainer
+from training.trainer.trainer import CrossValidationTrainerWrapper
 from training.default_conf import get_default_conf
 from training.single_frame_dataset_loader import SingleFrameDataIterator, SingleFrameDatasetsIteratorForCrossValidation
 
