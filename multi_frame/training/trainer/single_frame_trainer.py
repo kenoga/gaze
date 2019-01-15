@@ -22,7 +22,7 @@ class SingleFrameTrainer(TrainerBase):
     def train(self, datasets):
         losses = []
         for dataset in datasets:
-            print("train: %s" % dataset)
+            # print("train: %s" % dataset)
             batch_losses = []
             for batch in dataset:
                 xs, ts = batch

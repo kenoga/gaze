@@ -44,7 +44,6 @@ class SingleFrameDataIterator(object):
         start = self.batch_size * self.i
         end = self.batch_size * (self.i + 1)
         x_batch = chainer.Variable(self.xp.asarray(self.xs[start: end], dtype=self.xp.float32))
-#         t_batch = chainer.Variable(self.xp.asarray(self.ts[start: end], dtype=self.xp.int32))
         t_batch = chainer.Variable(self.xp.asarray(self.ts[start: end], dtype=self.xp.int32))
         self.i += 1
         return x_batch, t_batch
