@@ -26,7 +26,7 @@ class DatasetLoader(object):
         return data_iters
 
 
-class CrossValidationDatasetIterator(object):
+class CrossValidationDatasetsIterator(object):
     # test_dialog_idで指定されたデータはtestデータなので返さない
     # testデータで評価したい場合は上のDatasetLoaderでload_by_dialog_idでデータを読み込む
     def __init__(self, iterator, dataset_path, test_ids, train_ids):
