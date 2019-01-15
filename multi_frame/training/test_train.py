@@ -54,7 +54,7 @@ for network in networks:
             conf["batch_size"] = batch_size
 
             SingleFrameDataIterator.set_params(conf["batch_size"], xp=cp)
-            dataset_iterator = NStepCrossValidationDatasetIterator(\
+            dataset_iterator = CrossValidationDatasetsIterator(\
                 SingleFrameDataIterator,\
                 conf["dataset_path"],\
                 test_ids=conf["test_ids"],\
