@@ -208,7 +208,7 @@ class DatasetLoader(object):
 class NStepCrossValidationDatasetIterator(object):
     # test_dialog_idで指定されたデータはtestデータなので返さない
     # testデータで評価したい場合は上のDatasetLoaderでload_by_dialog_idでデータを読み込む
-    def __init__(self, iterator, dataset_path, iterator, test_ids, train_ids):
+    def __init__(self, iterator, dataset_path, test_ids, train_ids):
         self.datasets = pickle.load(open(dataset_path))
         self.dialog_ids = [did for did in sorted(self.datasets.keys()) if did not in test_ids and did in train_ids]
         self.test_ids = test_ids

@@ -23,8 +23,8 @@ class SingleFrameDataIterator(object):
         cls.batch_size = batch_size
         cls.xp = xp
 
-    def __init__(self, xs, ts, batch_size, xp=np):
-        if batch_size == None or xp == None:
+    def __init__(self, xs, ts):
+        if self.batch_size == None or self.xp == None:
             raise RuntimeError("Essential parameters have not been set.")
 
         assert len(xs) > 0
@@ -32,8 +32,6 @@ class SingleFrameDataIterator(object):
         self.xs, self.ts = xs, ts
         # shuffle
 #         self.xs, self.ts = self._shuffle(xs, ts)
-        self.batch_size = batch_size
-        self.xp = xp
         self.xdim = len(xs[0])
 
     def __iter__(self):

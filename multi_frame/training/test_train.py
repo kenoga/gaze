@@ -36,7 +36,6 @@ for d in [npz_dir, loss_dir, log_dir]:
 conf["npz_dir"] = npz_dir
 conf["loss_dir"] = loss_dir
 conf["log_path"] = os.path.join(log_dir, "{0:%Y%m%d%H%M%S}.txt".format(datetime.datetime.now()))
-conf["data_iterator"] = SingleFrameDataIterator
 
 #### Journey to the Best Hiper Parameter Search :)
 params = [networks, batch_sizes, dataset_path_and_rnn_inputs]
@@ -58,7 +57,7 @@ for network in networks:
                 SingleFrameDataIterator,\
                 conf["dataset_path"],\
                 test_ids=conf["test_ids"],\
-                train_ids=conf["train_ids"],\)
+                train_ids=conf["train_ids"])
             trainer = SingleFrameTrainer(conf)
             cvtrainer = CrossValidationTrainerWrapper(trainer, dataset_iterator)
             cvtrainer.cross_validate()
