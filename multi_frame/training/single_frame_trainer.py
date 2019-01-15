@@ -13,7 +13,6 @@ import chainer.cuda
 import chainer.functions as F
 from chainer import optimizers, serializers
 from trainer import TrainerBase
-from network.feedforward import *
 
 
 class SingleFrameTrainer(TrainerBase):
@@ -69,12 +68,6 @@ class SingleFrameTrainer(TrainerBase):
         self.optimizer.setup(self.model)
 
     def get_exp_id(self, val_dialog_id):
-        if self.network == OneLayerFeedForwardNeuralNetwork:
-            network = "ff1"
-        elif self.network == TwoLayerFeedForwardNeuralNetwork:
-            network = "ff2"
-        else:
-            network = "unknown"
         # network_inputType_batchSize_trainSize_valDialogId
         return "%s_%s_%04d_%02d_%02d" % \
-        (network, self.input_type, self.batch_size, len(self.train_ids)-1, val_dialog_id)
+        (self.network.name, self.input_type, self.batch_size, len(self.train_ids)-1, val_dialog_id)

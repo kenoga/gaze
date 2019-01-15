@@ -12,7 +12,6 @@ import chainer
 import chainer.cuda
 import chainer.functions as F
 from chainer import optimizers, serializers
-from network.lstm import *
 
 class TrainerBase(object):
     def __init__(self, conf):
@@ -115,18 +114,6 @@ class NStepTrainer(TrainerBase):
         self.optimizer.setup(self.model)
 
     def get_exp_id(self, val_dialog_id):
-        if self.network == LSTM:
-            network = "lstm"
-        elif self.network == GRU:
-            network = "gru"
-        elif self.network == RNN:
-            network = "rnn"
-        elif self.network == AttentionLSTM:
-            network = "atlstm"
-        elif self.network == AttentionGRU:
-            network = "atgru"
-        else:
-            network = "unknown"
         # network_inputType_rnnHidden_batchSize_windowSize_trainSize_valDialogId
         return "%s_%s_%04d_%02d_%02d_%02d_%02d" % \
-        (network, self.input_type, self.rnn_hidden, self.batch_size, self.window_size, len(self.train_ids)-1, val_dialog_id)
+        (self.network.name, self.input_type, self.rnn_hidden, self.batch_size, self.window_size, len(self.train_ids)-1, val_dialog_id)
