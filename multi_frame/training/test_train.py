@@ -55,7 +55,7 @@ for network in networks:
 
             dataset_iterator = SingleFrameDatasetsIteratorForCrossValidation(\
                 conf["dataset_path"],\
-                conf["self.batch_size"],\
+                conf["batch_size"],\
                 xp=conf["xp"],\
                 test_ids=conf["test_ids"],\
                 train_ids=conf["train_ids"],\
