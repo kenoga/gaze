@@ -6,14 +6,15 @@ import chainer
 import cupy as cp
 from chainer import optimizers
 from network.feedforward import *
-from training.single_frame_trainer import SingleFrameCrossValidationTrainer
+from training.single_frame_trainer import SingleFrameTrainer
+from training.trainer import CrossValidationTrainerWrapper
 from training.default_conf import get_default_conf
 from training.single_frame_dataset_loader import SingleFrameDataIterator, SingleFrameDatasetsIteratorForCrossValidation
 
 ####  Parameter Settings :)
-networks = [TwoLayerFeedForwardNeuralNetwork, OneLayerFeedForwardNeuralNetwork]
+networks = [OneLayerFeedForwardNeuralNetwork]
 batch_sizes = [64]
-dataset_path_and_rnn_inputs = [("./dataset/dataset_fc2.pickle", 128, "fc2"), ("./dataset/dataset_fc1.pickle", 256, "fc1")]
+dataset_path_and_rnn_inputs = [("./dataset/dataset_fc2.pickle", 128, "fc2")]
 
 conf = get_default_conf()
 print("default conf:")
@@ -21,11 +22,11 @@ for key, value in sorted(conf.items()):
     print("%s -> %s" % (key, value))
 
 ####  Configuration
-conf["epoch"] = 50
+conf["epoch"] = 1
 conf["gpu"] = 1
 conf["test_ids"] = [5]
 conf["train_ids"] = [1,2,3,4]
-output_dir = os.path.join("training", "output", "single_frame_test_dialog_id_%02d" % conf["test_ids"][0])
+output_dir = os.path.join("training", "output", "test_%02d" % conf["test_ids"][0])
 npz_dir = os.path.join(output_dir, "npz")
 loss_dir = os.path.join(output_dir, "loss")
 log_dir = os.path.join(output_dir, "log")
@@ -51,6 +52,8 @@ for network in networks:
             conf["nn_input"] = dataset_path_and_rnn_input[1]
             conf["input_type"] = dataset_path_and_rnn_input[2]
             conf["batch_size"] = batch_size
-            dataset_iterator = 
-            train = SingleFrameCrossValidationTrainer(conf)
-            train.cross_validate()
+
+            dataset_iterator = SingleFrameDatasetsIteratorForCrossValidation(self.dataset_path, self.batch_size, xp=self.xp, test_ids=self.test_ids, train_ids=self.train_ids, iterator=self.data_iterator)
+            trainer = SingleFrameTrainer(conf)
+            cvtrainer = SingleFrameCrossValidationTrainer(trainer, dataset_iterator)
+            cvtrainer.cross_validate()
