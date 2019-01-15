@@ -5,11 +5,6 @@ import cupy as cp
 import pickle
 import chainer
 
-sys.path.append("..")
-sys.path.append("../..")
-import dataset_utils.utils as utils
-import dataset_utils.config as config
-
 
 class NStepDataIterator(object):
     '''
@@ -27,16 +22,13 @@ class NStepDataIterator(object):
         cls.xp = xp
 
     def __init__(self, xs, ts):
-        if cls.batch_size == None or cls.window_sizse == None or cls.xp == None:
+        if self.batch_size == None or self.window_sizse == None or self.xp == None:
             raise RuntimeError("Essential parameters have not been set.")
-        self.batch_size = batch_size
-        self.window_size = window_size
-        self.xp = xp
 
         self.xs_all, section_size_x = self._separate_by_batch_size(xs, self.batch_size)
         self.ts_all, section_size_y = self._separate_by_batch_size(ts, self.batch_size)
-        assert len(self.xs_all) == len(self.ts_all) == batch_size
-        for i in range(batch_size):
+        assert len(self.xs_all) == len(self.ts_all) == self.batch_size
+        for i in range(self.batch_size):
             assert len(self.xs_all[i])== len(self.ts_all[i])
         assert len(set([len(xs) for xs in self.xs_all])) == 1
         assert len(set([len(ts) for ts in self.ts_all])) == 1
@@ -107,21 +99,18 @@ class NStepEachDataIterator(object):
         cls.xp = xp
 
     def __init__(self, xs, ts):
-        if batch_size == None or window_size == None or xp == None:
+        if self.batch_size == None or self.window_size == None or self.xp == None:
             raise RuntimeError("Essential parameters have not been set.")
-        self.batch_size = batch_size
-        self.window_size = window_size
-        self.xp = xp
         assert len(xs) > 0
         assert len(ts) > 0
         assert len(xs) == len(ts)
         # assert len(set([len(x) for x in xs])) == 1
         # assert len(set([len(t) for t in ts])) == 1
         self.xdim = len(xs[0])
-        self.xs_all, section_size_x = self._separate_by_batch_size(xs, batch_size)
-        self.ts_all, section_size_y = self._separate_by_batch_size(ts, batch_size)
-        assert len(self.xs_all) == len(self.ts_all) == batch_size
-        for i in range(batch_size):
+        self.xs_all, section_size_x = self._separate_by_batch_size(xs, self.batch_size)
+        self.ts_all, section_size_y = self._separate_by_batch_size(ts, self.batch_size)
+        assert len(self.xs_all) == len(self.ts_all) == self.batch_size
+        for i in range(self.batch_size):
             assert len(self.xs_all[i])== len(self.ts_all[i])
 #         assert len(set([len(xs) for xs in self.xs_all])) == 1
 #         assert len(set([len(ts) for ts in self.ts_all])) == 1
@@ -246,7 +235,6 @@ class NStepCrossValidationDatasetIterator(object):
                 iterator.set_info(dialog_id, session_id, seat_id)
                 iterators.append(iterator)
         return iterators
-
 
 
 

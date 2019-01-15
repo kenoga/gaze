@@ -6,11 +6,6 @@ import pickle
 import random
 import chainer
 
-sys.path.append("..")
-sys.path.append("../..")
-import dataset_utils.utils as utils
-import dataset_utils.config as config
-
 
 class SingleFrameDataIterator(object):
     # 一枚の画像を入力とするネットワークを学習する用のデータイテレータ

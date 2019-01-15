@@ -9,19 +9,15 @@ from network.feedforward import *
 from training.trainer.single_frame_trainer import SingleFrameTrainer
 from training.trainer.trainer import CrossValidationTrainerWrapper
 from training.default_conf import get_default_conf
-from training.single_frame_dataset_loader import SingleFrameDataIterator, SingleFrameCrossValidationDatasetsIterator
+from training.data_loader.single_frame_dataset_loader import SingleFrameDataIterator, SingleFrameCrossValidationDatasetsIterator
 
 ####  Parameter Settings :)
 networks = [OneLayerFeedForwardNeuralNetwork]
 batch_sizes = [64]
 dataset_path_and_rnn_inputs = [("./dataset/dataset_fc2.pickle", 128, "fc2")]
 
-conf = get_default_conf()
-print("default conf:")
-for key, value in sorted(conf.items()):
-    print("%s -> %s" % (key, value))
-
 ####  Configuration
+conf = get_default_conf()
 conf["epoch"] = 1
 conf["gpu"] = 1
 conf["test_ids"] = [5]
@@ -36,6 +32,9 @@ for d in [npz_dir, loss_dir, log_dir]:
 conf["npz_dir"] = npz_dir
 conf["loss_dir"] = loss_dir
 conf["log_path"] = os.path.join(log_dir, "{0:%Y%m%d%H%M%S}.txt".format(datetime.datetime.now()))
+print("conf:")
+for key, value in sorted(conf.items()):
+    print("%s -> %s" % (key, value))
 
 #### Journey to the Best Hiper Parameter Search :)
 params = [networks, batch_sizes, dataset_path_and_rnn_inputs]
