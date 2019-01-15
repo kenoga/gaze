@@ -9,6 +9,7 @@ import pickle
 import copy
 import numpy as np
 import cupy as cp
+from chainer import serializers
 
 class TrainerBase(object):
     def __init__(self, conf):
@@ -42,7 +43,7 @@ class CrossValidationTrainerWrapper(object):
         '''
 
         for train_dataset, val_dataset in self.dataset_iterator:
-            val_dialog_id = dataset_iterator.current_val_dialog_id
+            val_dialog_id = self.dataset_iterator.current_val_dialog_id
             # 実験idを取得
             exp_id = self.trainer.get_exp_id(val_dialog_id)
             print(exp_id)
