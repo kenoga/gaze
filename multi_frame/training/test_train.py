@@ -53,7 +53,13 @@ for network in networks:
             conf["input_type"] = dataset_path_and_rnn_input[2]
             conf["batch_size"] = batch_size
 
-            dataset_iterator = SingleFrameDatasetsIteratorForCrossValidation(self.dataset_path, self.batch_size, xp=self.xp, test_ids=self.test_ids, train_ids=self.train_ids, iterator=self.data_iterator)
+            dataset_iterator = SingleFrameDatasetsIteratorForCrossValidation(\
+                conf["dataset_path"],\
+                conf["self.batch_size"],\
+                xp=conf["xp"],\
+                test_ids=conf["test_ids"],\
+                train_ids=conf["train_ids"],\
+                iterator=conf["data_iterator"])
             trainer = SingleFrameTrainer(conf)
             cvtrainer = SingleFrameCrossValidationTrainer(trainer, dataset_iterator)
             cvtrainer.cross_validate()
