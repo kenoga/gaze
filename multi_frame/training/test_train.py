@@ -61,5 +61,5 @@ for network in networks:
                 train_ids=conf["train_ids"],\
                 iterator=conf["data_iterator"])
             trainer = SingleFrameTrainer(conf)
-            cvtrainer = SingleFrameCrossValidationTrainer(trainer, dataset_iterator)
+            cvtrainer = CrossValidationTrainerWrapper(trainer, dataset_iterator)
             cvtrainer.cross_validate()
