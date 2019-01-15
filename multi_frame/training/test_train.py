@@ -9,7 +9,7 @@ from network.feedforward import *
 from training.trainer.single_frame_trainer import SingleFrameTrainer
 from training.trainer.trainer import CrossValidationTrainerWrapper
 from training.default_conf import get_default_conf
-from training.single_frame_dataset_loader import SingleFrameDataIterator, SingleFrameDatasetsIteratorForCrossValidation
+from training.single_frame_dataset_loader import SingleFrameDataIterator, SingleFrameCrossValidationDatasetsIterator
 
 ####  Parameter Settings :)
 networks = [OneLayerFeedForwardNeuralNetwork]
@@ -53,13 +53,12 @@ for network in networks:
             conf["input_type"] = dataset_path_and_rnn_input[2]
             conf["batch_size"] = batch_size
 
-            dataset_iterator = SingleFrameDatasetsIteratorForCrossValidation(\
+            SingleFrameDataIterator.set_params(conf["batch_size"], xp=cp)
+            dataset_iterator = SingleFrameCrossValidationDatasetsIterator(\
+                SingleFrameDataIterator,\
                 conf["dataset_path"],\
-                conf["batch_size"],\
-                xp=conf["xp"],\
                 test_ids=conf["test_ids"],\
-                train_ids=conf["train_ids"],\
-                iterator=conf["data_iterator"])
+                train_ids=conf["train_ids"],\)
             trainer = SingleFrameTrainer(conf)
             cvtrainer = CrossValidationTrainerWrapper(trainer, dataset_iterator)
             cvtrainer.cross_validate()
