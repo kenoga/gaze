@@ -12,26 +12,7 @@ import chainer
 import chainer.cuda
 import chainer.functions as F
 from chainer import optimizers, serializers
-
-class TrainerBase(object):
-    def __init__(self, conf):
-        for key, value in conf.items():
-            self.__dict__[key] = value
-        self.set_random_seed(1107)
-
-    def set_random_seed(self, seed):
-        random.seed(seed)
-        np.random.seed(seed)
-        cp.random.seed(seed)
-
-    def train(self, dataset):
-        pass
-
-    def validate(self, dataset):
-        pass
-
-    def test(self, dataset):
-        pass
+from trainer import TrainerBase
 
 
 class NStepTrainer(TrainerBase):

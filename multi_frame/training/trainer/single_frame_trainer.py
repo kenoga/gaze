@@ -19,27 +19,34 @@ class SingleFrameTrainer(TrainerBase):
     def __init__(self, config):
         super(SingleFrameTrainer, self).__init__(config)
 
-    def train(self, dataset):
+    def train(self, datasets):
         losses = []
-        for batch in dataset:
-            xs, ts = batch
-            with chainer.using_config('train', True):
-                loss = self.model.compute_loss(xs, ts)
-            # 誤差逆伝播
-            self.model.cleargrads()
-            loss.backward()
-            self.optimizer.update()
-            losses.append(loss.data)
-            # バッチ単位で更新する。
+        for dataset in datasets:
+            print("train: %s" % dataset)
+            batch_losses = []
+            for batch in dataset:
+                xs, ts = batch
+                with chainer.using_config('train', True):
+                    loss = self.model.compute_loss(xs, ts)
+                # 誤差逆伝播
+                self.model.cleargrads()
+                loss.backward()
+                self.optimizer.update()
+                batch_losses.append(loss.data)
+                # バッチ単位で更新する。
+            losses.append(sum(batch_losses)/len(batch_losses))
         return sum(losses)/len(losses)
 
-    def validate(self, dataset):
+    def validate(self, datasets):
         losses = []
-        for batch in dataset:
-            xs, ts = batch
-            with chainer.using_config('train', False):
-                loss = self.model.compute_loss(xs, ts)
-            losses.append(loss.data)
+        for dataset in datasets:
+            batch_losses = []
+            for batch in dataset:
+                xs, ts = batch
+                with chainer.using_config('train', False):
+                    loss = self.model.compute_loss(xs, ts)
+                batch_losses.append(loss.data)
+            losses.append(sum(batch_losses)/len(batch_losses))
         return sum(losses)/len(losses)
 
     def test(self, dataset, all_result=False):
