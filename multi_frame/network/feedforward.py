@@ -23,7 +23,7 @@ class OneLayerFeedForwardNeuralNetwork(chainer.Chain):
 
 class TwoLayerFeedForwardNeuralNetwork(chainer.Chain):
     name = "ff2"
-    
+
     def __init__(self, n_in=256, n_out=2):
         n_hidden = 128 # 固定
         super(TwoLayerFeedForwardNeuralNetwork, self).__init__()

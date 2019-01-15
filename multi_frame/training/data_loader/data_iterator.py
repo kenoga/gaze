@@ -6,8 +6,18 @@ import pickle
 import random
 import chainer
 
+class DataIteratorBase(object):
+    def set_info(self, dialog_id, session_id, seat_id):
+        self.dialog_id = dialog_id
+        self.session_id = session_id
+        self.seat_id = seat_id
 
-class SingleFrameDataIterator(object):
+    def __str__(self):
+        return "%02d_%02d_%s" % (self.dialog_id, self.session_id, self.seat_id)
+
+
+
+class SingleFrameDataIterator(DataIteratorBase):
     # 一枚の画像を入力とするネットワークを学習する用のデータイテレータ
     batch_size = None
     xp = None
@@ -48,16 +58,78 @@ class SingleFrameDataIterator(object):
         self.i += 1
         return x_batch, t_batch
 
-    def set_info(self, dialog_id, session_id, seat_id):
-        self.dialog_id = dialog_id
-        self.session_id = session_id
-        self.seat_id = seat_id
 
-    def __str__(self):
-        return "%02d_%02d_%s" % (self.dialog_id, self.session_id, self.seat_id)
+class MultiFrameDataIterator(DataIteratorBase):
+    # 複数枚の画像を入力とするネットワークを学習する用のデータイテレータ
+    # 一枚ずつずらして返す
+
+    batch_size = None
+    window_size = None
+    xp = None
+
+    @classmethod
+    def set_params(cls, batch_size, window_size, xp=cp):
+        cls.batch_size = batch_size
+        cls.window_size = window_size
+        cls.xp = xp
+
+    def __init__(self, xs, ts):
+        if self.batch_size == None or self.window_size == None or self.xp == None:
+            raise RuntimeError("Essential parameters have not been set.")
+
+        assert len(xs) > 0
+        assert len(xs) == len(ts)
+        self.xs, self.ts = xs, ts
+        # shuffle
+#         self.xs, self.ts = self._shuffle(xs, ts)
+        self.xdim = len(xs[0])
+
+    def __iter__(self):
+        self.window_r = self.window_size - 1
+        return self
+
+    def _shuffle(self, xs, ts):
+        combined = list(zip(xs, ts))
+        random.shuffle(combined)
+        xs, ts = zip(*combined)
+        return xs, ts
+
+    def next(self):
+        '''
+        x_batch_list: window_size分のx_batch
+        x_batch_list[0]はwindowの一番左をバッチにしたもの
+        '''
+        x_batch_list = [[] for _ in range(self.window_size)]
+        t_batch = []
+
+        if self.window_r >= len(self.xs):
+            raise StopIteration
+
+        for window_r_now in range(self.window_r, self.window_r + self.batch_size):
+            if window_r_now >= len(self.xs):
+                break;
+            ts.append(self.ts[window_r_now])
+            window_l = window_r_now - (self.window_size - 1)
+            assert window_l >= 0
+            for xs_index, data_index in enumerate(range(window_l, window_r + 1)):
+                x_batch_list[xs_index].append(self.xs[data_index])
+        self.window_r += self.batch_size
+        x_batch_list = [chainer.Varialbe(self.xp.asarray(x_batch, dtype=self.xp.float32)) for x_batch in x_batch_list]
+        t_batch = chainer.Variable(self.xp.asarray(t_batch, dtype=self.xp.int32))
+        return x_batch_list, t_batch
 
 
-class NStepDataIterator(object):
+if __name__ == "__main__":
+    from dataset_loader import DatasetLoader
+    dataset_path = "./dataset/dataset_fc1.pickle"
+    MultiFrameDataIterator.set_params(64, 4)
+    dataset_loader = DatasetLoader(dataset_path, MultiFrameDataIterator)
+    iterator = dataset_loader.load(1, 1, "A")
+
+
+
+
+class NStepDataIterator(DataIteratorBase):
     '''
     NStep用のイテレータ
     初期化前に必要なパラメータを設定する
@@ -123,16 +195,8 @@ class NStepDataIterator(object):
                 li_s.append(li[i*section_size:i*section_size+section_size])
         return li_s, section_size
 
-    def set_info(self, dialog_id, session_id, seat_id):
-        self.dialog_id = dialog_id
-        self.session_id = session_id
-        self.seat_id = seat_id
 
-    def __str__(self):
-        return "%02d_%02d_%s" % (self.dialog_id, self.session_id, self.seat_id)
-
-
-class NStepEachDataIterator(object):
+class NStepEachDataIterator(DataIteratorBase):
     '''
    　windowをひとつずつずらしながらwindow_size分のデータを返していくiterator
     xsがx(1), x(2), x(3), window_sizeが3のときは
@@ -212,11 +276,3 @@ class NStepEachDataIterator(object):
             else:
                 li_s.append(li[i*section_size:i*section_size+section_size])
         return li_s, section_size
-
-    def set_info(self, dialog_id, session_id, seat_id):
-        self.dialog_id = dialog_id
-        self.session_id = session_id
-        self.seat_id = seat_id
-
-    def __str__(self):
-        return "%02d_%02d_%s" % (self.dialog_id, self.session_id, self.seat_id)
