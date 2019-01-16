@@ -37,6 +37,7 @@ class CrossValidationTrainerWrapper(object):
         self.dataset_iterator = dataset_iterator
 
     def cross_validate(self):
+        self.trainer._setup()
         for train_datasets, val_datasets in self.dataset_iterator:
             val_dialog_id = self.dataset_iterator.current_val_dialog_id
             # 実験idを取得

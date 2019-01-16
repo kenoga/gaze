@@ -38,3 +38,39 @@ class TwoLayerFeedForwardNeuralNetwork(chainer.Chain):
         ys = self(xs)
         loss = F.softmax_cross_entropy(ys, ts)
         return loss
+
+class MultiFrameOneLayerFeedForwardNeuralNetwork(chainer.Chain):
+    name = "multiff1"
+
+    def __init__(self, n_in=256, n_out=2):
+        super(MultiFrameOneLayerFeedForwardNeuralNetwork, self).__init__()
+        with self.init_scope():
+            self.l1 = L.Linear(n_in, n_out, initialW=chainer.initializers.Normal(scale=0.01))
+
+    def __call__(self, xs_list):
+        xs = F.concat(xs_list)
+        return self.l1(xs)
+
+    def compute_loss(self, xs, ts):
+        ys = self(xs)
+        loss = F.softmax_cross_entropy(ys, ts)
+        return loss
+    
+class MultiFrameTwoLayerFeedForwardNeuralNetwork(chainer.Chain):
+    name = "multiff2"
+
+    def __init__(self, n_in=256, n_out=2):
+        n_hidden = 128 # 固定
+        super(MultiFrameTwoLayerFeedForwardNeuralNetwork, self).__init__()
+        with self.init_scope():
+            self.l1 = L.Linear(n_in, n_hidden, initialW=chainer.initializers.Normal(scale=0.01))
+            self.l2 = L.Linear(n_hidden, n_out, initialW=chainer.initializers.Normal(scale=0.01))
+
+    def __call__(self, xs_list):
+        xs = F.concat(xs_list)
+        return self.l2(F.relu(self.l1(xs)))
+
+    def compute_loss(self, xs, ts):
+        ys = self(xs)
+        loss = F.softmax_cross_entropy(ys, ts)
+        return loss

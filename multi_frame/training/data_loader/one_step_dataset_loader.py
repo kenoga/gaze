@@ -63,7 +63,6 @@ class OneStepDataIterator(object):
         eq_seqs = chainer.functions.pad_sequence(nd_seq_list)
         return eq_seqs
     
-        
     def __str__(self):
         return "%02d_%02d_%s" % (self.dialog_id, self.session_id, self.seat_id)
     
@@ -94,47 +93,47 @@ class OneStepDataIterator(object):
 #         return data_iters
 
 
-class OneStepDatasetsIteratorForCrossValidation(object):
-    # test_dialog_idで指定されたデータはtestデータなので返さない
-    # testデータで評価したい場合は上のDatasetLoaderでload_by_dialog_idでデータを読み込む
-    def __init__(self, dataset_path, split_num, test_ids, train_ids, xp=np, iterator=OneStepDataIterator):
-        self.datasets = pickle.load(open(dataset_path))
-        self.dialog_ids = [did for did in sorted(self.datasets.keys()) if did not in test_ids and did in train_ids] 
-        self.split_num = split_num
-        self.test_ids = test_ids
-        self.train_ids = train_ids
-        self.xp = xp
-        self.iterator = iterator
+# class OneStepDatasetsIteratorForCrossValidation(object):
+#     # test_dialog_idで指定されたデータはtestデータなので返さない
+#     # testデータで評価したい場合は上のDatasetLoaderでload_by_dialog_idでデータを読み込む
+#     def __init__(self, dataset_path, split_num, test_ids, train_ids, xp=np, iterator=OneStepDataIterator):
+#         self.datasets = pickle.load(open(dataset_path))
+#         self.dialog_ids = [did for did in sorted(self.datasets.keys()) if did not in test_ids and did in train_ids] 
+#         self.split_num = split_num
+#         self.test_ids = test_ids
+#         self.train_ids = train_ids
+#         self.xp = xp
+#         self.iterator = iterator
 
-    def __iter__(self):
-        self.val_i = 0
-        self.current_val_dialog_id = self.dialog_ids[self.val_i]
-        return self
+#     def __iter__(self):
+#         self.val_i = 0
+#         self.current_val_dialog_id = self.dialog_ids[self.val_i]
+#         return self
 
-    def next(self):
-        if self.val_i >= len(self.dialog_ids):
-            raise StopIteration
-        train_datasets, val_datasets = [], []
+#     def next(self):
+#         if self.val_i >= len(self.dialog_ids):
+#             raise StopIteration
+#         train_datasets, val_datasets = [], []
 
-        val_id = self.dialog_ids[self.val_i]
-        self.current_val_dialog_id = val_id
+#         val_id = self.dialog_ids[self.val_i]
+#         self.current_val_dialog_id = val_id
         
-        train_iterator = self._get_data_iterator(self.train_ids)
-        val_iterator = self._get_data_iterator([val_id])
-        self.val_i += 1
-        return train_iterator, val_iterator
+#         train_iterator = self._get_data_iterator(self.train_ids)
+#         val_iterator = self._get_data_iterator([val_id])
+#         self.val_i += 1
+#         return train_iterator, val_iterator
 
-    def _get_data_iterator(self, dialog_ids):
-        xs_list = []
-        ts_list = []
-        for dialog_id in dialog_ids:
-            for session_id in sorted(self.datasets[dialog_id].keys()):
-                for seat_id in sorted(self.datasets[dialog_id][session_id].keys()):
-                    xs, ts = self.datasets[dialog_id][session_id][seat_id]
-                    xs_list.append(xs)
-                    ts_list.append(ts)
-        iterator = self.iterator(xs_list, ts_list, self.split_num, self.xp)
-        return iterator
+#     def _get_data_iterator(self, dialog_ids):
+#         xs_list = []
+#         ts_list = []
+#         for dialog_id in dialog_ids:
+#             for session_id in sorted(self.datasets[dialog_id].keys()):
+#                 for seat_id in sorted(self.datasets[dialog_id][session_id].keys()):
+#                     xs, ts = self.datasets[dialog_id][session_id][seat_id]
+#                     xs_list.append(xs)
+#                     ts_list.append(ts)
+#         iterator = self.iterator(xs_list, ts_list, self.split_num, self.xp)
+#         return iterator
     
   
 if __name__ == "__main__":

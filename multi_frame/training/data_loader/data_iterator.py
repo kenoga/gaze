@@ -16,7 +16,6 @@ class DataIteratorBase(object):
         return "%02d_%02d_%s" % (self.dialog_id, self.session_id, self.seat_id)
 
 
-
 class SingleFrameDataIterator(DataIteratorBase):
     # 一枚の画像を入力とするネットワークを学習する用のデータイテレータ
     batch_size = None
@@ -61,7 +60,6 @@ class SingleFrameDataIterator(DataIteratorBase):
 
 class MultiFrameDataIterator(DataIteratorBase):
     # 複数枚の画像を入力とするネットワークを学習する用のデータイテレータ
-    # 一枚ずつずらして返す
 
     batch_size = None
     window_size = None
@@ -108,23 +106,26 @@ class MultiFrameDataIterator(DataIteratorBase):
         for window_r_now in range(self.window_r, self.window_r + self.batch_size):
             if window_r_now >= len(self.xs):
                 break;
-            ts.append(self.ts[window_r_now])
+            t_batch.append(self.ts[window_r_now])
             window_l = window_r_now - (self.window_size - 1)
             assert window_l >= 0
-            for xs_index, data_index in enumerate(range(window_l, window_r + 1)):
+            for xs_index, data_index in enumerate(range(window_l, window_r_now + 1)):
                 x_batch_list[xs_index].append(self.xs[data_index])
         self.window_r += self.batch_size
-        x_batch_list = [chainer.Varialbe(self.xp.asarray(x_batch, dtype=self.xp.float32)) for x_batch in x_batch_list]
+        x_batch_list = [chainer.Variable(self.xp.asarray(x_batch, dtype=self.xp.float32)) for x_batch in x_batch_list]
         t_batch = chainer.Variable(self.xp.asarray(t_batch, dtype=self.xp.int32))
         return x_batch_list, t_batch
 
 
-if __name__ == "__main__":
-    from dataset_loader import DatasetLoader
-    dataset_path = "./dataset/dataset_fc1.pickle"
-    MultiFrameDataIterator.set_params(64, 4)
-    dataset_loader = DatasetLoader(dataset_path, MultiFrameDataIterator)
-    iterator = dataset_loader.load(1, 1, "A")
+# # MultiFrameDataIteratorのテスト
+# if __name__ == "__main__":
+#     from training.data_loader.dataset_loader import DatasetLoader
+#     dataset_path = "./dataset/dataset_fc1.pickle"
+#     MultiFrameDataIterator.set_params(64, 4)
+#     dataset_loader = DatasetLoader(dataset_path, MultiFrameDataIterator)
+#     iterator = dataset_loader.load(1, 1, "A").__iter__()
+#     x_batch_list, ts = iterator.next()
+#     import pdb; pdb.set_trace()
 
 
 
@@ -150,13 +151,13 @@ class NStepDataIterator(DataIteratorBase):
 
         self.xs_all, section_size_x = self._separate_by_batch_size(xs, self.batch_size)
         self.ts_all, section_size_y = self._separate_by_batch_size(ts, self.batch_size)
-        assert len(self.xs_all) == len(self.ts_all) == self.batch_size
-        for i in range(self.batch_size):
-            assert len(self.xs_all[i])== len(self.ts_all[i])
-        assert len(set([len(xs) for xs in self.xs_all])) == 1
-        assert len(set([len(ts) for ts in self.ts_all])) == 1
-        assert section_size_x == section_size_y
         self.section_size = section_size_x
+#         assert len(self.xs_all) == len(self.ts_all) == self.batch_size
+#         for i in range(self.batch_size):
+#             assert len(self.xs_all[i])== len(self.ts_all[i])
+#         assert len(set([len(xs) for xs in self.xs_all])) == 1
+#         assert len(set([len(ts) for ts in self.ts_all])) == 1
+#         assert section_size_x == section_size_y
 
 
     def __iter__(self):
@@ -276,3 +277,75 @@ class NStepEachDataIterator(DataIteratorBase):
             else:
                 li_s.append(li[i*section_size:i*section_size+section_size])
         return li_s, section_size
+
+    
+class OneStepDataIterator(object):
+    '''
+    NStepでない通常のRNNのためのイテレータ
+    '''
+    split_num = None
+    xp = None
+
+    @classmethod
+    def set_params(cls, split_num, xp=cp):
+        cls.split_num = split_num
+        cls.xp = xp
+
+    def __init__(self, xs_list, ts_list):
+        if self.split_num == None or self.xp == None:
+            raise RuntimeError("Essential parameters have not been set.")
+        assert len(xs_list) > 0
+        assert len(ts_list) > 0
+        assert len(xs_list) == len(ts_list)
+        self.xdim = len(xs_list[0][0])
+        xs_list, ts_list = self._split_seqs(xs_list, self.split_num), self._split_seqs(ts_list, self.split_num)
+        self.xs_list = chainer.Variable(self._equalize_seq_len(xs_list).data.astype(self.xp.float32))
+        self.ts_list = chainer.Variable(self._equalize_seq_len(ts_list).data.astype(self.xp.int32))
+        self.seq_len = self.xs_list.shape[1]
+        self.batch_size = self.xs_list.shape[0]
+        
+    def __iter__(self):
+        self.i = 0
+        return self
+    
+    def next(self):
+        xs, ts = [], []
+        
+        if self.i >= self.seq_len:
+            raise StopIteration
+        
+        xs = self.xs_list[:, self.i]
+#         ts = chainer.functions.reshape(self.ts_list[:, self.i], (self.batch_size, 1))
+        ts = self.ts_list[:, self.i]
+        
+        self.i += 1
+        return xs, ts
+        
+    def _split_seqs(self, seq_list, split_num):
+        split_seq_list = []
+        for i in range(len(seq_list)):
+            split_seq_list.extend(self._split_seq(seq_list[i], split_num))
+        return split_seq_list
+        
+    def _split_seq(self, seq, size):
+        newseq = []
+        splitsize = 1.0/size*len(seq)
+        for i in range(size):
+            newseq.append(seq[int(round(i*splitsize)):int(round((i+1)*splitsize))])
+        return newseq
+     
+    def _equalize_seq_len(self, seq_list):
+        max_seq_len = max([len(seq) for seq in seq_list])
+        nd_seq_list = [self.xp.asarray(seq) for seq in seq_list]
+        eq_seqs = chainer.functions.pad_sequence(nd_seq_list)
+        return eq_seqs
+
+# OneStepDataIteratorのテスト
+if __name__ == "__main__":
+    from training.data_loader.dataset_loader import DatasetLoader
+    dataset_path = "./dataset/dataset_fc2.pickle"
+    OneStepDataIterator.set_params(16)
+    dataset_loader = DatasetLoader(dataset_path, OneStepDataIterator)
+    iterator = dataset_loader.load_all_as_list([1]).__iter__()
+    import pdb; pdb.set_trace()
+    

@@ -366,4 +366,5 @@ class OneStepAttentionLSTM(chainer.Chain):
         self.l1.c = c
 
     def reset_state(self):
+        self.h_q = deque()
         self.set_state(None, None)

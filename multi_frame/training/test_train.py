@@ -49,7 +49,7 @@ for network in networks:
             print("exp_i: %d / %d" % (exp_i, exp_size))
             conf["network"] = network
             conf["dataset_path"] = dataset_path_and_rnn_input[0]
-            conf["nn_input"] = dataset_path_and_rnn_input[1]
+            conf["nn_input"] = dataset_path_and_rnn_input[1] * window_size
             conf["input_type"] = dataset_path_and_rnn_input[2]
             conf["batch_size"] = batch_size
 

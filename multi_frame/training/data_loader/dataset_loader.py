@@ -24,18 +24,35 @@ class DatasetLoader(object):
             for seat_id in self.datasets[dialog_id][session_id]:
                 data_iters.append(self.load(dialog_id, session_id, seat_id))
         return data_iters
-
-
+    
+    def load_all_as_list(self, dialog_ids):
+        '''
+        複数の系列をまとめてloadする
+        one_stepに使う
+        '''
+        xs_list = []
+        ts_list = []
+        for dialog_id in dialog_ids:
+            for session_id in sorted(self.datasets[dialog_id].keys()):
+                for seat_id in sorted(self.datasets[dialog_id][session_id].keys()):
+                    xs, ts = self.datasets[dialog_id][session_id][seat_id]
+                    xs_list.append(xs)
+                    ts_list.append(ts)
+        iterator = self.iterator(xs_list, ts_list)
+        return iterator
+    
+                
 class CrossValidationDatasetsIterator(object):
     # test_dialog_idで指定されたデータはtestデータなので返さない
     # testデータで評価したい場合は上のDatasetLoaderでload_by_dialog_idでデータを読み込む
-    def __init__(self, iterator, dataset_path, test_ids, train_ids):
+    def __init__(self, iterator, dataset_path, test_ids, train_ids, load_all_as_list=False):
         self.dataset_loader = DatasetLoader(dataset_path, iterator)
         self.dialog_ids = [did for did in sorted(self.dataset_loader.datasets.keys())\
                             if did not in test_ids and did in train_ids]
         self.test_ids = test_ids
         self.train_ids = train_ids
         self.iterator = iterator
+        self.load_all_as_list = load_all_as_list
 
     def __iter__(self):
         self.val_i = 0
@@ -48,14 +65,22 @@ class CrossValidationDatasetsIterator(object):
         train_datasets, val_datasets = [], []
 
         val_id = self.dialog_ids[self.val_i]
-        self.current_val_dialog_id = val_id
-
-        for did in self.dialog_ids:
-            if did == val_id:
-                val_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
-            else:
-                train_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
         self.val_i += 1
+        self.current_val_dialog_id = val_id
+        
+        train_ids = [did for did in self.dialog_ids if did != val_id]
+        val_ids = [val_id]
+        
+        if self.load_all_as_list:
+            train_datasets = [self.dataset_loader.load_all_as_list(train_ids)]
+            val_datasets = [self.dataset_loader.load_all_as_list(val_ids)]
+            return train_datasets, val_datasets
+        
+        for train_id in train_ids:
+            train_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
+        for val_id in val_ids:
+            val_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
+            
         return train_datasets, val_datasets
 
 
