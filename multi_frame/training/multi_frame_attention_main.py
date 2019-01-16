@@ -17,10 +17,10 @@ from training.data_loader.dataset_loader import CrossValidationDatasetsIterator
 from training.data_loader.data_iterator import *
 
 ####  Parameter Settings :)
-networks = [MultiFrameOneLayerFeedForwardNeuralNetwork]
+networks = [MultiFrameAttentionOneLayerFeedForwardNeuralNetwork, MultiFrameAttentionOneLayerFeedForwardNeuralNetwork]
 batch_sizes = [64]
-window_sizes = [2]
-dataset_path_and_rnn_inputs = [("./dataset/dataset_fc2.pickle", 128, "fc2")]
+window_sizes = [2,4,8,16,32]
+dataset_path_and_rnn_inputs = [("./dataset/dataset_fc2.pickle", 128, "fc2"), ("./dataset/dataset_fc1.pickle", 256, "fc1")]
 
 ####  Configuration
 conf = get_default_conf()

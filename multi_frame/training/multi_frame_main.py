@@ -5,10 +5,14 @@ import datetime
 import chainer
 import cupy as cp
 from chainer import optimizers
-from network.feedforward import *
-from training.trainer.single_frame_trainer import SingleFrameTrainer
-from training.trainer.trainer import CrossValidationTrainerWrapper
+
 from training.default_conf import get_default_conf
+from network.feedforward import *
+from training.trainer.rnn import *
+from training.trainer.feed_forward_trainer import *
+from training.trainer.nstep_rnn_trainer import *
+from training.trainer.one_step_rnn_trainer import *
+from training.trainer.trainer import CrossValidationTrainerWrapper
 from training.data_loader.dataset_loader import CrossValidationDatasetsIterator
 from training.data_loader.data_iterator import *
 
@@ -61,6 +65,6 @@ for network in networks:
                     conf["dataset_path"],\
                     test_ids=conf["test_ids"],\
                     train_ids=conf["train_ids"])
-                trainer = SingleFrameTrainer(conf)
+                trainer = FeedForwardTrainer(conf)
                 cvtrainer = CrossValidationTrainerWrapper(trainer, dataset_iterator)
                 cvtrainer.cross_validate()

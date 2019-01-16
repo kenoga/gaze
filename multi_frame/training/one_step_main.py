@@ -6,7 +6,7 @@ import chainer
 import cupy as cp
 from chainer import optimizers
 from network.lstm import *
-from training.trainer.one_step_trainer import OneStepTrainer
+from training.trainer.one_step_rnn_trainer import OneStepRNNTrainer
 from training.trainer.trainer import CrossValidationTrainerWrapper
 from training.default_conf import get_default_conf
 from training.data_loader.dataset_loader import CrossValidationDatasetsIterator
@@ -71,6 +71,6 @@ for network in networks:
                         load_all_as_list=True)
 
                     # Setting of Trainer
-                    trainer = OneStepTrainer(conf)
+                    trainer = OneStepRNNTrainer(conf)
                     cvtrainer = CrossValidationTrainerWrapper(trainer, dataset_iterator)
                     cvtrainer.cross_validate()

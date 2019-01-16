@@ -130,7 +130,7 @@ class MultiFrameDataIterator(DataIteratorBase):
 
 
 
-class NStepDataIterator(DataIteratorBase):
+class NStepRNNDataIterator(DataIteratorBase):
     '''
     NStep用のイテレータ
     初期化前に必要なパラメータを設定する
@@ -197,7 +197,7 @@ class NStepDataIterator(DataIteratorBase):
         return li_s, section_size
 
 
-class NStepEachDataIterator(DataIteratorBase):
+class NStepRNNEachDataIterator(DataIteratorBase):
     '''
    　windowをひとつずつずらしながらwindow_size分のデータを返していくiterator
     xsがx(1), x(2), x(3), window_sizeが3のときは
@@ -279,7 +279,7 @@ class NStepEachDataIterator(DataIteratorBase):
         return li_s, section_size
 
     
-class OneStepDataIterator(object):
+class OneStepRNNDataIterator(object):
     '''
     NStepでない通常のRNNのためのイテレータ
     '''

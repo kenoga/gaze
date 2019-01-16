@@ -14,9 +14,9 @@ import chainer.functions as F
 from chainer import optimizers, serializers
 from trainer import TrainerBase
 
-class OneStepTrainer(TrainerBase):
+class OneStepRNNTrainer(TrainerBase):
     def __init__(self, config):
-        super(OneStepTrainer, self).__init__(config)
+        super(OneStepRNNTrainer, self).__init__(config)
 
     def train(self, datasets):
         # 実装の都合上[dataset]が帰ってくるので0番目のみ使う
