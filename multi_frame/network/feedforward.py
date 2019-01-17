@@ -54,7 +54,7 @@ class MultiFrameOneLayerFeedForwardNeuralNetwork(chainer.Chain):
         ys = self(xs)
         loss = F.softmax_cross_entropy(ys, ts)
         return loss
-    
+
 class MultiFrameTwoLayerFeedForwardNeuralNetwork(chainer.Chain):
     name = "multiff2"
 
@@ -73,7 +73,7 @@ class MultiFrameTwoLayerFeedForwardNeuralNetwork(chainer.Chain):
         ys = self(xs)
         loss = F.softmax_cross_entropy(ys, ts)
         return loss
-    
+
 class MultiFrameAttentionOneLayerFeedForwardNeuralNetwork(chainer.Chain):
     name = "atmultiff1"
 
@@ -88,7 +88,7 @@ class MultiFrameAttentionOneLayerFeedForwardNeuralNetwork(chainer.Chain):
     def __call__(self, xs_list):
         last = xs_list[-1]
         batch = xs_list[0].shape[0]
-        
+
         # 注意重みを計算 (batch_size, window_size)
         attention_weight = F.softmax(self.attention(last))
 
@@ -104,21 +104,21 @@ class MultiFrameAttentionOneLayerFeedForwardNeuralNetwork(chainer.Chain):
             else:
                 attentioned += xs_list[window_i] * aw
         return self.l1(attentioned)
-    
+
     def get_attention_weight(self, xs_list):
         last = xs_list[-1]
-        
+
         # 注意重みを計算 (batch_size, window_size)
         attention_weight = F.softmax(self.attention(last))
-        
+
         return attention_weight
-        
+
 
     def compute_loss(self, xs, ts):
         ys = self(xs)
         loss = F.softmax_cross_entropy(ys, ts)
         return loss
-    
+
 # class MultiFrameAttentionTwoLayerFeedForwardNeuralNetwork(chainer.Chain):
 #     name = "atmultiff2"
 

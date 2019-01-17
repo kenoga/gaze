@@ -51,7 +51,7 @@ log_path = os.path.join(log_dir, "{0:%Y%m%d%H%M%S}.txt".format(datetime.datetime
 print("conf:")
 for key, value in sorted(conf.items()):
     print("%s -> %s" % (key, value))
-    
+
 #### Journey to the Best Hiper Parameter Search :)
 params = [networks, batch_sizes, dataset_path_and_rnn_inputs, window_sizes, nn_hiddens]
 exp_size = reduce(lambda x, y: x * y, [len(param) for param in params])
@@ -67,7 +67,7 @@ for network in networks:
                     input_type = dataset_path_and_rnn_input[2]
                     nn_input = dataset_path_and_rnn_input[1]
 
-                    # network_inputType_rnnHidden_batchSize_windowSize_trainSize_valDialogId
+                    # network_inputType_rnnHidden_batchSize_windowSize_trainSize
                     config_id = "%s_%s_%04d_%02d_%02d_%02d" % \
                                 (network.name, input_type, nn_hidden, batch_size, window_size, len(train_ids)-1)
 

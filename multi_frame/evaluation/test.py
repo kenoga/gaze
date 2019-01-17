@@ -32,7 +32,7 @@ def translate_conf(conf):
         conf["network"] = TwoLayerFeedForwardNeuralNetwork
     else:
         raise RuntimeError("invalid conf")
-    
+
     if conf["input_type"] == "fc2":
         conf["rnn_input"] = 128
         conf["dataset_path"] = "./dataset/dataset_fc2.pickle"
@@ -41,7 +41,7 @@ def translate_conf(conf):
         conf["dataset_path"] = "./dataset/dataset_fc3.pickle"
     elif conf["input_type"] == "fc1":
         conf["rnn_input"] = 256
-        conf["dataset_path"] = "./dataset/dataset_fc1.pickle"       
+        conf["dataset_path"] = "./dataset/dataset_fc1.pickle"
     else:
         raise RuntimeError("invalid conf")
     return conf
@@ -77,7 +77,7 @@ def test(target_model_path, output_dir):
     chainer.cuda.get_device(0).use()
     serializers.load_npz(target_model_path, model)
     conf["model"] = model
-    
+
     # Load test datasets
     if conf["network"] == AttentionLSTM:
         dataset_loader = DatasetLoader(conf["dataset_path"], conf["batch_size"], conf["window_size"], cp, iterator=EachDataIterator)
@@ -90,7 +90,7 @@ def test(target_model_path, output_dir):
         tester = SingleFrameTrainer(conf)
     else:
         tester = TrainerBase(conf)
-    
+
     # Test
     for i, test_dataset in enumerate(test_datasets):
         print(test_dataset)
@@ -113,7 +113,7 @@ def test(target_model_path, output_dir):
 #             os.makedirs(output_dir)
 #         target_path = os.path.join(target_dir, target_file)
 #         test(target_path, output_dir)
-    
+
 # GRU and RNN
 # if __name__ == "__main__":
 #     target_files = ["gru_fc2_0064_16_16_04.npz", "rnn_fc2_0064_08_32_04.npz"]
@@ -145,11 +145,11 @@ def test_by_trained_model(model_path, output_dir):
         os.makedirs(output_dir)
     test(model_path, output_dir)
 
- 
+
 
 if __name__ == "__main__":
 #     target_dir = os.path.join(".", "training", "output", "test_dialog_id_05", "npz")
-    
+
 #     # model_compare_lstm
 #     model_path = os.path.join(target_dir, "lstm_fc1_0016_04_16_03_02.npz")
 #     output_dir = os.path.join("evaluation", "test_result", "model_compare_lstm")
@@ -159,7 +159,7 @@ if __name__ == "__main__":
 #     model_path = os.path.join(target_dir, "gru_fc1_0064_04_16_03_02.npz")
 #     output_dir = os.path.join("evaluation", "test_result", "model_compare_gru")
 #     test_by_trained_model(model_path, output_dir)
-    
+
 #     # input_compare_fc1(gru)
 #     model_path = os.path.join(target_dir, "gru_fc1_0064_04_16_03_02.npz")
 #     output_dir = os.path.join("evaluation", "test_result", "input_compare_fc1")
@@ -193,24 +193,21 @@ if __name__ == "__main__":
 #     model_path = os.path.join(target_dir, "lstm_fc2_0128_08_32_02.npz")
 #     output_dir = os.path.join("evaluation", "test_result", "model_compare_lstm_02")
 #     test_by_trained_model(model_path, output_dir)
-    
+
 #     # model_compare_atlstm
 #     target_dir = os.path.join(".", "training", "output", "attention_test_dialog_id_05", "npz")
 #     model_path = os.path.join(target_dir, "atlstm_fc2_0016_32_32_03_02.npz")
 #     output_dir = os.path.join("evaluation", "test_result", "model_compare_atlstm_02")
 #     test_by_trained_model(model_path, output_dir)
-    
+
     # single frame fc2 (layer 1)
     target_dir = os.path.join(".", "training", "output", "single_frame_test_dialog_id_05", "npz")
     model_path = os.path.join(target_dir, "ff1_fc2_0064_03_02.npz")
     output_dir = os.path.join("evaluation", "test_result", "single_frame_02")
-    test_by_trained_model(model_path, output_dir)  
-    
+    test_by_trained_model(model_path, output_dir)
+
     # single frame fc1 (layer 2)
     target_dir = os.path.join(".", "training", "output", "single_frame_test_dialog_id_05", "npz")
     model_path = os.path.join(target_dir, "ff2_fc1_0064_03_02.npz")
     output_dir = os.path.join("evaluation", "test_result", "fc1_single_frame_02")
-    test_by_trained_model(model_path, output_dir)  
-    
-    
-    
+    test_by_trained_model(model_path, output_dir)
