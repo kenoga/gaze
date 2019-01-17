@@ -77,10 +77,9 @@ class CrossValidationDatasetsIterator(object):
             return train_datasets, val_datasets
         
         for train_id in train_ids:
-            train_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
+            train_datasets.extend(self.dataset_loader.load_by_dialog_id(train_id))
         for val_id in val_ids:
-            val_datasets.extend(self.dataset_loader.load_by_dialog_id(did))
-            
+            val_datasets.extend(self.dataset_loader.load_by_dialog_id(val_id))
         return train_datasets, val_datasets
 
 

@@ -146,7 +146,7 @@ class NStepRNNDataIterator(DataIteratorBase):
         cls.xp = xp
 
     def __init__(self, xs, ts):
-        if self.batch_size == None or self.window_sizse == None or self.xp == None:
+        if self.batch_size == None or self.window_size == None or self.xp == None:
             raise RuntimeError("Essential parameters have not been set.")
 
         self.xs_all, section_size_x = self._separate_by_batch_size(xs, self.batch_size)

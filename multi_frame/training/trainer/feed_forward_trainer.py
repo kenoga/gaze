@@ -16,8 +16,8 @@ from trainer import TrainerBase
 
 
 class FeedForwardTrainer(TrainerBase):
-    def __init__(self, config):
-        super(FeedForwardTrainer, self).__init__(config)
+    def __init__(self, *params):
+        super(FeedForwardTrainer, self).__init__(*params)
 
     def train(self, datasets):
         losses = []
@@ -65,16 +65,3 @@ class FeedForwardTrainer(TrainerBase):
             return f1_score, (ts_all, ys_all)
         return f1_score
 
-    def _setup(self):
-        self.model = self.network(self.nn_input, self.rnn_output)
-        if self.gpu >= 0:
-            chainer.cuda.get_device(self.gpu).use()
-            self.model.to_gpu()
-        # Optimizer
-        self.optimizer = optimizers.Adam()
-        self.optimizer.setup(self.model)
-
-    def get_exp_id(self, val_dialog_id):
-        # network_inputType_batchSize_trainSize_valDialogId
-        return "%s_%s_%04d_%02d_%02d" % \
-        (self.network.name, self.input_type, self.batch_size, len(self.train_ids)-1, val_dialog_id)

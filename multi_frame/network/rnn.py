@@ -50,8 +50,6 @@ class RNN(chainer.Chain):
         self.set_state(None)
 
 
-
-
 class GRU(chainer.Chain):
     name = "gru"
     def __init__(self, n_layers=1, n_in=128, n_hidden=16, n_out=2, dropout=0.5):

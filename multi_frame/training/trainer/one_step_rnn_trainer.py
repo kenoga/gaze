@@ -15,8 +15,8 @@ from chainer import optimizers, serializers
 from trainer import TrainerBase
 
 class OneStepRNNTrainer(TrainerBase):
-    def __init__(self, config):
-        super(OneStepRNNTrainer, self).__init__(config)
+    def __init__(self, *params):
+        super(OneStepRNNTrainer, self).__init__(*params)
 
     def train(self, datasets):
         # 実装の都合上[dataset]が帰ってくるので0番目のみ使う
@@ -28,7 +28,7 @@ class OneStepRNNTrainer(TrainerBase):
             with chainer.using_config('train', True):
                 loss += self.model.compute_loss(xs, ts)
             # BPTTの幅はwindow_sizeとする
-            if count % self.window_size == 0:
+            if count % self.model.window_size == 0:
                 self.model.cleargrads()
                 loss.backward()
                 self.optimizer.update()             
@@ -73,17 +73,3 @@ class OneStepRNNTrainer(TrainerBase):
             return f1_score, (ts_all, ys_all)
         return f1_score
     
-
-    def _setup(self):
-        self.model = self.network(self.rnn_input, self.rnn_hidden, self.rnn_output, self.window_size)
-        if self.gpu >= 0:
-            chainer.cuda.get_device(self.gpu).use()
-            self.model.to_gpu()
-        # Optimizer
-        self.optimizer = optimizers.Adam()
-        self.optimizer.setup(self.model)
-        
-    def get_exp_id(self, val_dialog_id):
-        # network_inputType_rnnHidden_splitNum_windowSize_trainSize_valDialogId
-          return "%s_%s_%04d_%02d_%02d_%02d_%02d" % \
-        (self.network.name, self.input_type, self.rnn_hidden, self.split_num, self.window_size, len(self.train_ids)-1, val_dialog_id)
