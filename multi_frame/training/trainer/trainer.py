@@ -41,6 +41,10 @@ class TrainerBase(object):
         # Optimizer
         self.optimizer = optimizers.Adam()
         self.optimizer.setup(self.model)
+    
+    def load_npz(self, npz_path):
+        serializers.load_npz(npz_path, self.model)
+        
 
 class CrossValidationTrainerWrapper(object):
     def __init__(self, trainer, dataset_iterator, epoch, log_path, npz_dir, loss_dir, config_id):

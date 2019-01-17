@@ -1,25 +1,33 @@
-
+# -*- coding: utf-8 -*-
 
 import inspect
 from network import rnn
 from network import feedforward
 from network.rnn import *
 from network.feedforward import *
+from collections import deque
+
+from training.trainer.feed_forward_trainer import *
+from training.trainer.nstep_rnn_trainer import *
+from training.trainer.one_step_rnn_trainer import *
+from training.data_loader.data_iterator import *
 
 class ConfigRepresentationTranslator(object):
     def __init__(self):
         self.networks = []
-        networks.extend(self._get_classes(rnn))
-        networks.extend(self._get_classes(feedforward))
+        self.networks.extend(self._get_classes(rnn))
+        self.networks.extend(self._get_classes(feedforward))
         self.repr2network = {}
-        for nw in networks:
+        for nw in self.networks:
+            if nw == deque:
+                continue
             self.repr2network[nw.name] = nw
 
     def _get_classes(self, module):
-        return map(lambda x:x[0], inspect.getmembers(module, inspect.isclass))
+        return map(lambda x:x[1], inspect.getmembers(module, inspect.isclass))
 
     def _input_type2input_size(self, input_type):
-        if input_type = "fc1":
+        if input_type == "fc1":
             return 256
         elif input_type == "fc2":
             return 128
@@ -27,7 +35,7 @@ class ConfigRepresentationTranslator(object):
             return 1
 
     def _input_type2dataset_path(self, input_type):
-        if input_type = "fc1":
+        if input_type == "fc1":
             return "./dataset/dataset_fc1.pickle"
         elif input_type == "fc2":
             return "./dataset/dataset_fc2.pickle"
@@ -43,9 +51,9 @@ class ConfigRepresentationTranslator(object):
         conf["network"] = self.repr2network[repr[0]]
         conf["input_type"] = repr[1]
         conf["n_in"] = self._input_type2input_size(repr[1])
-        conf["dataset_path"] = repr[1]
+        conf["dataset_path"] =self._input_type2dataset_path(repr[1])
 
-        if conf["network"] in {OneLayerFeedForwardNeuralNetwork, TwoLayerFeedForwardNeuralNetwork]:
+        if conf["network"] in {OneLayerFeedForwardNeuralNetwork, TwoLayerFeedForwardNeuralNetwork}:
             conf["batch_size"] = int(repr[2])
         elif conf["network"] in {MultiFrameOneLayerFeedForwardNeuralNetwork, MultiFrameTwoLayerFeedForwardNeuralNetwork, MultiFrameAttentionOneLayerFeedForwardNeuralNetwork}:
             conf["batch_size"] = int(repr[2])
@@ -72,7 +80,7 @@ class ConfigRepresentationTranslator(object):
         iterator_params = {}
 
         network = conf["network"]
-        if network in {OneLayerFeedForwardNeuralNetwork, TwoLayerFeedForwardNeuralNetwork]:
+        if network in {OneLayerFeedForwardNeuralNetwork, TwoLayerFeedForwardNeuralNetwork}:
             iterator = SingleFrameDataIterator
             iterator_params = {"batch_size": conf["batch_size"]}
             network_params = {"n_in": conf["n_in"]}
